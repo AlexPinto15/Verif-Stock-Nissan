@@ -599,14 +599,14 @@
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
                             <h3>Vérificateur Stock Usine</h3>
-                            <p>Lecture EPC/Excel, mode pas-à-pas avec copie auto pour GASS, et possibilité de corriger/remplacer une référence usine en direct.</p>
+                            <p>Lecture EPC/Excel, mode pas-à-pas avec copie auto, correction de référence usine et affichage automatique du récapitulatif en fin de liste.</p>
                         </div>
                     </div>
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
                             <span class="tile-feature-tag">Mode Pas-à-Pas</span>
-                            <span class="tile-feature-tag">Remplacement Réf Usine</span>
-                            <span class="tile-feature-tag">Dispo / Stock / Rupture</span>
+                            <span class="tile-feature-tag">Correction Réf Usine</span>
+                            <span class="tile-feature-tag">Bilan Automatique de Fin</span>
                         </div>
                         <div class="tile-footer">
                             <span>Ouvrir le Vérificateur Stock</span>
@@ -767,7 +767,6 @@
                         <div id="current-status-badge"></div>
                     </div>
                     <div class="ref-flex">
-                        <!-- Zone d'affichage normale ou zone de saisie pour remplacement de référence -->
                         <div id="ref-display-container" style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
                             <div id="current-ref" class="ref-code">----------</div>
                             <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence si l'usine a fait un remplacement (ex: 921005FA0A -> 921015FA0A)">
@@ -820,7 +819,7 @@
                 <div class="table-header">
                     <div class="table-header-left">
                         <h3>Récapitulatif de la liste</h3>
-                        <p>Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas</p>
+                        <p id="table-subtitle">Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas</p>
                     </div>
                     <div class="export-group">
                         <button id="btn-export-xlsx" class="btn-export-xlsx">
@@ -973,10 +972,11 @@
         }
 
         /* =========================================================================
-           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE (AVEC REMPLACEMENT DE REF USINE)
+           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE
            ========================================================================= */
         let listePieces = [];
         let indexActuel = 0;
+        let verificationTerminee = false;
 
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
@@ -1078,6 +1078,7 @@
         function initialiserInterface() {
             if (!listePieces.length) return;
             indexActuel = 0;
+            verificationTerminee = false;
             dropZone.classList.add('compact');
             document.getElementById('drop-title-text').textContent = "Fichier chargé avec succès";
             document.getElementById('drop-sub-text').textContent = "Vous pouvez importer un autre fichier à tout moment";
@@ -1085,6 +1086,7 @@
             document.getElementById('kpi-section').classList.remove('hidden');
             document.getElementById('pas-a-pas-card').classList.remove('hidden');
             document.getElementById('table-card').classList.remove('hidden');
+            document.getElementById('table-subtitle').textContent = "Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas";
 
             afficherPiece(true);
             afficherTableau();
@@ -1092,29 +1094,25 @@
         }
 
         function afficherPiece(autoCopyIfEnabled = false) {
+            if (verificationTerminee) return;
             const p = listePieces[indexActuel];
             document.getElementById('step-counter').textContent = `Pièce ${indexActuel + 1} sur ${listePieces.length}`;
             document.getElementById('current-qty').textContent = p.qty;
             document.getElementById('current-desig').textContent = p.desig;
 
-            // Réinitialiser l'affichage de la référence (mode lecture)
             resetAffichageReference(p.ref);
 
             const pct = ((indexActuel + 1) / listePieces.length) * 100;
             document.getElementById('progress-bar').style.width = `${pct}%`;
 
             document.getElementById('btn-prev').disabled = (indexActuel === 0);
-            document.getElementById('btn-next').disabled = (indexActuel === indexActuelMax()); // correction
+            document.getElementById('btn-next').disabled = (indexActuel === listePieces.length - 1);
 
             document.getElementById('current-status-badge').innerHTML = genererBadgeHTML(p.statut);
 
             if (autoCopyIfEnabled && document.getElementById('auto-copy-check').checked) {
                 copierDansPressePapier(true);
             }
-        }
-
-        function indexActuelMax() {
-            return listePieces.length - 1;
         }
 
         function resetAffichageReference(refTexte) {
@@ -1162,7 +1160,6 @@
                 listePieces[indexActuel].ref = nouvelleRef;
                 resetAffichageReference(nouvelleRef);
                 afficherTableau();
-                // Copier automatiquement la nouvelle référence corrigée dans le presse-papier
                 copierDansPressePapier(true);
             } else {
                 alert("La référence ne peut pas être vide.");
@@ -1170,7 +1167,7 @@
         }
 
         function copierDansPressePapier(silencieux = false) {
-            if (!listePieces.length) return;
+            if (!listePieces.length || verificationTerminee) return;
             const ref = listePieces[indexActuel].ref;
             navigator.clipboard.writeText(ref).then(() => {
                 const btnCopy = document.getElementById('btn-copy');
@@ -1190,7 +1187,7 @@
         document.getElementById('btn-rupture').addEventListener('click', () => enregistrerStatut('Rupture Usine'));
 
         function enregistrerStatut(statut) {
-            if (!listePieces.length) return;
+            if (!listePieces.length || verificationTerminee) return;
             listePieces[indexActuel].statut = statut;
             mettreAJourKPI();
 
@@ -1199,23 +1196,26 @@
                 afficherPiece(true);
                 afficherTableau();
             } else {
-                afficherPiece(false);
+                // Fin de la liste !
+                verificationTerminee = true;
+                document.getElementById('pas-a-pas-card').classList.add('hidden');
+                document.getElementById('table-subtitle').textContent = "🎉 Vérification terminée avec succès ! Voici le récapitulatif final de votre liste.";
                 afficherTableau();
+                alert("🎉 Bravo ! Toutes les références de votre fichier ont été vérifiées avec succès.");
             }
         }
 
         document.getElementById('btn-prev').addEventListener('click', () => {
-            if (indexActuel > 0) { indexActuel--; afficherPiece(true); afficherTableau(); }
+            if (indexActuel > 0 && !verificationTerminee) { indexActuel--; afficherPiece(true); afficherTableau(); }
         });
 
         document.getElementById('btn-next').addEventListener('click', () => {
-            if (indexActuel < listePieces.length - 1) { indexActuel++; afficherPiece(true); afficherTableau(); }
+            if (indexActuel < listePieces.length - 1 && !verificationTerminee) { indexActuel++; afficherPiece(true); afficherTableau(); }
         });
 
         document.addEventListener('keydown', (e) => {
             const stockVisible = document.getElementById('screen-stock').classList.contains('active-screen');
-            // Si on est en train d'écrire dans l'input de modification de ref, on ne déclenche pas les raccourcis de touches
-            if (!stockVisible || !listePieces.length || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+            if (!stockVisible || !listePieces.length || verificationTerminee || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
             
             if (e.key === '1' || e.key === '&') enregistrerStatut('Disponible Usine');
             else if (e.key === '2' || e.key === 'é') enregistrerStatut('En Stock');
@@ -1251,11 +1251,13 @@
             tbody.innerHTML = '';
             listePieces.forEach((p, idx) => {
                 const tr = document.createElement('tr');
-                if (idx === indexActuel) tr.className = 'active-row';
+                if (!verificationTerminee && idx === indexActuel) tr.className = 'active-row';
                 tr.addEventListener('click', () => {
-                    indexActuel = idx;
-                    afficherPiece(true);
-                    afficherTableau();
+                    if (!verificationTerminee) {
+                        indexActuel = idx;
+                        afficherPiece(true);
+                        afficherTableau();
+                    }
                 });
                 tr.innerHTML = `
                     <td style="color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${idx + 1}</td>
