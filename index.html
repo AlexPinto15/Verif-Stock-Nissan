@@ -162,9 +162,7 @@
             outline: none;
         }
 
-        .quick-switch-select:hover {
-            border-color: var(--border-highlight);
-        }
+        .quick-switch-select:hover { border-color: var(--border-highlight); }
 
         .badge-gass {
             background: rgba(16, 185, 129, 0.12);
@@ -214,9 +212,7 @@
             animation: fadeIn 0.25s ease-out;
         }
 
-        .app-screen.active-screen {
-            display: flex;
-        }
+        .app-screen.active-screen { display: flex; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
@@ -224,23 +220,9 @@
         }
 
         /* ================= ÉCRAN 0 : PORTAIL LAUNCHER ================= */
-        .hub-hero {
-            text-align: center;
-            margin: 16px 0 12px 0;
-        }
-
-        .hub-hero h2 {
-            font-size: 28px;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: -0.3px;
-            margin-bottom: 8px;
-        }
-
-        .hub-hero p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
+        .hub-hero { text-align: center; margin: 16px 0 12px 0; }
+        .hub-hero h2 { font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; margin-bottom: 8px; }
+        .hub-hero p { font-size: 14px; color: var(--text-secondary); }
 
         .launcher-grid {
             display: grid;
@@ -269,10 +251,7 @@
         .app-tile::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
+            top: 0; left: 0; width: 100%; height: 4px;
             background: var(--tile-accent, var(--nissan-red));
             opacity: 0.85;
         }
@@ -283,87 +262,29 @@
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
         }
 
-        .app-tile.tile-placeholder {
-            border-style: dashed;
-            opacity: 0.65;
-            cursor: default;
-        }
+        .app-tile.tile-placeholder { border-style: dashed; opacity: 0.65; cursor: default; }
+        .app-tile.tile-placeholder:hover { transform: none; border-color: var(--border-subtle); }
 
-        .app-tile.tile-placeholder:hover {
-            transform: none;
-            border-color: var(--border-subtle);
-        }
-
-        .tile-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-        }
-
+        .tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
         .tile-icon {
-            width: 58px;
-            height: 58px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
+            width: 58px; height: 58px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
         }
-
         .tile-badge {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.06);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-subtle);
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 10px; border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); border: 1px solid var(--border-subtle);
         }
-
-        .tile-body h3 {
-            font-size: 20px;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
-
-        .tile-body p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        .tile-features {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
+        .tile-body h3 { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 8px; }
+        .tile-body p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+        .tile-features { display: flex; flex-wrap: wrap; gap: 8px; }
         .tile-feature-tag {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-main);
-            border: 1px solid var(--border-subtle);
+            font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main); border: 1px solid var(--border-subtle);
         }
-
         .tile-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-subtle);
-            font-size: 13px;
-            font-weight: 700;
-            color: #ffffff;
+            display: flex; align-items: center; justify-content: space-between; padding-top: 16px;
+            border-top: 1px solid var(--border-subtle); font-size: 13px; font-weight: 700; color: #ffffff;
         }
-
         .tile-arrow { transition: transform 0.2s ease; }
         .app-tile:hover .tile-arrow { transform: translateX(5px); }
 
@@ -403,86 +324,34 @@
         }
 
         .icon-upload {
-            width: 56px;
-            height: 56px;
+            width: 56px; height: 56px;
             background: linear-gradient(135deg, rgba(195, 0, 47, 0.25), rgba(195, 0, 47, 0.08));
-            border: 1px solid rgba(195, 0, 47, 0.4);
-            color: #ff4d6d;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 18px auto;
+            border: 1px solid rgba(195, 0, 47, 0.4); color: #ff4d6d; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 18px auto;
             box-shadow: 0 8px 24px rgba(195, 0, 47, 0.2);
         }
 
         .drop-title { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
         .drop-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
-
         .btn-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
         .btn {
-            border: none;
-            padding: 11px 20px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-family: inherit;
+            border: none; padding: 11px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; font-family: inherit;
         }
-
         .btn:active { transform: scale(0.97); }
-
-        .btn-red {
-            background: linear-gradient(135deg, var(--nissan-red), #9e0026);
-            color: #ffffff;
-            box-shadow: 0 4px 15px var(--nissan-red-glow);
-        }
-
-        .btn-red:hover {
-            background: linear-gradient(135deg, var(--nissan-red-hover), var(--nissan-red));
-            box-shadow: 0 6px 22px rgba(195, 0, 47, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .btn-blue {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #ffffff;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
-        }
-
-        .btn-blue:hover {
-            background: linear-gradient(135deg, #60a5fa, #3b82f6);
-            transform: translateY(-1px);
-        }
-
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            border: 1px solid var(--border-subtle);
-        }
-
-        .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--border-highlight);
-            transform: translateY(-1px);
-        }
+        .btn-red { background: linear-gradient(135deg, var(--nissan-red), #9e0026); color: #ffffff; box-shadow: 0 4px 15px var(--nissan-red-glow); }
+        .btn-red:hover { background: linear-gradient(135deg, var(--nissan-red-hover), var(--nissan-red)); box-shadow: 0 6px 22px rgba(195, 0, 47, 0.5); transform: translateY(-1px); }
+        .btn-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35); }
+        .btn-blue:hover { background: linear-gradient(135deg, #60a5fa, #3b82f6); transform: translateY(-1px); }
+        .btn-glass { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-highlight); transform: translateY(-1px); }
 
         /* Barre KPI */
         .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .kpi-card {
-            background: var(--bg-surface);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 14px;
-            padding: 16px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            background: var(--bg-surface); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle);
+            border-radius: 14px; padding: 16px 18px; display: flex; align-items: center; justify-content: space-between;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
         .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); }
@@ -491,60 +360,29 @@
 
         /* Fiche Pas-à-Pas */
         .card-pas-a-pas {
-            background: var(--bg-surface);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-surface); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
+            border-radius: 20px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative; overflow: hidden;
         }
         .card-pas-a-pas::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 5px;
-            height: 100%;
+            content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%;
             background: linear-gradient(180deg, var(--nissan-red), #ff4d6d);
         }
         .pas-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border-subtle);
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+            margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);
         }
         .pas-header-left { display: flex; align-items: center; gap: 12px; }
         .pas-tag {
-            background: rgba(195, 0, 47, 0.18);
-            color: #ff6b8b;
-            border: 1px solid rgba(195, 0, 47, 0.4);
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            padding: 5px 12px;
-            border-radius: 6px;
-            text-transform: uppercase;
+            background: rgba(195, 0, 47, 0.18); color: #ff6b8b; border: 1px solid rgba(195, 0, 47, 0.4);
+            font-size: 11px; font-weight: 700; letter-spacing: 0.8px; padding: 5px 12px; border-radius: 6px; text-transform: uppercase;
         }
         .pas-counter { font-size: 14px; color: var(--text-main); font-weight: 600; }
         .pas-header-right { display: flex; align-items: center; gap: 16px; }
         .auto-copy-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            user-select: none;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-subtle);
+            display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary);
+            cursor: pointer; user-select: none; background: rgba(255, 255, 255, 0.03); padding: 6px 12px;
+            border-radius: 8px; border: 1px solid var(--border-subtle);
         }
         .auto-copy-toggle input { accent-color: var(--nissan-red); cursor: pointer; }
         .progress-wrapper { width: 160px; background: rgba(255, 255, 255, 0.07); height: 8px; border-radius: 999px; overflow: hidden; }
@@ -552,30 +390,50 @@
 
         .ref-card {
             background: linear-gradient(145deg, rgba(10, 13, 20, 0.9), rgba(15, 19, 30, 0.9));
-            border: 1px solid var(--border-highlight);
-            border-radius: 16px;
-            padding: 24px 28px;
-            margin-bottom: 22px;
+            border: 1px solid var(--border-highlight); border-radius: 16px; padding: 24px 28px; margin-bottom: 22px;
         }
         .ref-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .ref-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 700; }
         .ref-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 6px 0 16px 0; }
-        .ref-code { font-size: 38px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #ffffff; letter-spacing: 2px; user-select: all; }
+        .ref-code { font-size: 38px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #ffffff; letter-spacing: 2px; }
+
+        /* Style édition de référence (Remplacement Usine) */
+        .ref-edit-wrapper { display: flex; align-items: center; gap: 10px; width: 100%; flex-wrap: wrap; }
+        .ref-edit-input {
+            background: rgba(7, 9, 14, 0.95);
+            border: 2px solid var(--nissan-red);
+            color: #ffffff;
+            font-size: 28px;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 10px;
+            outline: none;
+            letter-spacing: 1px;
+            flex-grow: 1;
+            max-width: 420px;
+        }
+
+        .btn-edit-ref {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-edit-ref:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
 
         .btn-copy {
-            background: linear-gradient(135deg, var(--nissan-red), #9e0026);
-            color: #fff;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 6px 20px var(--nissan-red-glow);
+            background: linear-gradient(135deg, var(--nissan-red), #9e0026); color: #fff; border: none;
+            padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
+            transition: all 0.2s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 20px var(--nissan-red-glow);
         }
         .btn-copy.copied { background: linear-gradient(135deg, #10b981, #059669); }
 
@@ -586,16 +444,8 @@
 
         .action-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
         .btn-decision {
-            padding: 18px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s ease;
+            padding: 18px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease;
         }
         .btn-dispo { background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12)); color: #6ee7b7; border: 1.5px solid var(--emerald-border); }
         .btn-dispo:hover { background: linear-gradient(135deg, #10b981, #059669); color: #fff; transform: translateY(-2px); }
@@ -612,32 +462,17 @@
 
         /* Tableaux & Cartes */
         .table-card {
-            background: var(--bg-surface);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 20px;
-            padding: 24px 28px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-            width: 100%;
-            min-width: 0;
-            overflow: hidden;
+            background: var(--bg-surface); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
+            border-radius: 20px; padding: 24px 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35); width: 100%; min-width: 0; overflow: hidden;
         }
         .table-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
         .table-header-left h3 { font-size: 16px; color: #ffffff; font-weight: 700; }
         .table-header-left p { font-size: 12px; color: var(--text-secondary); }
         .export-group { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-export-xlsx {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #ffffff;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none;
+            padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px;
         }
         .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-subtle); max-width: 100%; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
@@ -656,127 +491,36 @@
 
         /* ================= ÉCRAN 2 : CONVERTISSEUR GASS -> DCSNET NEO ================= */
         .conv-settings-bar {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 18px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
+            background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px;
+            padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
         }
-
-        .conv-field {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
+        .conv-field { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
         .conv-input {
-            background: rgba(10, 13, 20, 0.9);
-            border: 1px solid var(--border-highlight);
-            color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 15px;
-            font-weight: 800;
-            text-align: center;
-            letter-spacing: 1.5px;
+            background: rgba(10, 13, 20, 0.9); border: 1px solid var(--border-highlight); color: #ffffff;
+            padding: 8px 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; text-align: center; letter-spacing: 1.5px;
         }
-
-        .conv-input:focus {
-            outline: none;
-            border-color: var(--blue);
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
-        }
-
+        .conv-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 10px rgba(59, 130, 246, 0.35); }
         .btn-mini-step {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid var(--border-subtle);
-            color: #fff;
-            width: 30px;
-            height: 34px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 14px;
-            transition: all 0.15s;
+            background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-subtle); color: #fff;
+            width: 30px; height: 34px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 14px; transition: all 0.15s;
         }
+        .btn-mini-step:hover { background: rgba(59, 130, 246, 0.25); border-color: var(--blue); }
 
-        .btn-mini-step:hover {
-            background: rgba(59, 130, 246, 0.25);
-            border-color: var(--blue);
-        }
-
-        .preview-grid {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-            gap: 20px;
-            width: 100%;
-            min-width: 0;
-        }
-
-        .preview-col {
-            min-width: 0;
-            max-width: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
+        .preview-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; width: 100%; min-width: 0; }
+        .preview-col { min-width: 0; max-width: 100%; display: flex; flex-direction: column; }
         .code-box {
-            background: #06080d;
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            color: #34d399;
-            height: 260px;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: auto;
-            overflow-y: auto;
-            white-space: pre;
-            box-sizing: border-box;
+            background: #06080d; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #34d399; height: 260px; width: 100%; max-width: 100%;
+            overflow-x: auto; overflow-y: auto; white-space: pre; box-sizing: border-box;
         }
-
         .toast-notif {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #34d399;
-            background: rgba(16, 185, 129, 0.14);
-            border: 1px solid rgba(16, 185, 129, 0.35);
-            padding: 4px 10px;
-            border-radius: 999px;
-            transition: opacity 0.3s;
+            display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #34d399;
+            background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); padding: 4px 10px; border-radius: 999px; transition: opacity 0.3s;
         }
-
         .hidden { display: none !important; }
 
-        footer {
-            background: rgba(10, 13, 20, 0.85);
-            border-top: 1px solid var(--border-subtle);
-            padding: 18px 36px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .footer-inner {
-            max-width: 1120px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        footer { background: rgba(10, 13, 20, 0.85); border-top: 1px solid var(--border-subtle); padding: 18px 36px; font-size: 12px; color: var(--text-muted); }
+        .footer-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 
         @media (max-width: 900px) {
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
@@ -855,14 +599,14 @@
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
                             <h3>Vérificateur Stock Usine</h3>
-                            <p>Lecture des exports EPC (.txt 3 lignes) ou Excel, vérification guidée pas-à-pas avec copie automatique pour GASS et export Excel.</p>
+                            <p>Lecture EPC/Excel, mode pas-à-pas avec copie auto pour GASS, et possibilité de corriger/remplacer une référence usine en direct.</p>
                         </div>
                     </div>
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
                             <span class="tile-feature-tag">Mode Pas-à-Pas</span>
-                            <span class="tile-feature-tag">Copie Auto Réf</span>
-                            <span class="tile-feature-tag">Dispo / En Stock / Rupture</span>
+                            <span class="tile-feature-tag">Remplacement Réf Usine</span>
+                            <span class="tile-feature-tag">Dispo / Stock / Rupture</span>
                         </div>
                         <div class="tile-footer">
                             <span>Ouvrir le Vérificateur Stock</span>
@@ -882,7 +626,7 @@
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
                             <h3>Convertisseur GASS (.csv & .wft)</h3>
-                            <p>Transforme automatiquement vos fichiers texte GASS (ZPN) en fichiers structurés .csv et .wft avec numéro de commande auto-incrémenté (+1 à chaque fichier).</p>
+                            <p>Transforme automatiquement vos fichiers texte GASS (ZPN) en fichiers structurés .csv et .wft avec numéro de commande auto-incrémenté (+1 par fichier).</p>
                         </div>
                     </div>
                     <div>
@@ -1019,11 +763,18 @@
 
                 <div class="ref-card">
                     <div class="ref-top-row">
-                        <div class="ref-label">Référence Usine (à coller dans GASS)</div>
+                        <div class="ref-label">Référence Usine (à coller dans GASS) — <span style="color:#ff6b8b;">Remplacement possible si référence modifiée</span></div>
                         <div id="current-status-badge"></div>
                     </div>
                     <div class="ref-flex">
-                        <div id="current-ref" class="ref-code">----------</div>
+                        <!-- Zone d'affichage normale ou zone de saisie pour remplacement de référence -->
+                        <div id="ref-display-container" style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
+                            <div id="current-ref" class="ref-code">----------</div>
+                            <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence si l'usine a fait un remplacement (ex: 921005FA0A -> 921015FA0A)">
+                                ✏️ Modifier
+                            </button>
+                        </div>
+                        
                         <button id="btn-copy" class="btn-copy">
                             📋 <span id="btn-copy-text">Copier la référence</span>
                         </button>
@@ -1154,7 +905,7 @@
                 <div class="table-header">
                     <div class="table-header-left">
                         <h3>Fichiers prêts pour DCSnet neo (<span id="conv-count">0</span> pièces extraites — Commande N° <span id="active-cmd-display" style="color: #60a5fa;">0001</span>)</h3>
-                        <p>Dès que vous téléchargez vos fichiers (.CSV / .WFT), le numéro de commande augmentera de +1 pour le prochain import</p>
+                        <p>Aperçu formaté sans dépassement — cliquez sur les boutons à droite pour télécharger</p>
                     </div>
                     <div class="export-group">
                         <button class="btn btn-blue" id="btn-dl-csv">📥 Télécharger .CSV</button>
@@ -1222,7 +973,7 @@
         }
 
         /* =========================================================================
-           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE
+           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE (AVEC REMPLACEMENT DE REF USINE)
            ========================================================================= */
         let listePieces = [];
         let indexActuel = 0;
@@ -1264,7 +1015,7 @@
 
         document.getElementById('btn-demo').addEventListener('click', (e) => {
             e.stopPropagation();
-            const contenuDemo = `E43023ZL0D\n1\nJAMBE SUSPENSION AVANT DROITE\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n543211KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n540503NF0A\n2\nBUTOIR CAOUTCHOUC SUSPENSION AV\n54325ED02A\n2\nBUTEE REBOND ISOLANT`;
+            const contenuDemo = `921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION`;
             document.getElementById('gass-status-text').textContent = "Exemple EPC chargé";
             lireContenuTexte(contenuDemo);
         });
@@ -1343,25 +1094,78 @@
         function afficherPiece(autoCopyIfEnabled = false) {
             const p = listePieces[indexActuel];
             document.getElementById('step-counter').textContent = `Pièce ${indexActuel + 1} sur ${listePieces.length}`;
-            document.getElementById('current-ref').textContent = p.ref;
             document.getElementById('current-qty').textContent = p.qty;
             document.getElementById('current-desig').textContent = p.desig;
+
+            // Réinitialiser l'affichage de la référence (mode lecture)
+            resetAffichageReference(p.ref);
 
             const pct = ((indexActuel + 1) / listePieces.length) * 100;
             document.getElementById('progress-bar').style.width = `${pct}%`;
 
             document.getElementById('btn-prev').disabled = (indexActuel === 0);
-            document.getElementById('btn-next').disabled = (indexActuel === listePieces.length - 1);
+            document.getElementById('btn-next').disabled = (indexActuel === indexActuelMax()); // correction
 
             document.getElementById('current-status-badge').innerHTML = genererBadgeHTML(p.statut);
 
+            if (autoCopyIfEnabled && document.getElementById('auto-copy-check').checked) {
+                copierDansPressePapier(true);
+            }
+        }
+
+        function indexActuelMax() {
+            return listePieces.length - 1;
+        }
+
+        function resetAffichageReference(refTexte) {
+            const container = document.getElementById('ref-display-container');
+            container.innerHTML = `
+                <div id="current-ref" class="ref-code">${refTexte}</div>
+                <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence si l'usine a fait un remplacement (ex: 921005FA0A -> 921015FA0A)">
+                    ✏️ Modifier
+                </button>
+            `;
+            document.getElementById('btn-toggle-edit-ref').addEventListener('click', activerModeEditionRef);
+            
             const btnCopy = document.getElementById('btn-copy');
             const btnCopyText = document.getElementById('btn-copy-text');
             btnCopy.classList.remove('copied');
             btnCopyText.textContent = "Copier la référence";
+        }
 
-            if (autoCopyIfEnabled && document.getElementById('auto-copy-check').checked) {
+        function activerModeEditionRef() {
+            const p = listePieces[indexActuel];
+            const container = document.getElementById('ref-display-container');
+            container.innerHTML = `
+                <div class="ref-edit-wrapper">
+                    <input type="text" id="input-edit-ref" class="ref-edit-input" value="${p.ref}" placeholder="Ex: 921015FA0A">
+                    <button class="btn btn-red" id="btn-save-ref" style="padding: 8px 16px; font-size: 13px;">💾 Valider</button>
+                    <button class="btn btn-glass" id="btn-cancel-ref" style="padding: 8px 12px; font-size: 13px;">Annuler</button>
+                </div>
+            `;
+            const input = document.getElementById('input-edit-ref');
+            input.focus();
+            input.select();
+
+            document.getElementById('btn-save-ref').addEventListener('click', sauvegarderEditionRef);
+            document.getElementById('btn-cancel-ref').addEventListener('click', () => resetAffichageReference(p.ref));
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') sauvegarderEditionRef();
+                if (e.key === 'Escape') resetAffichageReference(p.ref);
+            });
+        }
+
+        function sauvegarderEditionRef() {
+            const input = document.getElementById('input-edit-ref');
+            const nouvelleRef = input.value.trim().toUpperCase();
+            if (nouvelleRef) {
+                listePieces[indexActuel].ref = nouvelleRef;
+                resetAffichageReference(nouvelleRef);
+                afficherTableau();
+                // Copier automatiquement la nouvelle référence corrigée dans le presse-papier
                 copierDansPressePapier(true);
+            } else {
+                alert("La référence ne peut pas être vide.");
             }
         }
 
@@ -1372,7 +1176,7 @@
                 const btnCopy = document.getElementById('btn-copy');
                 const btnCopyText = document.getElementById('btn-copy-text');
                 btnCopy.classList.add('copied');
-                btnCopyText.textContent = silencieux ? "✓ Copié auto (Ctrl+V)" : "✓ Copié !";
+                btnCopyText.textContent = silencieux ? "✓ Copié auto (Réf active)" : "✓ Copié !";
                 setTimeout(() => {
                     btnCopy.classList.remove('copied');
                     btnCopyText.textContent = "Copier la référence";
@@ -1410,7 +1214,9 @@
 
         document.addEventListener('keydown', (e) => {
             const stockVisible = document.getElementById('screen-stock').classList.contains('active-screen');
+            // Si on est en train d'écrire dans l'input de modification de ref, on ne déclenche pas les raccourcis de touches
             if (!stockVisible || !listePieces.length || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+            
             if (e.key === '1' || e.key === '&') enregistrerStatut('Disponible Usine');
             else if (e.key === '2' || e.key === 'é') enregistrerStatut('En Stock');
             else if (e.key === '3' || e.key === '"') enregistrerStatut('Rupture Usine');
@@ -1493,7 +1299,6 @@
 
         /* =========================================================================
            OUTIL 2 : CONVERTISSEUR GASS (.CSV & .WFT POUR DCSNET NEO)
-           AVEC MÉMORISATION ET INCRÉMENTATION +1 PAR FICHIER EXPORTÉ
            ========================================================================= */
         let lignesConverties = [];
         let dernierTexteBrutConv = "";
@@ -1504,7 +1309,6 @@
         const inputNumCmd = document.getElementById('conv-num-cmd');
         const inputCodeFourn = document.getElementById('conv-code-fourn');
 
-        // Charger le dernier numéro de commande mémorisé dans le navigateur
         const cmdMemorisee = localStorage.getItem('dcsnet_last_cmd_num');
         if (cmdMemorisee && /^[0-9]{4}$/.test(cmdMemorisee)) {
             inputNumCmd.value = cmdMemorisee;
@@ -1529,14 +1333,12 @@
             sauvegarderNumCmd(suivantStr);
             if (dernierTexteBrutConv) genererApercusDCS();
 
-            // Afficher une notification visuelle
             const toast = document.getElementById('cmd-saved-toast');
             document.getElementById('toast-next-num').textContent = suivantStr;
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 2800);
         }
 
-        // Boutons manuels - et +
         document.getElementById('btn-cmd-minus').addEventListener('click', () => {
             const actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
             const prec = (actuel - 1 + 10000) % 10000;
@@ -1550,7 +1352,6 @@
             incrementerNumeroCommandeDe1();
         });
 
-        // Forcer strictement des chiffres de 0 à 9 (max 4 caractères)
         [inputNumCmd, inputCodeFourn].forEach(inp => {
             inp.addEventListener('input', () => {
                 inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 4);
@@ -1583,20 +1384,13 @@
             if (e.target.files.length) chargerFichierConv(e.target.files[0]);
         });
 
-        // Exemple fidèle à ton fichier GASS SAP avec lignes ZPN
         document.getElementById('btn-demo-conv').addEventListener('click', () => {
             dejaIncrementePourCeFichier = false;
             dernierTexteBrutConv = [
-                "1201509402",
-                "EUR",
-                "1",
-                "S580",
-                "NFRD9310",
+                "1201509402", "EUR", "1", "S580", "NFRD9310",
                 "000001\t000000\tZPN\t260424CA0A\tSUPPORT PROJECTEUR DROIT\t503T\t0220180801\tsb Clt 353096\t000001\tZSO\t783044\t260424CA0A\t1\t1.000\tEA\t183.78",
                 "000002\t000000\tZPN\t285334BA5C\tENJOLIVEUR SONAR\t503T\t0220180801\tsb Clt 353096\t000002\tZSO\t783044\t285334BA5C\t1\t1.000\tEA\t18.000",
-                "000006\t000000\tZPN\tD85214FJ0A\tROTULE BARRE ACCOUPLEMENT INTER\t503T\t0220180801\tsb Clt 353096\t000006\tZSO\t783044\tD85214FJ0A\t1\t1.000\tEA\t440.000",
-                "000011\t000000\tZPN\t284386PA0C\tCAPTEUR DISTANCE\t503T\t0220180801\tsb Clt 353096\t000011\tZSO\t783044\t284386PA0C\t1\t1.000\tEA\t160.000",
-                "000014\t000000\tZPN\t768474EA0A\tCLIP\t503T\t0220180801\tsb Clt 353096\t000014\tZSO\t783044\t768474EA0A\t10\t10.000\tEA\t20.000"
+                "000006\t000000\tZPN\tD85214FJ0A\tROTULE BARRE ACCOUPLEMENT INTER\t503T\t0220180801\tsb Clt 353096\t000006\tZSO\t783044\tD85214FJ0A\t1\t1.000\tEA\t440.000"
             ].join('\n');
             document.getElementById('conv-drop-title').textContent = "Exemple GASS (ZPN) chargé";
             parserContenuGASS(dernierTexteBrutConv);
