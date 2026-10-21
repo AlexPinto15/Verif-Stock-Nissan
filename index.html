@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nissan — Vérification Stock Usine</title>
+    <title>Portail Outils — Nissan & DCSnet neo</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 168'%3E%3Crect width='200' height='168' rx='36' fill='%2307090e'/%3E%3Cpath d='M 18 65 L 182 65 C 185 65 186 63 185 60 C 170 25 137 4 100 4 C 63 4 30 25 15 60 C 14 63 15 65 18 65 Z M 100 15 C 131 15 158 32 171 56 L 29 56 C 42 32 69 15 100 15 Z' fill='%23ffffff'/%3E%3Cpath d='M 18 103 L 182 103 C 185 103 186 105 185 108 C 170 143 137 164 100 164 C 63 164 30 143 15 108 C 14 105 15 103 18 103 Z M 100 153 C 131 153 158 136 171 112 L 29 112 C 42 136 69 153 100 153 Z' fill='%23ffffff'/%3E%3Crect x='16' y='74' width='168' height='20' rx='3' fill='%23c3002f'/%3E%3C/svg%3E">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,9 +16,8 @@
             --bg-base: #07090e;
             --bg-surface: rgba(18, 22, 33, 0.78);
             --bg-surface-elevated: rgba(26, 32, 48, 0.85);
-            --bg-glass: rgba(255, 255, 255, 0.03);
             --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-highlight: rgba(255, 255, 255, 0.15);
+            --border-highlight: rgba(255, 255, 255, 0.16);
             --nissan-red: #c3002f;
             --nissan-red-hover: #e00036;
             --nissan-red-glow: rgba(195, 0, 47, 0.35);
@@ -36,17 +35,13 @@
             --text-muted: #64748b;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg-base);
             background-image: 
                 radial-gradient(circle at 15% 0%, rgba(195, 0, 47, 0.14), transparent 40%),
-                radial-gradient(circle at 85% 100%, rgba(16, 185, 129, 0.08), transparent 40%);
+                radial-gradient(circle at 85% 100%, rgba(59, 130, 246, 0.09), transparent 40%);
             background-attachment: fixed;
             color: var(--text-main);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -56,11 +51,12 @@
             justify-content: space-between;
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        /* En-tête Glassmorphism */
+        /* En-tête Global */
         header {
-            background: rgba(12, 15, 23, 0.82);
+            background: rgba(12, 15, 23, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-subtle);
@@ -71,22 +67,25 @@
         }
 
         .header-inner {
-            max-width: 1080px;
+            max-width: 1120px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
         .logo-title {
             display: flex;
             align-items: center;
             gap: 16px;
+            cursor: pointer;
         }
 
         .nissan-logo-wrapper {
-            width: 58px;
-            height: 48px;
+            width: 56px;
+            height: 46px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,16 +93,12 @@
             transition: transform 0.25s ease, filter 0.25s ease;
         }
 
-        .nissan-logo-wrapper:hover {
+        .logo-title:hover .nissan-logo-wrapper {
             transform: scale(1.05);
             filter: drop-shadow(0 0 14px rgba(195, 0, 47, 0.55));
         }
 
-        .nissan-logo-svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+        .nissan-logo-svg { width: 100%; height: 100%; display: block; }
 
         .title-container h1 {
             font-size: 17px;
@@ -111,9 +106,6 @@
             letter-spacing: 0.6px;
             color: #ffffff;
             text-transform: uppercase;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .title-container p {
@@ -128,6 +120,52 @@
             gap: 12px;
         }
 
+        .app-switcher-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-portal {
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+            border: 1px solid var(--border-highlight);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-portal:hover {
+            background: var(--nissan-red);
+            border-color: var(--nissan-red);
+            box-shadow: 0 4px 15px var(--nissan-red-glow);
+            transform: translateY(-1px);
+        }
+
+        .quick-switch-select {
+            background: rgba(18, 22, 33, 0.95);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .quick-switch-select:hover {
+            border-color: var(--border-highlight);
+        }
+
         .badge-gass {
             background: rgba(16, 185, 129, 0.12);
             color: #34d399;
@@ -139,7 +177,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
         }
 
         .badge-dot {
@@ -158,17 +195,179 @@
 
         /* Conteneur Principal */
         main {
-            max-width: 1080px;
+            max-width: 1120px;
             width: 100%;
             margin: 32px auto;
             padding: 0 24px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            min-width: 0;
         }
 
-        /* Zone de Dépôt Modernisée */
+        .app-screen {
+            display: none;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+            min-width: 0;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .app-screen.active-screen {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= ÉCRAN 0 : PORTAIL LAUNCHER ================= */
+        .hub-hero {
+            text-align: center;
+            margin: 16px 0 12px 0;
+        }
+
+        .hub-hero h2 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+        }
+
+        .hub-hero p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .launcher-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 22px;
+            margin-top: 12px;
+        }
+
+        .app-tile {
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: 22px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 22px;
+            cursor: pointer;
+            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        }
+
+        .app-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--tile-accent, var(--nissan-red));
+            opacity: 0.85;
+        }
+
+        .app-tile:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-highlight);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
+        }
+
+        .app-tile.tile-placeholder {
+            border-style: dashed;
+            opacity: 0.65;
+            cursor: default;
+        }
+
+        .app-tile.tile-placeholder:hover {
+            transform: none;
+            border-color: var(--border-subtle);
+        }
+
+        .tile-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .tile-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        }
+
+        .tile-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tile-body h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .tile-body p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .tile-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tile-feature-tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tile-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-subtle);
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .tile-arrow { transition: transform 0.2s ease; }
+        .app-tile:hover .tile-arrow { transform: translateX(5px); }
+
+        /* ================= COMPOSANTS COMMUNS AUX OUTILS ================= */
         .drop-zone {
             background: var(--bg-surface);
             backdrop-filter: blur(12px);
@@ -180,6 +379,7 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
         }
 
         .drop-zone.compact {
@@ -192,21 +392,9 @@
             border-width: 1px;
         }
 
-        .drop-zone.compact .icon-upload {
-            margin: 0;
-            width: 42px;
-            height: 42px;
-        }
-
-        .drop-zone.compact .drop-info {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .drop-zone.compact .drop-sub {
-            margin-bottom: 0;
-        }
+        .drop-zone.compact .icon-upload { margin: 0; width: 42px; height: 42px; }
+        .drop-zone.compact .drop-info { display: flex; align-items: center; gap: 16px; }
+        .drop-zone.compact .drop-sub { margin-bottom: 0; }
 
         .drop-zone:hover, .drop-zone.dragover {
             border-color: var(--nissan-red);
@@ -226,32 +414,12 @@
             justify-content: center;
             margin: 0 auto 18px auto;
             box-shadow: 0 8px 24px rgba(195, 0, 47, 0.2);
-            transition: transform 0.3s ease;
         }
 
-        .drop-zone:hover .icon-upload {
-            transform: translateY(-3px) scale(1.04);
-        }
+        .drop-title { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
+        .drop-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
 
-        .drop-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 6px;
-        }
-
-        .drop-sub {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        .btn-group {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+        .btn-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
         .btn {
             border: none;
@@ -267,9 +435,7 @@
             font-family: inherit;
         }
 
-        .btn:active {
-            transform: scale(0.97);
-        }
+        .btn:active { transform: scale(0.97); }
 
         .btn-red {
             background: linear-gradient(135deg, var(--nissan-red), #9e0026);
@@ -280,6 +446,17 @@
         .btn-red:hover {
             background: linear-gradient(135deg, var(--nissan-red-hover), var(--nissan-red));
             box-shadow: 0 6px 22px rgba(195, 0, 47, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-blue:hover {
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
             transform: translateY(-1px);
         }
 
@@ -295,13 +472,8 @@
             transform: translateY(-1px);
         }
 
-        /* Barre de Statistiques KPI (5 colonnes) */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 14px;
-        }
-
+        /* Barre KPI */
+        .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .kpi-card {
             background: var(--bg-surface);
             backdrop-filter: blur(12px);
@@ -313,33 +485,11 @@
             justify-content: space-between;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
+        .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-secondary); }
+        .kpi-value { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+        .kpi-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 
-        .kpi-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-secondary);
-        }
-
-        .kpi-value {
-            font-size: 24px;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            margin-top: 2px;
-        }
-
-        .kpi-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-        }
-
-        /* Carte Pas-à-Pas Moderne */
+        /* Fiche Pas-à-Pas */
         .card-pas-a-pas {
             background: var(--bg-surface);
             backdrop-filter: blur(16px);
@@ -350,7 +500,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .card-pas-a-pas::before {
             content: '';
             position: absolute;
@@ -360,7 +509,6 @@
             height: 100%;
             background: linear-gradient(180deg, var(--nissan-red), #ff4d6d);
         }
-
         .pas-header {
             display: flex;
             justify-content: space-between;
@@ -371,13 +519,7 @@
             padding-bottom: 16px;
             border-bottom: 1px solid var(--border-subtle);
         }
-
-        .pas-header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .pas-header-left { display: flex; align-items: center; gap: 12px; }
         .pas-tag {
             background: rgba(195, 0, 47, 0.18);
             color: #ff6b8b;
@@ -389,19 +531,8 @@
             border-radius: 6px;
             text-transform: uppercase;
         }
-
-        .pas-counter {
-            font-size: 14px;
-            color: var(--text-main);
-            font-weight: 600;
-        }
-
-        .pas-header-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
+        .pas-counter { font-size: 14px; color: var(--text-main); font-weight: 600; }
+        .pas-header-right { display: flex; align-items: center; gap: 16px; }
         .auto-copy-toggle {
             display: flex;
             align-items: center;
@@ -415,78 +546,21 @@
             border-radius: 8px;
             border: 1px solid var(--border-subtle);
         }
+        .auto-copy-toggle input { accent-color: var(--nissan-red); cursor: pointer; }
+        .progress-wrapper { width: 160px; background: rgba(255, 255, 255, 0.07); height: 8px; border-radius: 999px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--nissan-red), #ff4d6d); border-radius: 999px; transition: width 0.35s ease; }
 
-        .auto-copy-toggle input {
-            accent-color: var(--nissan-red);
-            cursor: pointer;
-        }
-
-        .progress-wrapper {
-            width: 160px;
-            background: rgba(255, 255, 255, 0.07);
-            height: 8px;
-            border-radius: 999px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--nissan-red), #ff4d6d);
-            border-radius: 999px;
-            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 0 12px var(--nissan-red-glow);
-        }
-
-        /* Fiche Référence Active */
         .ref-card {
             background: linear-gradient(145deg, rgba(10, 13, 20, 0.9), rgba(15, 19, 30, 0.9));
             border: 1px solid var(--border-highlight);
             border-radius: 16px;
             padding: 24px 28px;
             margin-bottom: 22px;
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
         }
-
-        .ref-top-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .ref-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-secondary);
-            font-weight: 700;
-        }
-
-        .current-status-pill {
-            font-size: 11px;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 999px;
-        }
-
-        .ref-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 16px;
-            padding: 6px 0 16px 0;
-        }
-
-        .ref-code {
-            font-size: 38px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 800;
-            color: #ffffff;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 15px rgba(255, 255, 255, 0.12);
-            user-select: all;
-        }
+        .ref-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .ref-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 700; }
+        .ref-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 6px 0 16px 0; }
+        .ref-code { font-size: 38px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #ffffff; letter-spacing: 2px; user-select: all; }
 
         .btn-copy {
             background: linear-gradient(135deg, var(--nissan-red), #9e0026);
@@ -503,56 +577,16 @@
             gap: 10px;
             box-shadow: 0 6px 20px var(--nissan-red-glow);
         }
+        .btn-copy.copied { background: linear-gradient(135deg, #10b981, #059669); }
 
-        .btn-copy:hover {
-            background: linear-gradient(135deg, var(--nissan-red-hover), var(--nissan-red));
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(195, 0, 47, 0.55);
-        }
+        .details-grid { display: grid; grid-template-columns: auto 1fr; gap: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+        .detail-item { display: flex; flex-direction: column; gap: 2px; }
+        .detail-item span { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+        .detail-item strong { font-size: 15px; color: #ffffff; font-weight: 700; }
 
-        .btn-copy.copied {
-            background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .details-grid {
-            display: grid;
-            grid-template-columns: auto 1fr;
-            gap: 32px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border-subtle);
-        }
-
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .detail-item span {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .detail-item strong {
-            font-size: 15px;
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        /* Boutons Décision Stock (3 boutons) */
-        .action-btns {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
+        .action-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
         .btn-decision {
-            padding: 18px 18px;
+            padding: 18px;
             border-radius: 14px;
             font-size: 15px;
             font-weight: 700;
@@ -561,103 +595,22 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            transition: all 0.2s ease;
         }
+        .btn-dispo { background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12)); color: #6ee7b7; border: 1.5px solid var(--emerald-border); }
+        .btn-dispo:hover { background: linear-gradient(135deg, #10b981, #059669); color: #fff; transform: translateY(-2px); }
+        .btn-stock { background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(37, 99, 235, 0.12)); color: #93c5fd; border: 1.5px solid var(--blue-border); }
+        .btn-stock:hover { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; transform: translateY(-2px); }
+        .btn-rupture { background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.12)); color: #fda4af; border: 1.5px solid var(--rose-border); }
+        .btn-rupture:hover { background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff; transform: translateY(-2px); }
+        .key-hint { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.15); }
 
-        .btn-decision:active {
-            transform: scale(0.98);
-        }
+        .nav-btns { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
+        .btn-nav-item { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        .btn-nav-item:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+        .btn-nav-item:disabled { opacity: 0.35; cursor: not-allowed; }
 
-        .btn-dispo {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12));
-            color: #6ee7b7;
-            border: 1.5px solid var(--emerald-border);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.1);
-        }
-
-        .btn-dispo:hover {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #ffffff;
-            border-color: #34d399;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.35);
-        }
-
-        .btn-stock {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(37, 99, 235, 0.12));
-            color: #93c5fd;
-            border: 1.5px solid var(--blue-border);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.1);
-        }
-
-        .btn-stock:hover {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #ffffff;
-            border-color: #60a5fa;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(59, 130, 246, 0.35);
-        }
-
-        .btn-rupture {
-            background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.12));
-            color: #fda4af;
-            border: 1.5px solid var(--rose-border);
-            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.1);
-        }
-
-        .btn-rupture:hover {
-            background: linear-gradient(135deg, #f43f5e, #e11d48);
-            color: #ffffff;
-            border-color: #fb7185;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(244, 63, 94, 0.35);
-        }
-
-        .key-hint {
-            font-size: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            opacity: 0.8;
-        }
-
-        /* Navigation Pas-à-Pas */
-        .nav-btns {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 8px;
-        }
-
-        .btn-nav-item {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            cursor: pointer;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: all 0.2s;
-        }
-
-        .btn-nav-item:hover:not(:disabled) {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-        }
-
-        .btn-nav-item:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-        }
-
-        /* Tableau Récapitulatif */
+        /* Tableaux & Cartes */
         .table-card {
             background: var(--bg-surface);
             backdrop-filter: blur(16px);
@@ -665,33 +618,14 @@
             border-radius: 20px;
             padding: 24px 28px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            width: 100%;
+            min-width: 0;
+            overflow: hidden;
         }
-
-        .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 14px;
-            margin-bottom: 18px;
-        }
-
-        .table-header-left h3 {
-            font-size: 16px;
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        .table-header-left p {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .export-group {
-            display: flex;
-            gap: 10px;
-        }
-
+        .table-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 18px; }
+        .table-header-left h3 { font-size: 16px; color: #ffffff; font-weight: 700; }
+        .table-header-left p { font-size: 12px; color: var(--text-secondary); }
+        .export-group { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-export-xlsx {
             background: linear-gradient(135deg, #10b981, #059669);
             color: #ffffff;
@@ -704,102 +638,128 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s;
         }
+        .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-subtle); max-width: 100%; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        th { background: rgba(10, 13, 20, 0.85); color: var(--text-secondary); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); }
+        td { padding: 13px 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.04); color: var(--text-main); }
+        tbody tr { cursor: pointer; }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.04); }
+        tbody tr.active-row { background: rgba(195, 0, 47, 0.14); }
+        tbody tr.active-row td:first-child { box-shadow: inset 3px 0 0 var(--nissan-red); }
 
-        .btn-export-xlsx:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
-        }
+        .badge-status { padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+        .st-attente { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.25); }
+        .st-dispo { background: var(--emerald-dark); color: #34d399; border: 1px solid var(--emerald-border); }
+        .st-stock { background: var(--blue-dark); color: #60a5fa; border: 1px solid var(--blue-border); }
+        .st-rupture { background: var(--rose-dark); color: #fb7185; border: 1px solid var(--rose-border); }
 
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
+        /* ================= ÉCRAN 2 : CONVERTISSEUR GASS -> DCSNET NEO ================= */
+        .conv-settings-bar {
+            background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .conv-field {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-size: 13px;
-            text-align: left;
-        }
-
-        th {
-            background: rgba(10, 13, 20, 0.85);
             color: var(--text-secondary);
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.7px;
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border-subtle);
         }
 
-        td {
-            padding: 13px 16px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            color: var(--text-main);
-            transition: background 0.15s;
+        .conv-input {
+            background: rgba(10, 13, 20, 0.9);
+            border: 1px solid var(--border-highlight);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 15px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 1.5px;
         }
 
-        tbody tr {
+        .conv-input:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-mini-step {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-subtle);
+            color: #fff;
+            width: 30px;
+            height: 34px;
+            border-radius: 6px;
             cursor: pointer;
-        }
-
-        tbody tr:hover {
-            background: rgba(255, 255, 255, 0.04);
-        }
-
-        tbody tr.active-row {
-            background: rgba(195, 0, 47, 0.14);
-            position: relative;
-        }
-
-        tbody tr.active-row td:first-child {
-            box-shadow: inset 3px 0 0 var(--nissan-red);
-        }
-
-        .badge-status {
-            padding: 4px 11px;
-            border-radius: 999px;
-            font-size: 11px;
             font-weight: 700;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+
+        .btn-mini-step:hover {
+            background: rgba(59, 130, 246, 0.25);
+            border-color: var(--blue);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 20px;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .preview-col {
+            min-width: 0;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-box {
+            background: #06080d;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: #34d399;
+            height: 260px;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            overflow-y: auto;
+            white-space: pre;
+            box-sizing: border-box;
+        }
+
+        .toast-notif {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-        }
-
-        .st-attente {
-            background: rgba(148, 163, 184, 0.12);
-            color: #94a3b8;
-            border: 1px solid rgba(148, 163, 184, 0.25);
-        }
-
-        .st-dispo {
-            background: var(--emerald-dark);
+            font-size: 11px;
+            font-weight: 700;
             color: #34d399;
-            border: 1px solid var(--emerald-border);
+            background: rgba(16, 185, 129, 0.14);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            padding: 4px 10px;
+            border-radius: 999px;
+            transition: opacity 0.3s;
         }
 
-        .st-stock {
-            background: var(--blue-dark);
-            color: #60a5fa;
-            border: 1px solid var(--blue-border);
-        }
+        .hidden { display: none !important; }
 
-        .st-rupture {
-            background: var(--rose-dark);
-            color: #fb7185;
-            border: 1px solid var(--rose-border);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Pied de page */
         footer {
             background: rgba(10, 13, 20, 0.85);
             border-top: 1px solid var(--border-subtle);
@@ -809,7 +769,7 @@
         }
 
         .footer-inner {
-            max-width: 1080px;
+            max-width: 1120px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -820,7 +780,7 @@
 
         @media (max-width: 900px) {
             .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .action-btns { grid-template-columns: 1fr; }
+            .action-btns, .preview-grid { grid-template-columns: minmax(0, 1fr); }
             .ref-code { font-size: 26px; }
             .drop-zone.compact { flex-direction: column; gap: 14px; text-align: center; }
         }
@@ -828,265 +788,448 @@
 </head>
 <body>
 
-    <!-- En-tête -->
+    <!-- En-tête Global -->
     <header>
         <div class="header-inner">
-            <div class="logo-title">
-                <div class="nissan-logo-wrapper" title="Nissan Motor Co., Ltd.">
+            <div class="logo-title" onclick="ouvrirEcran('hub')" title="Retour au Portail d'Outils">
+                <div class="nissan-logo-wrapper">
                     <svg class="nissan-logo-svg" viewBox="0 0 200 168" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Officiel Nissan">
-    <!-- Arche supérieure officielle Nissan -->
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M 14 66 H 186 C 188.5 66 189.5 63.8 188.5 61.2 C 173.5 26 139.5 4 100 4 C 60.5 4 26.5 26 11.5 61.2 C 10.5 63.8 11.5 66 14 66 Z M 100 14.5 C 133 14.5 161.5 31.8 175.2 56.5 H 24.8 C 38.5 31.8 67 14.5 100 14.5 Z" fill="#ffffff"/>
-    <!-- Arche inférieure officielle Nissan -->
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M 14 102 H 186 C 188.5 102 189.5 104.2 188.5 106.8 C 173.5 142 139.5 164 100 164 C 60.5 164 26.5 142 11.5 106.8 C 10.5 104.2 11.5 102 14 102 Z M 100 153.5 C 133 153.5 161.5 136.2 175.2 111.5 H 24.8 C 38.5 136.2 67 153.5 100 153.5 Z" fill="#ffffff"/>
-    <!-- Lettrage vectoriel officiel NISSAN parfaitement centré (x: 10.5 à 189.5, centre = 100) -->
-    <g transform="translate(-5.5, 0)">
-        <!-- N -->
-        <path d="M 16 74 H 23.5 L 36.5 90.5 V 74 H 42.5 V 94 H 35 L 22 77.5 V 94 H 16 V 74 Z" fill="#ffffff"/>
-        <!-- I -->
-        <path d="M 51.5 74 H 58 V 94 H 51.5 V 74 Z" fill="#ffffff"/>
-        <!-- S -->
-        <path d="M 67 88.5 H 84.5 C 86.2 88.5 87 87.8 87 86.8 C 87 85.8 86.2 85.2 84.5 85.2 H 72.5 C 68.2 85.2 66 83.3 66 79.6 C 66 76 68.5 74 73 74 H 91.5 V 79 H 74 C 72.5 79 71.8 79.5 71.8 80.4 C 71.8 81.3 72.5 81.8 74 81.8 H 86 C 90.5 81.8 92.8 83.8 92.8 87.5 C 92.8 91.5 90.2 94 85.2 94 H 67 V 88.5 Z" fill="#ffffff"/>
-        <!-- S -->
-        <path d="M 101 88.5 H 118.5 C 120.2 88.5 121 87.8 121 86.8 C 121 85.8 120.2 85.2 118.5 85.2 H 106.5 C 102.2 85.2 100 83.3 100 79.6 C 100 76 102.5 74 107 74 H 125.5 V 79 H 108 C 106.5 79 105.8 79.5 105.8 80.4 C 105.8 81.3 106.5 81.8 108 81.8 H 120 C 124.5 81.8 126.8 83.8 126.8 87.5 C 126.8 91.5 124.2 94 119.2 94 H 101 V 88.5 Z" fill="#ffffff"/>
-        <!-- A -->
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M 143 74 H 150.5 L 162.5 94 H 155.5 L 153 89.8 H 140.5 L 138 94 H 131 L 143 74 Z M 143.2 85 H 150.3 L 146.75 79 L 143.2 85 Z" fill="#ffffff"/>
-        <!-- N -->
-        <path d="M 168.5 74 H 176 L 189 90.5 V 74 H 195 V 94 H 187.5 L 174.5 77.5 V 94 H 168.5 V 74 Z" fill="#ffffff"/>
-    </g>
-</svg>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M 14 66 H 186 C 188.5 66 189.5 63.8 188.5 61.2 C 173.5 26 139.5 4 100 4 C 60.5 4 26.5 26 11.5 61.2 C 10.5 63.8 11.5 66 14 66 Z M 100 14.5 C 133 14.5 161.5 31.8 175.2 56.5 H 24.8 C 38.5 31.8 67 14.5 100 14.5 Z" fill="#ffffff"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M 14 102 H 186 C 188.5 102 189.5 104.2 188.5 106.8 C 173.5 142 139.5 164 100 164 C 60.5 164 26.5 142 11.5 106.8 C 10.5 104.2 11.5 102 14 102 Z M 100 153.5 C 133 153.5 161.5 136.2 175.2 111.5 H 24.8 C 38.5 136.2 67 153.5 100 153.5 Z" fill="#ffffff"/>
+                        <g transform="translate(-5.5, 0)">
+                            <path d="M 16 74 H 23.5 L 36.5 90.5 V 74 H 42.5 V 94 H 35 L 22 77.5 V 94 H 16 V 74 Z" fill="#ffffff"/>
+                            <path d="M 51.5 74 H 58 V 94 H 51.5 V 74 Z" fill="#ffffff"/>
+                            <path d="M 67 88.5 H 84.5 C 86.2 88.5 87 87.8 87 86.8 C 87 85.8 86.2 85.2 84.5 85.2 H 72.5 C 68.2 85.2 66 83.3 66 79.6 C 66 76 68.5 74 73 74 H 91.5 V 79 H 74 C 72.5 79 71.8 79.5 71.8 80.4 C 71.8 81.3 72.5 81.8 74 81.8 H 86 C 90.5 81.8 92.8 83.8 92.8 87.5 C 92.8 91.5 90.2 94 85.2 94 H 67 V 88.5 Z" fill="#ffffff"/>
+                            <path d="M 101 88.5 H 118.5 C 120.2 88.5 121 87.8 121 86.8 C 121 85.8 120.2 85.2 118.5 85.2 H 106.5 C 102.2 85.2 100 83.3 100 79.6 C 100 76 102.5 74 107 74 H 125.5 V 79 H 108 C 106.5 79 105.8 79.5 105.8 80.4 C 105.8 81.3 106.5 81.8 108 81.8 H 120 C 124.5 81.8 126.8 83.8 126.8 87.5 C 126.8 91.5 124.2 94 119.2 94 H 101 V 88.5 Z" fill="#ffffff"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M 143 74 H 150.5 L 162.5 94 H 155.5 L 153 89.8 H 140.5 L 138 94 H 131 L 143 74 Z M 143.2 85 H 150.3 L 146.75 79 L 143.2 85 Z" fill="#ffffff"/>
+                            <path d="M 168.5 74 H 176 L 189 90.5 V 74 H 195 V 94 H 187.5 L 174.5 77.5 V 94 H 168.5 V 74 Z" fill="#ffffff"/>
+                        </g>
+                    </svg>
                 </div>
                 <div class="title-container">
-                    <h1>VÉRIFICATION STOCK USINE</h1>
-                    <p>Lecteur EPC (.txt) & Excel avec suivi de disponibilité Usine</p>
+                    <h1 id="header-main-title">PORTAIL OUTILS NISSAN & ATELIER</h1>
+                    <p id="header-sub-title">Sélectionnez un logiciel métier pour démarrer</p>
                 </div>
             </div>
+
+            <!-- Barre de Switch d'application -->
             <div class="header-right">
+                <div class="app-switcher-bar">
+                    <button id="btn-back-hub" class="btn-portal hidden" onclick="ouvrirEcran('hub')">
+                        ⬅ Menu des Outils
+                    </button>
+                    <select id="quick-app-select" class="quick-switch-select" onchange="ouvrirEcran(this.value)" title="Basculer rapidement vers un autre outil">
+                        <option value="hub">🏠 Accueil Portail</option>
+                        <option value="stock">📦 Vérificateur Stock Usine</option>
+                        <option value="convertisseur">🔄 Convertisseur GASS (.csv / .wft)</option>
+                    </select>
+                </div>
                 <div class="badge-gass">
                     <div class="badge-dot"></div>
-                    <span id="gass-status-text">GASS Prêt</span>
+                    <span id="gass-status-text">Prêt</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Contenu Principal -->
     <main>
 
-        <!-- Zone de Dépôt -->
-        <div id="drop-zone" class="drop-zone">
-            <div class="drop-info">
-                <div class="icon-upload">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="12" y1="18" x2="12" y2="12"></line>
-                        <polyline points="9 15 12 12 15 15"></polyline>
-                    </svg>
+        <!-- =========================================================================
+             ÉCRAN 0 : PORTAIL D'ACCUEIL (MENU LAUNCHER SÉPARÉ)
+             ========================================================================= -->
+        <section id="screen-hub" class="app-screen active-screen">
+            <div class="hub-hero">
+                <h2>Choisissez votre outil de travail</h2>
+                <p>Chaque application fonctionne dans son propre espace indépendant. Basculez de l'une à l'autre à tout moment.</p>
+            </div>
+
+            <div class="launcher-grid">
+                <!-- Carte Application 1 : Vérificateur Stock Usine -->
+                <div class="app-tile" style="--tile-accent: #c3002f;" onclick="ouvrirEcran('stock')">
+                    <div>
+                        <div class="tile-top">
+                            <div class="tile-icon" style="background: rgba(195, 0, 47, 0.18); color: #ff4d6d; border: 1px solid rgba(195, 0, 47, 0.4);">
+                                📦
+                            </div>
+                            <span class="tile-badge">Outil #1 • EPC & GASS</span>
+                        </div>
+                        <div class="tile-body" style="margin-top: 18px;">
+                            <h3>Vérificateur Stock Usine</h3>
+                            <p>Lecture des exports EPC (.txt 3 lignes) ou Excel, vérification guidée pas-à-pas avec copie automatique pour GASS et export Excel.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tile-features" style="margin-bottom: 18px;">
+                            <span class="tile-feature-tag">Mode Pas-à-Pas</span>
+                            <span class="tile-feature-tag">Copie Auto Réf</span>
+                            <span class="tile-feature-tag">Dispo / En Stock / Rupture</span>
+                        </div>
+                        <div class="tile-footer">
+                            <span>Ouvrir le Vérificateur Stock</span>
+                            <span class="tile-arrow">➔</span>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <div class="drop-title" id="drop-title-text">Déposez votre fichier d'export EPC (.txt) ou Excel (.xlsx / .csv)</div>
-                    <div class="drop-sub" id="drop-sub-text">Détection automatique du format 3 lignes EPC (Réf, Qté, Désignation)</div>
+
+                <!-- Carte Application 2 : Convertisseur GASS (.csv / .wft) -->
+                <div class="app-tile" style="--tile-accent: #3b82f6;" onclick="ouvrirEcran('convertisseur')">
+                    <div>
+                        <div class="tile-top">
+                            <div class="tile-icon" style="background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4);">
+                                🔄
+                            </div>
+                            <span class="tile-badge">Outil #2 • DCSnet neo</span>
+                        </div>
+                        <div class="tile-body" style="margin-top: 18px;">
+                            <h3>Convertisseur GASS (.csv & .wft)</h3>
+                            <p>Transforme automatiquement vos fichiers texte GASS (ZPN) en fichiers structurés .csv et .wft avec numéro de commande auto-incrémenté (+1 à chaque fichier).</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tile-features" style="margin-bottom: 18px;">
+                            <span class="tile-feature-tag">Export .CSV (DCSnet)</span>
+                            <span class="tile-feature-tag">Export .WFT (27 'X')</span>
+                            <span class="tile-feature-tag">N° Cmd +1 Auto Mémorisé</span>
+                        </div>
+                        <div class="tile-footer">
+                            <span>Ouvrir le Convertisseur GASS</span>
+                            <span class="tile-arrow">➔</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carte Application 3 : Emplacement Futur Outil -->
+                <div class="app-tile tile-placeholder" style="--tile-accent: #64748b;">
+                    <div>
+                        <div class="tile-top">
+                            <div class="tile-icon" style="background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px dashed rgba(148, 163, 184, 0.3);">
+                                ➕
+                            </div>
+                            <span class="tile-badge">Emplacement Libre</span>
+                        </div>
+                        <div class="tile-body" style="margin-top: 18px;">
+                            <h3>Futur Outil Atelier</h3>
+                            <p>Cet emplacement est réservé pour ajouter facilement une nouvelle fonctionnalité indépendante dès que tu en auras besoin.</p>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="tile-features" style="margin-bottom: 18px;">
+                            <span class="tile-feature-tag">Évolutif</span>
+                            <span class="tile-feature-tag">Prêt à intégrer</span>
+                        </div>
+                        <div class="tile-footer" style="color: var(--text-muted);">
+                            <span>Bientôt disponible</span>
+                            <span>•••</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =========================================================================
+             ÉCRAN 1 : VÉRIFICATEUR STOCK USINE (100% INDÉPENDANT)
+             ========================================================================= -->
+        <section id="screen-stock" class="app-screen">
+
+            <!-- Zone de Dépôt -->
+            <div id="drop-zone" class="drop-zone">
+                <div class="drop-info">
+                    <div class="icon-upload">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <polyline points="9 15 12 12 15 15"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="drop-title" id="drop-title-text">Déposez votre fichier d'export EPC (.txt) ou Excel (.xlsx / .csv)</div>
+                        <div class="drop-sub" id="drop-sub-text">Détection automatique du format 3 lignes EPC (Réf, Qté, Désignation)</div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-red" id="btn-select-file">
+                        📂 Sélectionner un fichier
+                    </button>
+                    <button class="btn btn-glass" id="btn-demo">
+                        ✏️ Charger exemple EPC (.txt)
+                    </button>
+                </div>
+                <input type="file" id="file-input" accept=".txt,.xlsx,.xls,.csv" class="hidden">
+            </div>
+
+            <!-- Compteurs KPI (5 Cartes) -->
+            <div id="kpi-section" class="kpi-grid hidden">
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-label">Total Références</div>
+                        <div class="kpi-value" id="kpi-total">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(255,255,255,0.06); color: #fff;">📦</div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-label">Disponible Usine</div>
+                        <div class="kpi-value" id="kpi-dispo" style="color: #34d399;">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-label">En Stock</div>
+                        <div class="kpi-value" id="kpi-stock" style="color: #60a5fa;">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">🏠</div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-label">Rupture Usine</div>
+                        <div class="kpi-value" id="kpi-rupture" style="color: #fb7185;">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">✕</div>
+                </div>
+                <div class="kpi-card">
+                    <div>
+                        <div class="kpi-label">Reste à traiter</div>
+                        <div class="kpi-value" id="kpi-attente" style="color: #94a3b8;">0</div>
+                    </div>
+                    <div class="kpi-icon" style="background: rgba(148, 163, 184, 0.12); color: #94a3b8;">⏳</div>
                 </div>
             </div>
 
-            <div class="btn-group">
-                <button class="btn btn-red" id="btn-select-file">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                    </svg>
-                    Sélectionner un fichier
-                </button>
-                <button class="btn btn-glass" id="btn-demo">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                    </svg>
-                    Charger exemple EPC (.txt)
-                </button>
-            </div>
-            <input type="file" id="file-input" accept=".txt,.xlsx,.xls,.csv" class="hidden">
-        </div>
+            <!-- Mode Recherche Guidée Pas-à-Pas -->
+            <div id="pas-a-pas-card" class="card-pas-a-pas hidden">
+                <div class="pas-header">
+                    <div class="pas-header-left">
+                        <span class="pas-tag">Recherche Guidée Pas-à-Pas</span>
+                        <span id="step-counter" class="pas-counter">Pièce 1 sur 6</span>
+                    </div>
+                    <div class="pas-header-right">
+                        <label class="auto-copy-toggle">
+                            <input type="checkbox" id="auto-copy-check" checked>
+                            Copie auto au passage suivant
+                        </label>
+                        <div class="progress-wrapper">
+                            <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Compteurs KPI (5 Cartes) -->
-        <div id="kpi-section" class="kpi-grid hidden">
-            <div class="kpi-card">
-                <div>
-                    <div class="kpi-label">Total Références</div>
-                    <div class="kpi-value" id="kpi-total">0</div>
+                <div class="ref-card">
+                    <div class="ref-top-row">
+                        <div class="ref-label">Référence Usine (à coller dans GASS)</div>
+                        <div id="current-status-badge"></div>
+                    </div>
+                    <div class="ref-flex">
+                        <div id="current-ref" class="ref-code">----------</div>
+                        <button id="btn-copy" class="btn-copy">
+                            📋 <span id="btn-copy-text">Copier la référence</span>
+                        </button>
+                    </div>
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span>Quantité demandée</span>
+                            <strong id="current-qty">1</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Désignation EPC</span>
+                            <strong id="current-desig">---</strong>
+                        </div>
+                    </div>
                 </div>
-                <div class="kpi-icon" style="background: rgba(255,255,255,0.06); color: #fff;">📦</div>
-            </div>
-            <div class="kpi-card">
-                <div>
-                    <div class="kpi-label">Disponible Usine</div>
-                    <div class="kpi-value" id="kpi-dispo" style="color: #34d399;">0</div>
-                </div>
-                <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div>
-            </div>
-            <div class="kpi-card">
-                <div>
-                    <div class="kpi-label">En Stock</div>
-                    <div class="kpi-value" id="kpi-stock" style="color: #60a5fa;">0</div>
-                </div>
-                <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">🏠</div>
-            </div>
-            <div class="kpi-card">
-                <div>
-                    <div class="kpi-label">Rupture Usine</div>
-                    <div class="kpi-value" id="kpi-rupture" style="color: #fb7185;">0</div>
-                </div>
-                <div class="kpi-icon" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">✕</div>
-            </div>
-            <div class="kpi-card">
-                <div>
-                    <div class="kpi-label">Reste à traiter</div>
-                    <div class="kpi-value" id="kpi-attente" style="color: #94a3b8;">0</div>
-                </div>
-                <div class="kpi-icon" style="background: rgba(148, 163, 184, 0.12); color: #94a3b8;">⏳</div>
-            </div>
-        </div>
 
-        <!-- Mode Recherche Guidée Pas-à-Pas -->
-        <div id="pas-a-pas-card" class="card-pas-a-pas hidden">
-            <div class="pas-header">
-                <div class="pas-header-left">
-                    <span class="pas-tag">Recherche Guidée Pas-à-Pas</span>
-                    <span id="step-counter" class="pas-counter">Pièce 1 sur 6</span>
+                <div class="action-btns">
+                    <button id="btn-dispo" class="btn-decision btn-dispo">
+                        <span>✓ Disponible Usine</span>
+                        <span class="key-hint">Touche 1</span>
+                    </button>
+                    <button id="btn-stock" class="btn-decision btn-stock">
+                        <span>🏠 En Stock</span>
+                        <span class="key-hint">Touche 2</span>
+                    </button>
+                    <button id="btn-rupture" class="btn-decision btn-rupture">
+                        <span>✕ Rupture Usine</span>
+                        <span class="key-hint">Touche 3</span>
+                    </button>
                 </div>
-                <div class="pas-header-right">
-                    <label class="auto-copy-toggle" title="Copie automatiquement la référence suivante dans le presse-papier dès que vous cliquez sur un statut">
-                        <input type="checkbox" id="auto-copy-check" checked>
-                        Copie auto au passage suivant
+
+                <div class="nav-btns">
+                    <button id="btn-prev" class="btn-nav-item">◀ Pièce précédente</button>
+                    <span style="font-size: 11px; color: var(--text-muted);">
+                        Astuce : Cliquez sur une ligne du tableau ci-dessous pour y accéder directement
+                    </span>
+                    <button id="btn-next" class="btn-nav-item">Pièce suivante ▶</button>
+                </div>
+            </div>
+
+            <!-- Tableau Récapitulatif -->
+            <div id="table-card" class="table-card hidden">
+                <div class="table-header">
+                    <div class="table-header-left">
+                        <h3>Récapitulatif de la liste</h3>
+                        <p>Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas</p>
+                    </div>
+                    <div class="export-group">
+                        <button id="btn-export-xlsx" class="btn-export-xlsx">
+                            💾 Exporter vers Excel (.xlsx)
+                        </button>
+                        <button id="btn-export-csv" class="btn btn-glass">
+                            Exporter (.csv)
+                        </button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">#</th>
+                                <th>Référence Usine</th>
+                                <th style="width: 90px; text-align: center;">Quantité</th>
+                                <th>Désignation</th>
+                                <th style="width: 170px; text-align: center;">Disponibilité Usine</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- =========================================================================
+             ÉCRAN 2 : CONVERTISSEUR GASS -> DCSNET NEO (.CSV & .WFT) (100% INDÉPENDANT)
+             ========================================================================= -->
+        <section id="screen-convertisseur" class="app-screen">
+
+            <!-- Paramètres de conversion -->
+            <div class="conv-settings-bar">
+                <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
+                    <div class="conv-field">
+                        <label for="conv-code-fourn">Code Fournisseur :</label>
+                        <input type="text" id="conv-code-fourn" class="conv-input" value="9000" maxlength="4" inputmode="numeric" style="width: 80px;">
+                    </div>
+                    <div class="conv-field">
+                        <label for="conv-num-cmd">N° Commande actuel (4 chiffres) :</label>
+                        <button class="btn-mini-step" id="btn-cmd-minus" title="Diminuer de 1">-</button>
+                        <input type="text" id="conv-num-cmd" class="conv-input" value="0001" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" style="width: 90px;">
+                        <button class="btn-mini-step" id="btn-cmd-plus" title="Augmenter de 1">+</button>
+                    </div>
+                    <label class="auto-copy-toggle" title="Augmente automatiquement le numéro de commande de +1 dès que vous exportez un fichier (et le garde en mémoire)">
+                        <input type="checkbox" id="conv-auto-next-file" checked>
+                        +1 auto à chaque fichier exporté
                     </label>
-                    <div class="progress-wrapper">
-                        <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+                    <label class="auto-copy-toggle">
+                        <input type="checkbox" id="conv-neg-qty">
+                        Quantités en négatif
+                    </label>
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span id="cmd-saved-toast" class="toast-notif hidden">✓ N° passé à <strong id="toast-next-num">0002</strong></span>
+                    <button class="btn btn-glass" id="btn-demo-conv">✏️ Charger exemple GASS (ZPN)</button>
+                </div>
+            </div>
+
+            <!-- Zone de dépôt Convertisseur -->
+            <div id="drop-zone-conv" class="drop-zone" style="border-color: rgba(59, 130, 246, 0.3);">
+                <div class="drop-info">
+                    <div class="icon-upload" style="background: rgba(59, 130, 246, 0.18); border-color: rgba(59, 130, 246, 0.4); color: #60a5fa;">
+                        🔄
+                    </div>
+                    <div>
+                        <div class="drop-title" id="conv-drop-title">Déposez votre fichier texte GASS (.txt) ou EPC</div>
+                        <div class="drop-sub">Extraction automatique des lignes ZPN et incrémentation automatique du N° de commande</div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-blue" id="btn-select-conv">📂 Choisir un fichier à convertir</button>
+                </div>
+                <input type="file" id="file-input-conv" accept=".txt,.csv" class="hidden">
+            </div>
+
+            <!-- Résultats & Téléchargements Convertisseur -->
+            <div id="conv-results-card" class="table-card hidden">
+                <div class="table-header">
+                    <div class="table-header-left">
+                        <h3>Fichiers prêts pour DCSnet neo (<span id="conv-count">0</span> pièces extraites — Commande N° <span id="active-cmd-display" style="color: #60a5fa;">0001</span>)</h3>
+                        <p>Dès que vous téléchargez vos fichiers (.CSV / .WFT), le numéro de commande augmentera de +1 pour le prochain import</p>
+                    </div>
+                    <div class="export-group">
+                        <button class="btn btn-blue" id="btn-dl-csv">📥 Télécharger .CSV</button>
+                        <button class="btn btn-red" id="btn-dl-wft">📥 Télécharger .WFT</button>
+                        <button class="btn btn-export-xlsx" id="btn-dl-both">⚡ Télécharger .CSV + .WFT</button>
+                    </div>
+                </div>
+
+                <div class="preview-grid">
+                    <div class="preview-col">
+                        <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">
+                            APERÇU DU FICHIER .CSV (Code;N°Cmd 4 chiffres;S;Réf;Désignation;Qté)
+                        </div>
+                        <div id="preview-csv-box" class="code-box"></div>
+                    </div>
+                    <div class="preview-col">
+                        <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">
+                            APERÇU DU FICHIER .WFT (18 lignes à 0 + 27 'X' + Qté + 4 espaces + Réf)
+                        </div>
+                        <div id="preview-wft-box" class="code-box" style="color: #60a5fa;"></div>
                     </div>
                 </div>
             </div>
 
-            <div class="ref-card">
-                <div class="ref-top-row">
-                    <div class="ref-label">Référence Usine (à coller dans GASS)</div>
-                    <div id="current-status-badge"></div>
-                </div>
-                <div class="ref-flex">
-                    <div id="current-ref" class="ref-code">----------</div>
-                    <button id="btn-copy" class="btn-copy">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                        </svg>
-                        <span id="btn-copy-text">Copier la référence</span>
-                    </button>
-                </div>
-                <div class="details-grid">
-                    <div class="detail-item">
-                        <span>Quantité demandée</span>
-                        <strong id="current-qty">1</strong>
-                    </div>
-                    <div class="detail-item">
-                        <span>Désignation EPC</span>
-                        <strong id="current-desig">---</strong>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-btns">
-                <button id="btn-dispo" class="btn-decision btn-dispo">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                    </svg>
-                    <span>Disponible Usine</span>
-                    <span class="key-hint">Touche 1</span>
-                </button>
-                <button id="btn-stock" class="btn-decision btn-stock">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
-                    </svg>
-                    <span>En Stock</span>
-                    <span class="key-hint">Touche 2</span>
-                </button>
-                <button id="btn-rupture" class="btn-decision btn-rupture">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="15" y1="9" x2="9" y2="15"></line>
-                        <line x1="9" y1="9" x2="15" y2="15"></line>
-                    </svg>
-                    <span>Rupture Usine</span>
-                    <span class="key-hint">Touche 3</span>
-                </button>
-            </div>
-
-            <div class="nav-btns">
-                <button id="btn-prev" class="btn-nav-item">
-                    ◀ Pièce précédente
-                </button>
-                <span style="font-size: 11px; color: var(--text-muted);">
-                    Astuce : Cliquez sur une ligne du tableau ci-dessous pour y accéder directement
-                </span>
-                <button id="btn-next" class="btn-nav-item">
-                    Pièce suivante ▶
-                </button>
-            </div>
-        </div>
-
-        <!-- Tableau Récapitulatif -->
-        <div id="table-card" class="table-card hidden">
-            <div class="table-header">
-                <div class="table-header-left">
-                    <h3>Récapitulatif de la liste</h3>
-                    <p>Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas</p>
-                </div>
-                <div class="export-group">
-                    <button id="btn-export-xlsx" class="btn-export-xlsx">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="7 10 12 15 17 10"></polyline>
-                            <line x1="12" y1="15" x2="12" y2="3"></line>
-                        </svg>
-                        Exporter vers Excel (.xlsx)
-                    </button>
-                    <button id="btn-export-csv" class="btn btn-glass">
-                        Exporter (.csv)
-                    </button>
-                </div>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 50px;">#</th>
-                            <th>Référence Usine</th>
-                            <th style="width: 90px; text-align: center;">Quantité</th>
-                            <th>Désignation</th>
-                            <th style="width: 170px; text-align: center;">Disponibilité Usine</th>
-                        </tr>
-                    </thead>
-                    <tbody id="table-body"></tbody>
-                </table>
-            </div>
-        </div>
+        </section>
 
     </main>
 
     <!-- Pied de Page -->
     <footer>
         <div class="footer-inner">
-            <div>© 2026 Nissan Motor Co., Ltd. — Outil interne d'extraction EPC & vérification Stock</div>
-            <div>Format supporté : Texte EPC (.txt 3 lignes) / Excel (.xlsx / .csv)</div>
+            <div>© 2026 Nissan Motor Co., Ltd. — Portail d'outils internes indépendants</div>
+            <div>Le numéro de commande (4 chiffres) est mémorisé automatiquement dans votre navigateur</div>
         </div>
     </footer>
 
     <script>
+        /* =========================================================================
+           NAVIGATION ENTRE LES APPLICATIONS SÉPARÉES (SWITCH)
+           ========================================================================= */
+        function ouvrirEcran(nomEcran) {
+            document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active-screen'));
+            const cible = document.getElementById('screen-' + nomEcran);
+            if (cible) cible.classList.add('active-screen');
+
+            document.getElementById('quick-app-select').value = nomEcran;
+            const btnBack = document.getElementById('btn-back-hub');
+            const mainTitle = document.getElementById('header-main-title');
+            const subTitle = document.getElementById('header-sub-title');
+
+            if (nomEcran === 'hub') {
+                btnBack.classList.add('hidden');
+                mainTitle.textContent = "PORTAIL OUTILS NISSAN & ATELIER";
+                subTitle.textContent = "Sélectionnez un logiciel métier pour démarrer";
+            } else if (nomEcran === 'stock') {
+                btnBack.classList.remove('hidden');
+                mainTitle.textContent = "VÉRIFICATION STOCK USINE";
+                subTitle.textContent = "Lecteur EPC (.txt) & Excel avec suivi de disponibilité Usine";
+            } else if (nomEcran === 'convertisseur') {
+                btnBack.classList.remove('hidden');
+                mainTitle.textContent = "CONVERTISSEUR GASS → DCSNET NEO";
+                subTitle.textContent = "Générateur de fichiers d'importation .CSV et .WFT";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* =========================================================================
+           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE
+           ========================================================================= */
         let listePieces = [];
         let indexActuel = 0;
 
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
 
-        // Sélection de fichier
         document.getElementById('btn-select-file').addEventListener('click', (e) => {
             e.stopPropagation();
             fileInput.click();
@@ -1101,7 +1244,6 @@
             if (e.target.files.length) chargerFichier(e.target.files[0]);
         });
 
-        // Glisser-Déposer
         ['dragenter', 'dragover'].forEach(evt => {
             dropZone.addEventListener(evt, (e) => {
                 e.preventDefault();
@@ -1120,27 +1262,9 @@
             if (e.dataTransfer.files.length) chargerFichier(e.dataTransfer.files[0]);
         });
 
-        // Bouton Exemple EPC
         document.getElementById('btn-demo').addEventListener('click', (e) => {
             e.stopPropagation();
-            const contenuDemo = `E43023ZL0D
-1
-JAMBE SUSPENSION AVANT DROITE
-E43033ZL0D
-1
-JAMBE SUSPENSION AVANT GAUCHE
-543201KA0B
-1
-TAMPON ELAST FIXAT JAMBE SUSPENSION
-543211KA0B
-1
-TAMPON ELAST FIXAT JAMBE SUSPENSION
-540503NF0A
-2
-BUTOIR CAOUTCHOUC SUSPENSION AV
-54325ED02A
-2
-BUTEE REBOND ISOLANT`;
+            const contenuDemo = `E43023ZL0D\n1\nJAMBE SUSPENSION AVANT DROITE\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n543211KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n540503NF0A\n2\nBUTOIR CAOUTCHOUC SUSPENSION AV\n54325ED02A\n2\nBUTEE REBOND ISOLANT`;
             document.getElementById('gass-status-text').textContent = "Exemple EPC chargé";
             lireContenuTexte(contenuDemo);
         });
@@ -1229,8 +1353,7 @@ BUTEE REBOND ISOLANT`;
             document.getElementById('btn-prev').disabled = (indexActuel === 0);
             document.getElementById('btn-next').disabled = (indexActuel === listePieces.length - 1);
 
-            const badgeContainer = document.getElementById('current-status-badge');
-            badgeContainer.innerHTML = genererBadgeHTML(p.statut);
+            document.getElementById('current-status-badge').innerHTML = genererBadgeHTML(p.statut);
 
             const btnCopy = document.getElementById('btn-copy');
             const btnCopyText = document.getElementById('btn-copy-text');
@@ -1249,7 +1372,7 @@ BUTEE REBOND ISOLANT`;
                 const btnCopy = document.getElementById('btn-copy');
                 const btnCopyText = document.getElementById('btn-copy-text');
                 btnCopy.classList.add('copied');
-                btnCopyText.textContent = silencieux ? "✓ Copié auto (Ctrl+V)" : "✓ Copié dans le presse-papier !";
+                btnCopyText.textContent = silencieux ? "✓ Copié auto (Ctrl+V)" : "✓ Copié !";
                 setTimeout(() => {
                     btnCopy.classList.remove('copied');
                     btnCopyText.textContent = "Copier la référence";
@@ -1258,7 +1381,6 @@ BUTEE REBOND ISOLANT`;
         }
 
         document.getElementById('btn-copy').addEventListener('click', () => copierDansPressePapier(false));
-
         document.getElementById('btn-dispo').addEventListener('click', () => enregistrerStatut('Disponible Usine'));
         document.getElementById('btn-stock').addEventListener('click', () => enregistrerStatut('En Stock'));
         document.getElementById('btn-rupture').addEventListener('click', () => enregistrerStatut('Rupture Usine'));
@@ -1278,49 +1400,29 @@ BUTEE REBOND ISOLANT`;
             }
         }
 
-        // Navigation Précédent / Suivant
         document.getElementById('btn-prev').addEventListener('click', () => {
-            if (indexActuel > 0) {
-                indexActuel--;
-                afficherPiece(true);
-                afficherTableau();
-            }
+            if (indexActuel > 0) { indexActuel--; afficherPiece(true); afficherTableau(); }
         });
 
         document.getElementById('btn-next').addEventListener('click', () => {
-            if (indexActuel < listePieces.length - 1) {
-                indexActuel++;
-                afficherPiece(true);
-                afficherTableau();
-            }
+            if (indexActuel < listePieces.length - 1) { indexActuel++; afficherPiece(true); afficherTableau(); }
         });
 
-        // Raccourcis Clavier (1 = Dispo Usine, 2 = En Stock, 3 = Rupture Usine, C = Copier, Flèches = Navigation)
         document.addEventListener('keydown', (e) => {
-            if (!listePieces.length || ['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-            if (e.key === '1' || e.key === '&') {
-                enregistrerStatut('Disponible Usine');
-            } else if (e.key === '2' || e.key === 'é') {
-                enregistrerStatut('En Stock');
-            } else if (e.key === '3' || e.key === '"') {
-                enregistrerStatut('Rupture Usine');
-            } else if (e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.metaKey) {
-                copierDansPressePapier(false);
-            } else if (e.key === 'ArrowRight') {
-                if (indexActuel < listePieces.length - 1) { indexActuel++; afficherPiece(true); afficherTableau(); }
-            } else if (e.key === 'ArrowLeft') {
-                if (indexActuel > 0) { indexActuel--; afficherPiece(true); afficherTableau(); }
-            }
+            const stockVisible = document.getElementById('screen-stock').classList.contains('active-screen');
+            if (!stockVisible || !listePieces.length || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+            if (e.key === '1' || e.key === '&') enregistrerStatut('Disponible Usine');
+            else if (e.key === '2' || e.key === 'é') enregistrerStatut('En Stock');
+            else if (e.key === '3' || e.key === '"') enregistrerStatut('Rupture Usine');
+            else if (e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.metaKey) copierDansPressePapier(false);
+            else if (e.key === 'ArrowRight' && indexActuel < listePieces.length - 1) { indexActuel++; afficherPiece(true); afficherTableau(); }
+            else if (e.key === 'ArrowLeft' && indexActuel > 0) { indexActuel--; afficherPiece(true); afficherTableau(); }
         });
 
         function genererBadgeHTML(statut) {
-            if (statut === 'Disponible Usine') {
-                return `<span class="badge-status st-dispo">● Disponible Usine</span>`;
-            } else if (statut === 'En Stock') {
-                return `<span class="badge-status st-stock">● En Stock</span>`;
-            } else if (statut === 'Rupture Usine') {
-                return `<span class="badge-status st-rupture">● Rupture Usine</span>`;
-            }
+            if (statut === 'Disponible Usine') return `<span class="badge-status st-dispo">● Disponible Usine</span>`;
+            if (statut === 'En Stock') return `<span class="badge-status st-stock">● En Stock</span>`;
+            if (statut === 'Rupture Usine') return `<span class="badge-status st-rupture">● Rupture Usine</span>`;
             return `<span class="badge-status st-attente">● En attente</span>`;
         }
 
@@ -1344,13 +1446,11 @@ BUTEE REBOND ISOLANT`;
             listePieces.forEach((p, idx) => {
                 const tr = document.createElement('tr');
                 if (idx === indexActuel) tr.className = 'active-row';
-
                 tr.addEventListener('click', () => {
                     indexActuel = idx;
                     afficherPiece(true);
                     afficherTableau();
                 });
-
                 tr.innerHTML = `
                     <td style="color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${idx + 1}</td>
                     <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #ffffff; font-size: 14px;">${p.ref}</td>
@@ -1362,7 +1462,6 @@ BUTEE REBOND ISOLANT`;
             });
         }
 
-        // Export Excel (.xlsx)
         document.getElementById('btn-export-xlsx').addEventListener('click', () => {
             if (!listePieces.length) return;
             if (typeof XLSX !== 'undefined') {
@@ -1377,26 +1476,283 @@ BUTEE REBOND ISOLANT`;
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Stock Usine Nissan");
                 XLSX.writeFile(wb, "verification_stock_nissan.xlsx");
-            } else {
-                exporterCSV();
             }
         });
 
-        // Export CSV compatible Excel FR
-        function exporterCSV() {
+        document.getElementById('btn-export-csv').addEventListener('click', () => {
             if (!listePieces.length) return;
             let csv = "\uFEFFRéférence Usine;Quantité;Désignation;Disponibilité Usine\n";
-            listePieces.forEach(p => {
-                csv += `"${p.ref}";"${p.qty}";"${p.desig}";"${p.statut}"\n`;
-            });
+            listePieces.forEach(p => { csv += `"${p.ref}";"${p.qty}";"${p.desig}";"${p.statut}"\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = "verification_stock_nissan.csv";
             a.click();
+        });
+
+
+        /* =========================================================================
+           OUTIL 2 : CONVERTISSEUR GASS (.CSV & .WFT POUR DCSNET NEO)
+           AVEC MÉMORISATION ET INCRÉMENTATION +1 PAR FICHIER EXPORTÉ
+           ========================================================================= */
+        let lignesConverties = [];
+        let dernierTexteBrutConv = "";
+        let dejaIncrementePourCeFichier = false;
+
+        const fileInputConv = document.getElementById('file-input-conv');
+        const dropZoneConv = document.getElementById('drop-zone-conv');
+        const inputNumCmd = document.getElementById('conv-num-cmd');
+        const inputCodeFourn = document.getElementById('conv-code-fourn');
+
+        // Charger le dernier numéro de commande mémorisé dans le navigateur
+        const cmdMemorisee = localStorage.getItem('dcsnet_last_cmd_num');
+        if (cmdMemorisee && /^[0-9]{4}$/.test(cmdMemorisee)) {
+            inputNumCmd.value = cmdMemorisee;
         }
 
-        document.getElementById('btn-export-csv').addEventListener('click', exporterCSV);
+        function sauvegarderNumCmd(val4) {
+            localStorage.setItem('dcsnet_last_cmd_num', val4);
+            document.getElementById('active-cmd-display').textContent = val4;
+        }
+
+        function obtenirNumCommandeActuel4Chiffres() {
+            const brut = (inputNumCmd.value || '0001').replace(/[^0-9]/g, '');
+            const num = parseInt(brut || '1', 10) % 10000;
+            return String(num).padStart(4, '0');
+        }
+
+        function incrementerNumeroCommandeDe1() {
+            const actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
+            const suivant = (actuel + 1) % 10000;
+            const suivantStr = String(suivant).padStart(4, '0');
+            inputNumCmd.value = suivantStr;
+            sauvegarderNumCmd(suivantStr);
+            if (dernierTexteBrutConv) genererApercusDCS();
+
+            // Afficher une notification visuelle
+            const toast = document.getElementById('cmd-saved-toast');
+            document.getElementById('toast-next-num').textContent = suivantStr;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 2800);
+        }
+
+        // Boutons manuels - et +
+        document.getElementById('btn-cmd-minus').addEventListener('click', () => {
+            const actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
+            const prec = (actuel - 1 + 10000) % 10000;
+            const precStr = String(prec).padStart(4, '0');
+            inputNumCmd.value = precStr;
+            sauvegarderNumCmd(precStr);
+            if (dernierTexteBrutConv) genererApercusDCS();
+        });
+
+        document.getElementById('btn-cmd-plus').addEventListener('click', () => {
+            incrementerNumeroCommandeDe1();
+        });
+
+        // Forcer strictement des chiffres de 0 à 9 (max 4 caractères)
+        [inputNumCmd, inputCodeFourn].forEach(inp => {
+            inp.addEventListener('input', () => {
+                inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 4);
+                if (inp === inputNumCmd && inp.value.length === 4) sauvegarderNumCmd(inp.value);
+                if (dernierTexteBrutConv) genererApercusDCS();
+            });
+            inp.addEventListener('blur', () => {
+                if (inp.value.length > 0) inp.value = inp.value.padStart(4, '0');
+                if (inp === inputNumCmd) sauvegarderNumCmd(inp.value);
+                if (dernierTexteBrutConv) genererApercusDCS();
+            });
+        });
+
+        document.getElementById('conv-neg-qty').addEventListener('change', () => {
+            if (dernierTexteBrutConv) genererApercusDCS();
+        });
+
+        document.getElementById('btn-select-conv').addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInputConv.value = '';
+            fileInputConv.click();
+        });
+
+        dropZoneConv.addEventListener('click', () => {
+            fileInputConv.value = '';
+            fileInputConv.click();
+        });
+
+        fileInputConv.addEventListener('change', (e) => {
+            if (e.target.files.length) chargerFichierConv(e.target.files[0]);
+        });
+
+        // Exemple fidèle à ton fichier GASS SAP avec lignes ZPN
+        document.getElementById('btn-demo-conv').addEventListener('click', () => {
+            dejaIncrementePourCeFichier = false;
+            dernierTexteBrutConv = [
+                "1201509402",
+                "EUR",
+                "1",
+                "S580",
+                "NFRD9310",
+                "000001\t000000\tZPN\t260424CA0A\tSUPPORT PROJECTEUR DROIT\t503T\t0220180801\tsb Clt 353096\t000001\tZSO\t783044\t260424CA0A\t1\t1.000\tEA\t183.78",
+                "000002\t000000\tZPN\t285334BA5C\tENJOLIVEUR SONAR\t503T\t0220180801\tsb Clt 353096\t000002\tZSO\t783044\t285334BA5C\t1\t1.000\tEA\t18.000",
+                "000006\t000000\tZPN\tD85214FJ0A\tROTULE BARRE ACCOUPLEMENT INTER\t503T\t0220180801\tsb Clt 353096\t000006\tZSO\t783044\tD85214FJ0A\t1\t1.000\tEA\t440.000",
+                "000011\t000000\tZPN\t284386PA0C\tCAPTEUR DISTANCE\t503T\t0220180801\tsb Clt 353096\t000011\tZSO\t783044\t284386PA0C\t1\t1.000\tEA\t160.000",
+                "000014\t000000\tZPN\t768474EA0A\tCLIP\t503T\t0220180801\tsb Clt 353096\t000014\tZSO\t783044\t768474EA0A\t10\t10.000\tEA\t20.000"
+            ].join('\n');
+            document.getElementById('conv-drop-title').textContent = "Exemple GASS (ZPN) chargé";
+            parserContenuGASS(dernierTexteBrutConv);
+        });
+
+        function chargerFichierConv(file) {
+            dejaIncrementePourCeFichier = false;
+            document.getElementById('conv-drop-title').textContent = "Fichier chargé : " + file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                dernierTexteBrutConv = e.target.result;
+                parserContenuGASS(dernierTexteBrutConv);
+            };
+            reader.readAsText(file);
+        }
+
+        function parserContenuGASS(texte) {
+            const lignes = texte.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            lignesConverties = [];
+
+            const lignesZPN = lignes.filter(l => /\bZPN\b/.test(l));
+
+            if (lignesZPN.length > 0) {
+                lignesZPN.forEach(ligne => {
+                    let cols = ligne.includes('\t')
+                        ? ligne.split('\t').map(c => c.trim()).filter(c => c.length > 0)
+                        : ligne.split(/\s{2,}/).map(c => c.trim()).filter(c => c.length > 0);
+
+                    const zpnIdx = cols.findIndex(c => c === 'ZPN');
+                    if (zpnIdx !== -1 && cols[zpnIdx + 1]) {
+                        const ref = cols[zpnIdx + 1];
+                        const desig = cols[zpnIdx + 2] || 'PIECE NISSAN';
+
+                        let qty = 1;
+                        const eaIdx = cols.findIndex((c, idx) => idx > zpnIdx && c === 'EA');
+                        if (eaIdx !== -1) {
+                            const candidat = parseInt(cols[eaIdx - 2], 10) || parseFloat(cols[eaIdx - 1]);
+                            if (!isNaN(candidat) && candidat > 0) qty = Math.round(candidat);
+                        } else {
+                            const secondRefIdx = cols.findIndex((c, idx) => idx > zpnIdx + 1 && c === ref);
+                            if (secondRefIdx !== -1 && cols[secondRefIdx + 1]) {
+                                const candidat = parseInt(cols[secondRefIdx + 1], 10);
+                                if (!isNaN(candidat) && candidat > 0) qty = candidat;
+                            }
+                        }
+
+                        lignesConverties.push({ ref, desig, qty });
+                    }
+                });
+            } else if (lignes[0] && lignes[0].includes(';')) {
+                lignes.forEach((ligne, idx) => {
+                    const cols = ligne.split(';').map(c => c.replace(/^"|"$/g, '').trim());
+                    if (idx === 0 && cols[0].toLowerCase().includes('ref')) return;
+                    if (cols[0]) {
+                        lignesConverties.push({
+                            ref: cols[0],
+                            qty: parseInt(cols[1], 10) || 1,
+                            desig: cols[2] || 'PIECE NISSAN'
+                        });
+                    }
+                });
+            } else {
+                for (let i = 0; i < lignes.length; i += 3) {
+                    if (lignes[i]) {
+                        lignesConverties.push({
+                            ref: lignes[i],
+                            qty: parseInt(lignes[i + 1], 10) || 1,
+                            desig: lignes[i + 2] || 'PIECE NISSAN'
+                        });
+                    }
+                }
+            }
+
+            genererApercusDCS();
+        }
+
+        function construireContenuCSV() {
+            const codeFourn = (inputCodeFourn.value.replace(/[^0-9]/g, '') || '9000').padStart(4, '0');
+            const numCmd4 = obtenirNumCommandeActuel4Chiffres();
+            const forcerNeg = document.getElementById('conv-neg-qty').checked;
+
+            return lignesConverties.map(item => {
+                const qteFinale = forcerNeg ? -Math.abs(item.qty) : item.qty;
+                return `${codeFourn};${numCmd4};S;${item.ref};${item.desig};${qteFinale}`;
+            }).join('\r\n');
+        }
+
+        function construireContenuWFT() {
+            const forcerNeg = document.getElementById('conv-neg-qty').checked;
+            const enteteZeros = Array(18).fill('0').join('\r\n');
+            const corps = lignesConverties.map(item => {
+                const qteFinale = forcerNeg ? -Math.abs(item.qty) : item.qty;
+                const prefixe27X = 'X'.repeat(27);
+                return `${prefixe27X}${qteFinale}    ${item.ref}`;
+            }).join('\r\n');
+
+            return enteteZeros + '\r\n' + corps;
+        }
+
+        function genererApercusDCS() {
+            if (!lignesConverties.length) return;
+            const numActuel = obtenirNumCommandeActuel4Chiffres();
+            document.getElementById('active-cmd-display').textContent = numActuel;
+            document.getElementById('conv-results-card').classList.remove('hidden');
+            document.getElementById('conv-count').textContent = lignesConverties.length;
+            document.getElementById('preview-csv-box').textContent = construireContenuCSV();
+            document.getElementById('preview-wft-box').textContent = construireContenuWFT();
+        }
+
+        function telechargerFichierCSV() {
+            const numActuel = obtenirNumCommandeActuel4Chiffres();
+            const blob = new Blob(["\uFEFF" + construireContenuCSV()], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `import_dcsnet_${numActuel}.csv`;
+            a.click();
+        }
+
+        function telechargerFichierWFT() {
+            const numActuel = obtenirNumCommandeActuel4Chiffres();
+            const blob = new Blob([construireContenuWFT()], { type: 'text/plain;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `import_dcsnet_${numActuel}.wft`;
+            a.click();
+        }
+
+        function verifierAutoIncrementApresExport() {
+            if (document.getElementById('conv-auto-next-file').checked && !dejaIncrementePourCeFichier) {
+                dejaIncrementePourCeFichier = true;
+                setTimeout(() => {
+                    incrementerNumeroCommandeDe1();
+                }, 400);
+            }
+        }
+
+        document.getElementById('btn-dl-csv').addEventListener('click', () => {
+            if (!lignesConverties.length) return;
+            telechargerFichierCSV();
+            verifierAutoIncrementApresExport();
+        });
+
+        document.getElementById('btn-dl-wft').addEventListener('click', () => {
+            if (!lignesConverties.length) return;
+            telechargerFichierWFT();
+            verifierAutoIncrementApresExport();
+        });
+
+        document.getElementById('btn-dl-both').addEventListener('click', () => {
+            if (!lignesConverties.length) return;
+            telechargerFichierCSV();
+            setTimeout(() => {
+                telechargerFichierWFT();
+                verifierAutoIncrementApresExport();
+            }, 250);
+        });
     </script>
 </body>
 </html>
