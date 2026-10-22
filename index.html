@@ -1495,16 +1495,23 @@
         }
 
         function construireContenuWFT() {
-            const forcerNeg = document.getElementById('conv-neg-qty').checked;
-            const enteteZeros = Array(18).fill('0').join('\r\n');
-            const corps = lignesConverties.map(item => {
-                const qteFinale = forcerNeg ? -Math.abs(item.qty) : item.qty;
-                const prefixe27X = 'X'.repeat(27);
-                return `${prefixe27X}${qteFinale}    ${item.ref}`;
-            }).join('\r\n');
+   			const forcerNeg = document.getElementById('conv-neg-qty').checked;
+    		const enteteZeros = Array(18).fill('0').join('\r\n');
+    
+    		const corps = lignesConverties.map(item => {
+        		let qteNum = forcerNeg ? -Math.abs(item.qty) : item.qty;
+        		let qteStr = String(qteNum);
+        
+        // Le bloc préfixe doit faire EXACTEMENT 28 caractères au total
+        // On met des 'X' complétés par la quantité à la fin
+        		let prefixe28 = 'X'.repeat(Math.max(0, 28 - qteStr.length)) + qteStr;
+        
+        // 4 espaces stricts puis la référence nettoyée
+        		return `${prefixe28}    ${item.ref.trim()}`;
+    	}).join('\r\n');
 
-            return enteteZeros + '\r\n' + corps;
-        }
+    return enteteZeros + '\r\n' + corps;
+}
 
         function genererApercusDCS() {
             if (!lignesConverties.length) return;
