@@ -54,7 +54,6 @@
             overflow-x: hidden;
         }
 
-        /* En-tête Global */
         header {
             background: rgba(12, 15, 23, 0.85);
             backdrop-filter: blur(16px);
@@ -191,7 +190,6 @@
             50% { opacity: 0.5; transform: scale(1.15); }
         }
 
-        /* Conteneur Principal */
         main {
             max-width: 1120px;
             width: 100%;
@@ -219,7 +217,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ================= ÉCRAN 0 : PORTAIL LAUNCHER ================= */
         .hub-hero { text-align: center; margin: 16px 0 12px 0; }
         .hub-hero h2 { font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; margin-bottom: 8px; }
         .hub-hero p { font-size: 14px; color: var(--text-secondary); }
@@ -288,7 +285,6 @@
         .tile-arrow { transition: transform 0.2s ease; }
         .app-tile:hover .tile-arrow { transform: translateX(5px); }
 
-        /* ================= COMPOSANTS COMMUNS AUX OUTILS ================= */
         .drop-zone {
             background: var(--bg-surface);
             backdrop-filter: blur(12px);
@@ -347,7 +343,6 @@
         .btn-glass { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--border-subtle); }
         .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-highlight); transform: translateY(-1px); }
 
-        /* Barre KPI */
         .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .kpi-card {
             background: var(--bg-surface); backdrop-filter: blur(12px); border: 1px solid var(--border-subtle);
@@ -358,7 +353,6 @@
         .kpi-value { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .kpi-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 
-        /* Fiche Pas-à-Pas */
         .card-pas-a-pas {
             background: var(--bg-surface); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
             border-radius: 20px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -397,7 +391,6 @@
         .ref-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 6px 0 16px 0; }
         .ref-code { font-size: 38px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #ffffff; letter-spacing: 2px; }
 
-        /* Style édition de référence */
         .ref-edit-wrapper { display: flex; align-items: center; gap: 10px; width: 100%; flex-wrap: wrap; }
         .ref-edit-input {
             background: rgba(7, 9, 14, 0.95);
@@ -420,7 +413,7 @@
         .btn-copy.copied { background: linear-gradient(135deg, #10b981, #059669); }
 
         .details-grid { display: grid; grid-template-columns: auto 1fr; gap: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
-        .detail-item { display: flex; flex-direction: column; gap: 2px; }
+        .detail-item { display: flex; flex-direction: gap; gap: 2px; }
         .detail-item span { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
         .detail-item strong { font-size: 15px; color: #ffffff; font-weight: 700; }
 
@@ -442,7 +435,6 @@
         .btn-nav-item:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
         .btn-nav-item:disabled { opacity: 0.35; cursor: not-allowed; }
 
-        /* Tableaux & Cartes */
         .table-card {
             background: var(--bg-surface); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
             border-radius: 20px; padding: 24px 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35); width: 100%; min-width: 0; overflow: hidden;
@@ -471,7 +463,6 @@
         .st-stock { background: var(--blue-dark); color: #60a5fa; border: 1px solid var(--blue-border); }
         .st-rupture { background: var(--rose-dark); color: #fb7185; border: 1px solid var(--rose-border); }
 
-        /* ================= ÉCRAN 2 : CONVERTISSEUR GASS -> DCSNET NEO ================= */
         .conv-settings-bar {
             background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 16px;
             padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
@@ -516,7 +507,6 @@
 </head>
 <body>
 
-    <!-- En-tête Global -->
     <header>
         <div class="header-inner">
             <div class="logo-title" onclick="ouvrirEcran('hub')" title="Retour au Portail d'Outils">
@@ -540,7 +530,6 @@
                 </div>
             </div>
 
-            <!-- Barre de Switch d'application -->
             <div class="header-right">
                 <div class="app-switcher-bar">
                     <button id="btn-back-hub" class="btn-portal hidden" onclick="ouvrirEcran('hub')">
@@ -562,9 +551,7 @@
 
     <main>
 
-        <!-- =========================================================================
-             ÉCRAN 0 : PORTAIL D'ACCUEIL (MENU LAUNCHER SÉPARÉ)
-             ========================================================================= -->
+        <!-- SECTION HUB -->
         <section id="screen-hub" class="app-screen active-screen">
             <div class="hub-hero">
                 <h2>Choisissez votre outil de travail</h2>
@@ -572,7 +559,6 @@
             </div>
 
             <div class="launcher-grid">
-                <!-- Carte Application 1 : Vérificateur Stock Usine -->
                 <div class="app-tile" style="--tile-accent: #c3002f;" onclick="ouvrirEcran('stock')">
                     <div>
                         <div class="tile-top">
@@ -599,7 +585,6 @@
                     </div>
                 </div>
 
-                <!-- Carte Application 2 : Convertisseur GASS (.csv / .wft) -->
                 <div class="app-tile" style="--tile-accent: #3b82f6;" onclick="ouvrirEcran('convertisseur')">
                     <div>
                         <div class="tile-top">
@@ -626,7 +611,6 @@
                     </div>
                 </div>
 
-                <!-- Carte Application 3 : Emplacement Futur Outil -->
                 <div class="app-tile tile-placeholder" style="--tile-accent: #64748b;">
                     <div>
                         <div class="tile-top">
@@ -654,80 +638,31 @@
             </div>
         </section>
 
-
-        <!-- =========================================================================
-             ÉCRAN 1 : VÉRIFICATEUR STOCK USINE (100% INDÉPENDANT)
-             ========================================================================= -->
+        <!-- SECTION STOCK -->
         <section id="screen-stock" class="app-screen">
-
-            <!-- Zone de Dépôt -->
             <div id="drop-zone" class="drop-zone">
                 <div class="drop-info">
-                    <div class="icon-upload">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="12" y1="18" x2="12" y2="12"></line>
-                            <polyline points="9 15 12 12 15 15"></polyline>
-                        </svg>
-                    </div>
+                    <div class="icon-upload">📁</div>
                     <div>
                         <div class="drop-title" id="drop-title-text">Déposez votre fichier d'export EPC (.txt) ou Excel (.xlsx / .csv)</div>
                         <div class="drop-sub" id="drop-sub-text">Détection automatique du format 3 lignes EPC (Réf, Qté, Désignation)</div>
                     </div>
                 </div>
-
                 <div class="btn-group">
-                    <button class="btn btn-red" id="btn-select-file">
-                        📂 Sélectionner un fichier
-                    </button>
-                    <button class="btn btn-glass" id="btn-demo">
-                        ✏️ Charger exemple EPC (.txt)
-                    </button>
+                    <button class="btn btn-red" id="btn-select-file">📂 Sélectionner un fichier</button>
+                    <button class="btn btn-glass" id="btn-demo">✏️ Charger exemple EPC (.txt)</button>
                 </div>
                 <input type="file" id="file-input" accept=".txt,.xlsx,.xls,.csv" class="hidden">
             </div>
 
-            <!-- Compteurs KPI (5 Cartes) -->
             <div id="kpi-section" class="kpi-grid hidden">
-                <div class="kpi-card">
-                    <div>
-                        <div class="kpi-label">Total Références</div>
-                        <div class="kpi-value" id="kpi-total">0</div>
-                    </div>
-                    <div class="kpi-icon" style="background: rgba(255,255,255,0.06); color: #fff;">📦</div>
-                </div>
-                <div class="kpi-card">
-                    <div>
-                        <div class="kpi-label">Disponible Usine</div>
-                        <div class="kpi-value" id="kpi-dispo" style="color: #34d399;">0</div>
-                    </div>
-                    <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div>
-                </div>
-                <div class="kpi-card">
-                    <div>
-                        <div class="kpi-label">En Stock</div>
-                        <div class="kpi-value" id="kpi-stock" style="color: #60a5fa;">0</div>
-                    </div>
-                    <div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">🏠</div>
-                </div>
-                <div class="kpi-card">
-                    <div>
-                        <div class="kpi-label">Rupture Usine</div>
-                        <div class="kpi-value" id="kpi-rupture" style="color: #fb7185;">0</div>
-                    </div>
-                    <div class="kpi-icon" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">✕</div>
-                </div>
-                <div class="kpi-card">
-                    <div>
-                        <div class="kpi-label">Reste à traiter</div>
-                        <div class="kpi-value" id="kpi-attente" style="color: #94a3b8;">0</div>
-                    </div>
-                    <div class="kpi-icon" style="background: rgba(148, 163, 184, 0.12); color: #94a3b8;">⏳</div>
-                </div>
+                <div class="kpi-card"><div><div class="kpi-label">Total Références</div><div class="kpi-value" id="kpi-total">0</div></div><div class="kpi-icon" style="background: rgba(255,255,255,0.06); color: #fff;">📦</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">Disponible Usine</div><div class="kpi-value" id="kpi-dispo" style="color: #34d399;">0</div></div><div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">En Stock</div><div class="kpi-value" id="kpi-stock" style="color: #60a5fa;">0</div></div><div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">🏠</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">Rupture Usine</div><div class="kpi-value" id="kpi-rupture" style="color: #fb7185;">0</div></div><div class="kpi-icon" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">✕</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">Reste à traiter</div><div class="kpi-value" id="kpi-attente" style="color: #94a3b8;">0</div></div><div class="kpi-icon" style="background: rgba(148, 163, 184, 0.12); color: #94a3b8;">⏳</div></div>
             </div>
 
-            <!-- Mode Recherche Guidée Pas-à-Pas -->
             <div id="pas-a-pas-card" class="card-pas-a-pas hidden">
                 <div class="pas-header">
                     <div class="pas-header-left">
@@ -736,8 +671,7 @@
                     </div>
                     <div class="pas-header-right">
                         <label class="auto-copy-toggle">
-                            <input type="checkbox" id="auto-copy-check" checked>
-                            Copie auto au passage suivant
+                            <input type="checkbox" id="auto-copy-check" checked> Copie auto au passage suivant
                         </label>
                         <div class="progress-wrapper">
                             <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
@@ -747,58 +681,35 @@
 
                 <div class="ref-card">
                     <div class="ref-top-row">
-                        <div class="ref-label">Référence Usine (à coller dans GASS) — <span style="color:#ff6b8b;">Remplacement possible si référence modifiée</span></div>
+                        <div class="ref-label">Référence Usine (à coller dans GASS) — <span style="color:#ff6b8b;">Remplacement possible si modifiée</span></div>
                         <div id="current-status-badge"></div>
                     </div>
                     <div class="ref-flex">
                         <div id="ref-display-container" style="display: flex; align-items: center; gap: 12px; flex-grow: 1;">
                             <div id="current-ref" class="ref-code">----------</div>
-                            <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence si l'usine a fait un remplacement (ex: 921005FA0A -> 921015FA0A)">
-                                ✏️ Modifier
-                            </button>
+                            <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence">✏️ Modifier</button>
                         </div>
-                        
-                        <button id="btn-copy" class="btn-copy">
-                            📋 <span id="btn-copy-text">Copier la référence</span>
-                        </button>
+                        <button id="btn-copy" class="btn-copy">📋 <span id="btn-copy-text">Copier la référence</span></button>
                     </div>
                     <div class="details-grid">
-                        <div class="detail-item">
-                            <span>Quantité demandée</span>
-                            <strong id="current-qty">1</strong>
-                        </div>
-                        <div class="detail-item">
-                            <span>Désignation EPC</span>
-                            <strong id="current-desig">---</strong>
-                        </div>
+                        <div class="detail-item"><span>Quantité demandée</span><strong id="current-qty">1</strong></div>
+                        <div class="detail-item"><span>Désignation EPC</span><strong id="current-desig">---</strong></div>
                     </div>
                 </div>
 
                 <div class="action-btns">
-                    <button id="btn-dispo" class="btn-decision btn-dispo">
-                        <span>✓ Disponible Usine</span>
-                        <span class="key-hint">Touche 1</span>
-                    </button>
-                    <button id="btn-stock" class="btn-decision btn-stock">
-                        <span>🏠 En Stock</span>
-                        <span class="key-hint">Touche 2</span>
-                    </button>
-                    <button id="btn-rupture" class="btn-decision btn-rupture">
-                        <span>✕ Rupture Usine</span>
-                        <span class="key-hint">Touche 3</span>
-                    </button>
+                    <button id="btn-dispo" class="btn-decision btn-dispo"><span>✓ Disponible Usine</span> <span class="key-hint">1</span></button>
+                    <button id="btn-stock" class="btn-decision btn-stock"><span>🏠 En Stock</span> <span class="key-hint">2</span></button>
+                    <button id="btn-rupture" class="btn-decision btn-rupture"><span>✕ Rupture Usine</span> <span class="key-hint">3</span></button>
                 </div>
 
                 <div class="nav-btns">
                     <button id="btn-prev" class="btn-nav-item">◀ Pièce précédente</button>
-                    <span style="font-size: 11px; color: var(--text-muted);">
-                        Astuce : Cliquez sur une ligne du tableau ci-dessous pour y accéder directement
-                    </span>
+                    <span style="font-size: 11px; color: var(--text-muted);">Cliquez sur une ligne du tableau pour y accéder directement</span>
                     <button id="btn-next" class="btn-nav-item">Pièce suivante ▶</button>
                 </div>
             </div>
 
-            <!-- Tableau Récapitulatif -->
             <div id="table-card" class="table-card hidden">
                 <div class="table-header">
                     <div class="table-header-left">
@@ -806,12 +717,8 @@
                         <p id="table-subtitle">Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas</p>
                     </div>
                     <div class="export-group">
-                        <button id="btn-export-xlsx" class="btn-export-xlsx">
-                            💾 Exporter vers Excel (.xlsx)
-                        </button>
-                        <button id="btn-export-csv" class="btn btn-glass">
-                            Exporter (.csv)
-                        </button>
+                        <button id="btn-export-xlsx" class="btn-export-xlsx">💾 Exporter vers Excel (.xlsx)</button>
+                        <button id="btn-export-csv" class="btn btn-glass">Exporter (.csv)</button>
                     </div>
                 </div>
                 <div class="table-container">
@@ -829,16 +736,10 @@
                     </table>
                 </div>
             </div>
-
         </section>
 
-
-        <!-- =========================================================================
-             ÉCRAN 2 : CONVERTISSEUR GASS -> DCSNET NEO (.CSV & .WFT) (100% INDÉPENDANT)
-             ========================================================================= -->
+        <!-- SECTION CONVERTISSEUR -->
         <section id="screen-convertisseur" class="app-screen">
-
-            <!-- Paramètres de conversion -->
             <div class="conv-settings-bar">
                 <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
                     <div class="conv-field">
@@ -848,17 +749,14 @@
                     <div class="conv-field">
                         <label for="conv-num-cmd" title="Strictement entre 2000 et 9999">N° Commande (2000 - 9999) :</label>
                         <button class="btn-mini-step" id="btn-cmd-minus" title="Diminuer de 1">-</button>
-                        <!-- Valeur par défaut à 2000, bloquée de 2000 à 9999 -->
                         <input type="text" id="conv-num-cmd" class="conv-input" value="2000" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" style="width: 90px;">
                         <button class="btn-mini-step" id="btn-cmd-plus" title="Augmenter de 1">+</button>
                     </div>
-                    <label class="auto-copy-toggle" title="Augmente automatiquement le numéro de commande de +1 dès que vous exportez un fichier (et le garde en mémoire)">
-                        <input type="checkbox" id="conv-auto-next-file" checked>
-                        +1 auto à chaque fichier exporté
+                    <label class="auto-copy-toggle" title="Augmente de +1 dès que vous exportez un fichier">
+                        <input type="checkbox" id="conv-auto-next-file" checked> +1 auto à chaque export
                     </label>
                     <label class="auto-copy-toggle">
-                        <input type="checkbox" id="conv-neg-qty">
-                        Quantités en négatif
+                        <input type="checkbox" id="conv-neg-qty"> Quantités en négatif
                     </label>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
@@ -867,12 +765,9 @@
                 </div>
             </div>
 
-            <!-- Zone de dépôt Convertisseur -->
             <div id="drop-zone-conv" class="drop-zone" style="border-color: rgba(59, 130, 246, 0.3);">
                 <div class="drop-info">
-                    <div class="icon-upload" style="background: rgba(59, 130, 246, 0.18); border-color: rgba(59, 130, 246, 0.4); color: #60a5fa;">
-                        🔄
-                    </div>
+                    <div class="icon-upload" style="background: rgba(59, 130, 246, 0.18); border-color: rgba(59, 130, 246, 0.4); color: #60a5fa;">🔄</div>
                     <div>
                         <div class="drop-title" id="conv-drop-title">Déposez votre fichier texte GASS (.txt) ou EPC</div>
                         <div class="drop-sub">Extraction automatique des lignes ZPN et formatage strict pour DCSnet neo</div>
@@ -884,12 +779,11 @@
                 <input type="file" id="file-input-conv" accept=".txt,.csv" class="hidden">
             </div>
 
-            <!-- Résultats & Téléchargements Convertisseur -->
             <div id="conv-results-card" class="table-card hidden">
                 <div class="table-header">
                     <div class="table-header-left">
                         <h3>Fichiers prêts pour DCSnet neo (<span id="conv-count">0</span> pièces extraites — Commande N° <span id="active-cmd-display" style="color: #60a5fa;">2000</span>)</h3>
-                        <p>Aperçu formaté sans dépassement — cliquez sur les boutons à droite pour télécharger</p>
+                        <p>Aperçu formaté — cliquez sur les boutons à droite pour télécharger</p>
                     </div>
                     <div class="export-group">
                         <button class="btn btn-blue" id="btn-dl-csv">📥 Télécharger .CSV</button>
@@ -907,29 +801,24 @@
                     </div>
                     <div class="preview-col">
                         <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">
-                            APERÇU DU FICHIER .WFT (18 lignes à 0 + 27 'X' + Qté + 4 espaces + Réf)
+                            APERÇU DU FICHIER .WFT (28 'X' + Qté + 4 espaces + Réf + 8 tabulations)
                         </div>
                         <div id="preview-wft-box" class="code-box" style="color: #60a5fa;"></div>
                     </div>
                 </div>
             </div>
-
         </section>
 
     </main>
 
-    <!-- Pied de Page -->
     <footer>
         <div class="footer-inner">
-            <div>© 2026 Nissan Motor Co., Ltd. — Portail d'outils internes indépendants</div>
-            <div>Le numéro de commande (strictement 2000-9999) est mémorisé automatiquement dans votre navigateur</div>
+            <div>© 2026 Nissan Motor Co., Ltd. — Portail d'outils internes</div>
+            <div>N° commande (strictement 2000-9999) mémorisé dans le navigateur</div>
         </div>
     </footer>
 
     <script>
-        /* =========================================================================
-           NAVIGATION ENTRE LES APPLICATIONS SÉPARÉES (SWITCH)
-           ========================================================================= */
         function ouvrirEcran(nomEcran) {
             document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active-screen'));
             const cible = document.getElementById('screen-' + nomEcran);
@@ -956,9 +845,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        /* =========================================================================
-           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE (AVEC REMPLACEMENT DE REF USINE)
-           ========================================================================= */
         let listePieces = [];
         let indexActuel = 0;
         let verificationTerminee = false;
@@ -1000,7 +886,7 @@
 
         document.getElementById('btn-demo').addEventListener('click', (e) => {
             e.stopPropagation();
-            const contenuDemo = `921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION`;
+            const contenuDemo = "921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION";
             document.getElementById('gass-status-text').textContent = "Exemple EPC chargé";
             lireContenuTexte(contenuDemo);
         });
@@ -1104,9 +990,7 @@
             const container = document.getElementById('ref-display-container');
             container.innerHTML = `
                 <div id="current-ref" class="ref-code">${refTexte}</div>
-                <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence si l'usine a fait un remplacement (ex: 921005FA0A -> 921015FA0A)">
-                    ✏️ Modifier
-                </button>
+                <button class="btn-edit-ref" id="btn-toggle-edit-ref" title="Modifier la référence">✏️ Modifier</button>
             `;
             document.getElementById('btn-toggle-edit-ref').addEventListener('click', activerModeEditionRef);
             
@@ -1158,7 +1042,7 @@
                 const btnCopy = document.getElementById('btn-copy');
                 const btnCopyText = document.getElementById('btn-copy-text');
                 btnCopy.classList.add('copied');
-                btnCopyText.textContent = silencieux ? "✓ Copié auto (Réf active)" : "✓ Copié !";
+                btnCopyText.textContent = silencieux ? "✓ Copié auto" : "✓ Copié !";
                 setTimeout(() => {
                     btnCopy.classList.remove('copied');
                     btnCopyText.textContent = "Copier la référence";
@@ -1181,7 +1065,6 @@
                 afficherPiece(true);
                 afficherTableau();
             } else {
-                // Fin de la liste !
                 verificationTerminee = true;
                 document.getElementById('pas-a-pas-card').classList.add('hidden');
                 document.getElementById('table-subtitle').textContent = "🎉 Vérification terminée avec succès ! Voici le récapitulatif final de votre liste.";
@@ -1211,10 +1094,10 @@
         });
 
         function genererBadgeHTML(statut) {
-            if (statut === 'Disponible Usine') return `<span class="badge-status st-dispo">● Disponible Usine</span>`;
-            if (statut === 'En Stock') return `<span class="badge-status st-stock">● En Stock</span>`;
-            if (statut === 'Rupture Usine') return `<span class="badge-status st-rupture">● Rupture Usine</span>`;
-            return `<span class="badge-status st-attente">● En attente</span>`;
+            if (statut === 'Disponible Usine') return '<span class="badge-status st-dispo">● Disponible Usine</span>';
+            if (statut === 'En Stock') return '<span class="badge-status st-stock">● En Stock</span>';
+            if (statut === 'Rupture Usine') return '<span class="badge-status st-rupture">● Rupture Usine</span>';
+            return '<span class="badge-status st-attente">● En attente</span>';
         }
 
         function mettreAJourKPI() {
@@ -1274,20 +1157,15 @@
 
         document.getElementById('btn-export-csv').addEventListener('click', () => {
             if (!listePieces.length) return;
-            let csv = "\uFEFFRéférence Usine;Quantité;Désignation;Disponibilité Usine\n";
+            let csv = "Référence Usine;Quantité;Désignation;Disponibilité Usine\n";
             listePieces.forEach(p => { csv += `"${p.ref}";"${p.qty}";"${p.desig}";"${p.statut}"\n`; });
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=windows-1252;' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = "verification_stock_nissan.csv";
             a.click();
         });
 
-
-        /* =========================================================================
-           OUTIL 2 : CONVERTISSEUR GASS (.CSV & .WFT POUR DCSNET NEO)
-           AVEC MÉMORISATION STRICTE DU N° DE COMMANDE ENTRE 2000 ET 9999
-           ========================================================================= */
         let lignesConverties = [];
         let dernierTexteBrutConv = "";
         let dejaIncrementePourCeFichier = false;
@@ -1297,7 +1175,6 @@
         const inputNumCmd = document.getElementById('conv-num-cmd');
         const inputCodeFourn = document.getElementById('conv-code-fourn');
 
-        // Charger le dernier numéro mémorisé, et forcer la plage 2000-9999
         const cmdMemorisee = localStorage.getItem('dcsnet_last_cmd_num');
         if (cmdMemorisee && /^[0-9]{4}$/.test(cmdMemorisee)) {
             let val = parseInt(cmdMemorisee, 10);
@@ -1318,16 +1195,15 @@
         function obtenirNumCommandeActuel4Chiffres() {
             let brut = (inputNumCmd.value || '2000').replace(/[^0-9]/g, '');
             let num = parseInt(brut || '2000', 10);
-            // On bloque strictement de 2000 à 9999
             if (num < 2000) num = 2000;
             if (num > 9999) num = 9999;
-            return String(num); // Pas besoin de padStart car >= 2000 a toujours 4 chiffres
+            return String(num);
         }
 
         function incrementerNumeroCommandeDe1() {
             let actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
             let suivant = actuel + 1;
-            if (suivant > 9999) suivant = 2000; // Boucle de 9999 à 2000
+            if (suivant > 9999) suivant = 2000;
             
             const suivantStr = String(suivant);
             inputNumCmd.value = suivantStr;
@@ -1343,7 +1219,7 @@
         document.getElementById('btn-cmd-minus').addEventListener('click', () => {
             let actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
             let prec = actuel - 1;
-            if (prec < 2000) prec = 9999; // Boucle inverse de 2000 à 9999
+            if (prec < 2000) prec = 9999;
             
             const precStr = String(prec);
             inputNumCmd.value = precStr;
@@ -1355,7 +1231,6 @@
             incrementerNumeroCommandeDe1();
         });
 
-        // Validation en temps réel et au blur pour forcer le range 2000-9999
         inputNumCmd.addEventListener('input', () => {
             inputNumCmd.value = inputNumCmd.value.replace(/[^0-9]/g, '').slice(0, 4);
             if (inputNumCmd.value.length === 4) {
@@ -1495,28 +1370,19 @@
         }
 
         function construireContenuWFT() {
-    		const forcerNeg = document.getElementById('conv-neg-qty').checked;
-    		const tabulationsFin = '\t\t\t\t\t\t\t\t'; // 8 tabulations exigées par DCSnet
-    
-    		// 18 lignes de zéros suivies des 8 tabulations
-    		const enteteZeros = Array(18).fill('0' + tabulationsFin).join('\r\n');
-    
-    		const corps = lignesConverties.map(item => {
-        		let qteNum = forcerNeg ? -Math.abs(item.qty) : item.qty;
-        		let qteStr = String(qteNum);
-        
-        		// 28 fois le caractère 'X'
-        		const prefixe28X = 'X'.repeat(28);
-        
-        		// 28 'X' + Quantité + 4 espaces + Référence + 8 tabulations
-        		return `${prefixe28X}${qteStr}    ${item.ref.trim()}${tabulationsFin}`;
-    }).join('\r\n');
+            const forcerNeg = document.getElementById('conv-neg-qty').checked;
+            const tabulationsFin = '\t\t\t\t\t\t\t\t';
+            const enteteZeros = Array(18).fill('0' + tabulationsFin).join('\r\n');
+            
+            const corps = lignesConverties.map(item => {
+                let qteNum = forcerNeg ? -Math.abs(item.qty) : item.qty;
+                let qteStr = String(qteNum);
+                const prefixe28X = 'X'.repeat(28);
+                return `${prefixe28X}${qteStr}    ${item.ref.trim()}${tabulationsFin}`;
+            }).join('\r\n');
 
-    return enteteZeros + '\r\n' + corps;
-}
-
-    return enteteZeros + '\r\n' + corps;
-}
+            return enteteZeros + '\r\n' + corps;
+        }
 
         function genererApercusDCS() {
             if (!lignesConverties.length) return;
@@ -1529,22 +1395,22 @@
         }
 
         function telechargerFichierCSV() {
-    	    const numActuel = obtenirNumCommandeActuel4Chiffres();
-    	    const blob = new Blob([construireContenuCSV()], { type: 'text/csv;charset=windows-1252;' });
-    	    const a = document.createElement('a');
-    	    a.href = URL.createObjectURL(blob);
-    	    a.download = `import_dcsnet_${numActuel}.csv`;
-    	    a.click();
-	}
+            const numActuel = obtenirNumCommandeActuel4Chiffres();
+            const blob = new Blob([construireContenuCSV()], { type: 'text/csv;charset=windows-1252;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `import_dcsnet_${numActuel}.csv`;
+            a.click();
+        }
 
         function telechargerFichierWFT() {
-    		const numActuel = obtenirNumCommandeActuel4Chiffres();
-    		const blob = new Blob([construireContenuWFT()], { type: 'text/plain;charset=windows-1252;' });
-    		const a = document.createElement('a');
-    		a.href = URL.createObjectURL(blob);
-    		a.download = `import_dcsnet_${numActuel}.wft`;
-    		a.click();
-	}
+            const numActuel = obtenirNumCommandeActuel4Chiffres();
+            const blob = new Blob([construireContenuWFT()], { type: 'text/plain;charset=windows-1252;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `import_dcsnet_${numActuel}.wft`;
+            a.click();
+        }
 
         function verifierAutoIncrementApresExport() {
             if (document.getElementById('conv-auto-next-file').checked && !dejaIncrementePourCeFichier) {
