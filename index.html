@@ -1533,13 +1533,13 @@
 	}
 
         function telechargerFichierWFT() {
-            const numActuel = obtenirNumCommandeActuel4Chiffres();
-            const blob = new Blob([construireContenuWFT()], { type: 'text/plain;charset=utf-8;' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `import_dcsnet_${numActuel}.wft`;
-            a.click();
-        }
+    		const numActuel = obtenirNumCommandeActuel4Chiffres();
+    		const blob = new Blob([construireContenuWFT()], { type: 'text/plain;charset=windows-1252;' });
+    		const a = document.createElement('a');
+    		a.href = URL.createObjectURL(blob);
+    		a.download = `import_dcsnet_${numActuel}.wft`;
+    		a.click();
+}
 
         function verifierAutoIncrementApresExport() {
             if (document.getElementById('conv-auto-next-file').checked && !dejaIncrementePourCeFichier) {
