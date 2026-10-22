@@ -397,36 +397,18 @@
         .ref-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 6px 0 16px 0; }
         .ref-code { font-size: 38px; font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #ffffff; letter-spacing: 2px; }
 
-        /* Style édition de référence (Remplacement Usine) */
+        /* Style édition de référence */
         .ref-edit-wrapper { display: flex; align-items: center; gap: 10px; width: 100%; flex-wrap: wrap; }
         .ref-edit-input {
             background: rgba(7, 9, 14, 0.95);
-            border: 2px solid var(--nissan-red);
-            color: #ffffff;
-            font-size: 28px;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 800;
-            padding: 6px 14px;
-            border-radius: 10px;
-            outline: none;
-            letter-spacing: 1px;
-            flex-grow: 1;
-            max-width: 420px;
+            border: 2px solid var(--nissan-red); color: #ffffff; font-size: 28px;
+            font-family: 'JetBrains Mono', monospace; font-weight: 800; padding: 6px 14px;
+            border-radius: 10px; outline: none; letter-spacing: 1px; flex-grow: 1; max-width: 420px;
         }
 
         .btn-edit-ref {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-subtle);
-            color: var(--text-secondary);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle); color: var(--text-secondary);
+            font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px;
         }
         .btn-edit-ref:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
 
@@ -495,11 +477,13 @@
             padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
         }
         .conv-field { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
+        
         .conv-input {
             background: rgba(10, 13, 20, 0.9); border: 1px solid var(--border-highlight); color: #ffffff;
             padding: 8px 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; text-align: center; letter-spacing: 1.5px;
         }
         .conv-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 10px rgba(59, 130, 246, 0.35); }
+        
         .btn-mini-step {
             background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-subtle); color: #fff;
             width: 30px; height: 34px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 14px; transition: all 0.15s;
@@ -626,14 +610,14 @@
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
                             <h3>Convertisseur GASS (.csv & .wft)</h3>
-                            <p>Transforme automatiquement vos fichiers texte GASS (ZPN) en fichiers structurés .csv et .wft avec numéro de commande auto-incrémenté (+1 par fichier).</p>
+                            <p>Transforme automatiquement vos fichiers texte GASS (ZPN) en fichiers structurés .csv et .wft. N° de commande bridé (2000-9999).</p>
                         </div>
                     </div>
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
                             <span class="tile-feature-tag">Export .CSV (DCSnet)</span>
                             <span class="tile-feature-tag">Export .WFT (27 'X')</span>
-                            <span class="tile-feature-tag">N° Cmd +1 Auto Mémorisé</span>
+                            <span class="tile-feature-tag">N° Cmd 2000-9999</span>
                         </div>
                         <div class="tile-footer">
                             <span>Ouvrir le Convertisseur GASS</span>
@@ -862,9 +846,10 @@
                         <input type="text" id="conv-code-fourn" class="conv-input" value="9000" maxlength="4" inputmode="numeric" style="width: 80px;">
                     </div>
                     <div class="conv-field">
-                        <label for="conv-num-cmd">N° Commande actuel (4 chiffres) :</label>
+                        <label for="conv-num-cmd" title="Strictement entre 2000 et 9999">N° Commande (2000 - 9999) :</label>
                         <button class="btn-mini-step" id="btn-cmd-minus" title="Diminuer de 1">-</button>
-                        <input type="text" id="conv-num-cmd" class="conv-input" value="0001" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" style="width: 90px;">
+                        <!-- Valeur par défaut à 2000, bloquée de 2000 à 9999 -->
+                        <input type="text" id="conv-num-cmd" class="conv-input" value="2000" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" style="width: 90px;">
                         <button class="btn-mini-step" id="btn-cmd-plus" title="Augmenter de 1">+</button>
                     </div>
                     <label class="auto-copy-toggle" title="Augmente automatiquement le numéro de commande de +1 dès que vous exportez un fichier (et le garde en mémoire)">
@@ -877,7 +862,7 @@
                     </label>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span id="cmd-saved-toast" class="toast-notif hidden">✓ N° passé à <strong id="toast-next-num">0002</strong></span>
+                    <span id="cmd-saved-toast" class="toast-notif hidden">✓ N° passé à <strong id="toast-next-num">2001</strong></span>
                     <button class="btn btn-glass" id="btn-demo-conv">✏️ Charger exemple GASS (ZPN)</button>
                 </div>
             </div>
@@ -890,7 +875,7 @@
                     </div>
                     <div>
                         <div class="drop-title" id="conv-drop-title">Déposez votre fichier texte GASS (.txt) ou EPC</div>
-                        <div class="drop-sub">Extraction automatique des lignes ZPN et incrémentation automatique du N° de commande</div>
+                        <div class="drop-sub">Extraction automatique des lignes ZPN et formatage strict pour DCSnet neo</div>
                     </div>
                 </div>
                 <div class="btn-group">
@@ -903,7 +888,7 @@
             <div id="conv-results-card" class="table-card hidden">
                 <div class="table-header">
                     <div class="table-header-left">
-                        <h3>Fichiers prêts pour DCSnet neo (<span id="conv-count">0</span> pièces extraites — Commande N° <span id="active-cmd-display" style="color: #60a5fa;">0001</span>)</h3>
+                        <h3>Fichiers prêts pour DCSnet neo (<span id="conv-count">0</span> pièces extraites — Commande N° <span id="active-cmd-display" style="color: #60a5fa;">2000</span>)</h3>
                         <p>Aperçu formaté sans dépassement — cliquez sur les boutons à droite pour télécharger</p>
                     </div>
                     <div class="export-group">
@@ -916,7 +901,7 @@
                 <div class="preview-grid">
                     <div class="preview-col">
                         <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">
-                            APERÇU DU FICHIER .CSV (Code;N°Cmd 4 chiffres;S;Réf;Désignation;Qté)
+                            APERÇU DU FICHIER .CSV (Code;N°Cmd;S;Réf;Désignation;Qté)
                         </div>
                         <div id="preview-csv-box" class="code-box"></div>
                     </div>
@@ -937,7 +922,7 @@
     <footer>
         <div class="footer-inner">
             <div>© 2026 Nissan Motor Co., Ltd. — Portail d'outils internes indépendants</div>
-            <div>Le numéro de commande (4 chiffres) est mémorisé automatiquement dans votre navigateur</div>
+            <div>Le numéro de commande (strictement 2000-9999) est mémorisé automatiquement dans votre navigateur</div>
         </div>
     </footer>
 
@@ -972,7 +957,7 @@
         }
 
         /* =========================================================================
-           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE
+           OUTIL 1 : VÉRIFICATEUR DE STOCK USINE (AVEC REMPLACEMENT DE REF USINE)
            ========================================================================= */
         let listePieces = [];
         let indexActuel = 0;
@@ -1301,6 +1286,7 @@
 
         /* =========================================================================
            OUTIL 2 : CONVERTISSEUR GASS (.CSV & .WFT POUR DCSNET NEO)
+           AVEC MÉMORISATION STRICTE DU N° DE COMMANDE ENTRE 2000 ET 9999
            ========================================================================= */
         let lignesConverties = [];
         let dernierTexteBrutConv = "";
@@ -1311,26 +1297,39 @@
         const inputNumCmd = document.getElementById('conv-num-cmd');
         const inputCodeFourn = document.getElementById('conv-code-fourn');
 
+        // Charger le dernier numéro mémorisé, et forcer la plage 2000-9999
         const cmdMemorisee = localStorage.getItem('dcsnet_last_cmd_num');
         if (cmdMemorisee && /^[0-9]{4}$/.test(cmdMemorisee)) {
-            inputNumCmd.value = cmdMemorisee;
+            let val = parseInt(cmdMemorisee, 10);
+            if(val >= 2000 && val <= 9999) {
+                inputNumCmd.value = String(val);
+            } else {
+                inputNumCmd.value = "2000";
+            }
+        } else {
+            inputNumCmd.value = "2000";
         }
 
-        function sauvegarderNumCmd(val4) {
-            localStorage.setItem('dcsnet_last_cmd_num', val4);
-            document.getElementById('active-cmd-display').textContent = val4;
+        function sauvegarderNumCmd(valStr) {
+            localStorage.setItem('dcsnet_last_cmd_num', valStr);
+            document.getElementById('active-cmd-display').textContent = valStr;
         }
 
         function obtenirNumCommandeActuel4Chiffres() {
-            const brut = (inputNumCmd.value || '0001').replace(/[^0-9]/g, '');
-            const num = parseInt(brut || '1', 10) % 10000;
-            return String(num).padStart(4, '0');
+            let brut = (inputNumCmd.value || '2000').replace(/[^0-9]/g, '');
+            let num = parseInt(brut || '2000', 10);
+            // On bloque strictement de 2000 à 9999
+            if (num < 2000) num = 2000;
+            if (num > 9999) num = 9999;
+            return String(num); // Pas besoin de padStart car >= 2000 a toujours 4 chiffres
         }
 
         function incrementerNumeroCommandeDe1() {
-            const actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
-            const suivant = (actuel + 1) % 10000;
-            const suivantStr = String(suivant).padStart(4, '0');
+            let actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
+            let suivant = actuel + 1;
+            if (suivant > 9999) suivant = 2000; // Boucle de 9999 à 2000
+            
+            const suivantStr = String(suivant);
             inputNumCmd.value = suivantStr;
             sauvegarderNumCmd(suivantStr);
             if (dernierTexteBrutConv) genererApercusDCS();
@@ -1342,9 +1341,11 @@
         }
 
         document.getElementById('btn-cmd-minus').addEventListener('click', () => {
-            const actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
-            const prec = (actuel - 1 + 10000) % 10000;
-            const precStr = String(prec).padStart(4, '0');
+            let actuel = parseInt(obtenirNumCommandeActuel4Chiffres(), 10);
+            let prec = actuel - 1;
+            if (prec < 2000) prec = 9999; // Boucle inverse de 2000 à 9999
+            
+            const precStr = String(prec);
             inputNumCmd.value = precStr;
             sauvegarderNumCmd(precStr);
             if (dernierTexteBrutConv) genererApercusDCS();
@@ -1354,17 +1355,30 @@
             incrementerNumeroCommandeDe1();
         });
 
-        [inputNumCmd, inputCodeFourn].forEach(inp => {
-            inp.addEventListener('input', () => {
-                inp.value = inp.value.replace(/[^0-9]/g, '').slice(0, 4);
-                if (inp === inputNumCmd && inp.value.length === 4) sauvegarderNumCmd(inp.value);
+        // Validation en temps réel et au blur pour forcer le range 2000-9999
+        inputNumCmd.addEventListener('input', () => {
+            inputNumCmd.value = inputNumCmd.value.replace(/[^0-9]/g, '').slice(0, 4);
+            if (inputNumCmd.value.length === 4) {
+                let val = parseInt(inputNumCmd.value, 10);
+                if (val < 2000) val = 2000;
+                inputNumCmd.value = String(val);
+                sauvegarderNumCmd(inputNumCmd.value);
                 if (dernierTexteBrutConv) genererApercusDCS();
-            });
-            inp.addEventListener('blur', () => {
-                if (inp.value.length > 0) inp.value = inp.value.padStart(4, '0');
-                if (inp === inputNumCmd) sauvegarderNumCmd(inp.value);
-                if (dernierTexteBrutConv) genererApercusDCS();
-            });
+            }
+        });
+
+        inputNumCmd.addEventListener('blur', () => {
+            let val = parseInt(inputNumCmd.value || '2000', 10);
+            if (val < 2000) val = 2000;
+            if (val > 9999) val = 9999;
+            inputNumCmd.value = String(val);
+            sauvegarderNumCmd(inputNumCmd.value);
+            if (dernierTexteBrutConv) genererApercusDCS();
+        });
+
+        inputCodeFourn.addEventListener('input', () => {
+            inputCodeFourn.value = inputCodeFourn.value.replace(/[^0-9]/g, '').slice(0, 4);
+            if (dernierTexteBrutConv) genererApercusDCS();
         });
 
         document.getElementById('conv-neg-qty').addEventListener('change', () => {
@@ -1471,12 +1485,12 @@
 
         function construireContenuCSV() {
             const codeFourn = (inputCodeFourn.value.replace(/[^0-9]/g, '') || '9000').padStart(4, '0');
-            const numCmd4 = obtenirNumCommandeActuel4Chiffres();
+            const numCmdStr = obtenirNumCommandeActuel4Chiffres();
             const forcerNeg = document.getElementById('conv-neg-qty').checked;
 
             return lignesConverties.map(item => {
                 const qteFinale = forcerNeg ? -Math.abs(item.qty) : item.qty;
-                return `${codeFourn};${numCmd4};S;${item.ref};${item.desig};${qteFinale}`;
+                return `${codeFourn};${numCmdStr};S;${item.ref};${item.desig};${qteFinale}`;
             }).join('\r\n');
         }
 
@@ -1503,13 +1517,13 @@
         }
 
         function telechargerFichierCSV() {
-            const numActuel = obtenirNumCommandeActuel4Chiffres();
-            const blob = new Blob(["\uFEFF" + construireContenuCSV()], { type: 'text/csv;charset=utf-8;' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `import_dcsnet_${numActuel}.csv`;
-            a.click();
-        }
+    	    const numActuel = obtenirNumCommandeActuel4Chiffres();
+    	    const blob = new Blob([construireContenuCSV()], { type: 'text/csv;charset=windows-1252;' });
+    	    const a = document.createElement('a');
+    	    a.href = URL.createObjectURL(blob);
+    	    a.download = `import_dcsnet_${numActuel}.csv`;
+    	    a.click();
+	}
 
         function telechargerFichierWFT() {
             const numActuel = obtenirNumCommandeActuel4Chiffres();
