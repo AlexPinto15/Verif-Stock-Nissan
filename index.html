@@ -1520,7 +1520,6 @@
             lignesMG = [];
             if (!rows || rows.length < 2) return;
 
-            // Détection des index de colonnes 'Part #', 'Part Name', 'QTY'
             let colPart = -1, colName = -1, colQty = -1;
             let headerRowIdx = 0;
 
@@ -1537,6 +1536,33 @@
                     break;
                 }
             }
+
+            if (colPart === -1) colPart = 1;
+            if (colName === -1) colName = 2;
+            if (colQty === -1) colQty = 9;
+
+            for (let r = headerRowIdx + 1; r < rows.length; r++) {
+                const row = rows[r] || [];
+                const ref = String(row[colPart] || '').trim();
+                if (!ref || ref.toLowerCase() === 'total' || ref.toLowerCase() === 'part #') continue;
+
+                // Nettoyage des sauts de ligne + suppression des points-virgules + coupe à 30 caractères
+                let desigBrute = String(row[colName] || 'PIECE MG');
+                let desigPropre = desigBrute
+                    .replace(/[\r\n]+/g, ' ')   // Supprime les sauts de ligne internes
+                    .replace(/;/g, ' ')         // Évite de casser les colonnes CSV
+                    .replace(/\s+/g, ' ')       // Supprime les doubles espaces
+                    .trim()
+                    .slice(0, 30);              // Coupe strictement à 30 caractères
+
+                let qteVal = parseInt(row[colQty], 10) || parseFloat(row[colQty]);
+                if (isNaN(qteVal) || qteVal <= 0) qteVal = 1;
+
+                lignesMG.push({ ref, desig: desigPropre, qty: Math.round(qteVal) });
+            }
+
+            genererApercusMG();
+        }
 
             // Fallback par défaut si non trouvées
             if (colPart === -1) colPart = 1;
