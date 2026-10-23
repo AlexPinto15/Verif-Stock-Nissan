@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 168'%3E%3Crect width='200' height='168' rx='36' fill='%2307090e'/%3E%3Cpath d='M 18 65 L 182 65 C 185 65 186 63 185 60 C 170 25 137 4 100 4 C 63 4 30 25 15 60 C 14 63 15 65 18 65 Z M 100 15 C 131 15 158 32 171 56 L 29 56 C 42 32 69 15 100 15 Z' fill='%23ffffff'/%3E%3Cpath d='M 18 103 L 182 103 C 185 103 186 105 185 108 C 170 143 137 164 100 164 C 63 164 30 143 15 108 C 14 105 15 103 18 103 Z M 100 153 C 131 153 158 136 171 112 L 29 112 C 42 136 69 153 100 153 Z' fill='%23ffffff'/%3E%3Crect x='16' y='74' width='168' height='20' rx='3' fill='%23c3002f'/%3E%3C/svg%3E">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- SheetJS pour lecture Excel (.xlsx / .csv) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -60,7 +60,6 @@
         header {
             background: rgba(12, 15, 23, 0.85);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-subtle);
             padding: 16px 36px;
             position: sticky;
@@ -616,7 +615,7 @@
                     </div>
                 </div>
 
-                <!-- Outil 3 : Convertisseur MG (NOUVEAU) -->
+                <!-- Outil 3 : Convertisseur MG -->
                 <div class="app-tile" style="--tile-accent: var(--mg-orange);" onclick="ouvrirEcran('conv-mg')">
                     <div>
                         <div class="tile-top">
@@ -633,7 +632,7 @@
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
                             <span class="tile-feature-tag">Fournisseur 6000</span>
-                            <span class="tile-feature-tag">Lecture .XLSX / .CSV</span>
+                            <span class="tile-feature-tag">Désignation max 30 car.</span>
                             <span class="tile-feature-tag">N° Cmd 2000-9999</span>
                         </div>
                         <div class="tile-footer">
@@ -816,7 +815,7 @@
             </div>
         </section>
 
-        <!-- SECTION CONVERTISSEUR MG (NOUVEAU) -->
+        <!-- SECTION CONVERTISSEUR MG -->
         <section id="screen-conv-mg" class="app-screen">
             <div class="conv-settings-bar">
                 <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -861,7 +860,7 @@
                 <div class="table-header">
                     <div class="table-header-left">
                         <h3>Fichiers MG prêts pour DCSnet neo (<span id="mg-count">0</span> pièces — Commande N° <span id="mg-active-cmd-display" style="color: #fb923c;">2000</span>)</h3>
-                        <p>Format 6000 vérifié — cliquez sur les boutons à droite pour télécharger</p>
+                        <p>Format 6000 vérifié (désignation coupée à 30 caractères sans saut de ligne)</p>
                     </div>
                     <div class="export-group">
                         <button class="btn btn-orange" id="btn-mg-dl-csv">📥 Télécharger .CSV (MG)</button>
@@ -1220,7 +1219,6 @@
 
         function synchroniserAffichageCmd(val4) {
             localStorage.setItem('dcsnet_last_cmd_num', val4);
-            // Sync inputs Nissan et MG
             document.getElementById('conv-num-cmd').value = val4;
             document.getElementById('mg-num-cmd').value = val4;
             document.getElementById('active-cmd-display').textContent = val4;
@@ -1256,7 +1254,6 @@
             synchroniserAffichageCmd(String(prev));
         }
 
-        // Init au chargement
         const cmdInitiale = chargerNumCmdMemorise();
         synchroniserAffichageCmd(cmdInitiale);
 
@@ -1436,12 +1433,10 @@
 
 
         /* -------------------------------------------------------------------------
-           OUTIL 3 : CONVERTISSEUR MG (NOUVEAU MODULE)
-           Extraction de Part #, Part Name et QTY
+           OUTIL 3 : CONVERTISSEUR MG
            ------------------------------------------------------------------------- */
         let lignesMG = [];
         let dejaIncrementeMG = false;
-        let dernierFichierMGData = null;
 
         const inputNumMG = document.getElementById('mg-num-cmd');
         const inputCodeMG = document.getElementById('mg-code-fourn');
@@ -1502,7 +1497,6 @@
             }
         }
 
-        // Exemple MG fidèle au fichier Sales Invoice
         document.getElementById('btn-demo-mg').addEventListener('click', () => {
             dejaIncrementeMG = false;
             const matriceDemo = [
@@ -1546,39 +1540,18 @@
                 const ref = String(row[colPart] || '').trim();
                 if (!ref || ref.toLowerCase() === 'total' || ref.toLowerCase() === 'part #') continue;
 
-                // Nettoyage des sauts de ligne + suppression des points-virgules + coupe à 30 caractères
                 let desigBrute = String(row[colName] || 'PIECE MG');
                 let desigPropre = desigBrute
-                    .replace(/[\r\n]+/g, ' ')   // Supprime les sauts de ligne internes
-                    .replace(/;/g, ' ')         // Évite de casser les colonnes CSV
-                    .replace(/\s+/g, ' ')       // Supprime les doubles espaces
+                    .replace(/[\r\n]+/g, ' ')
+                    .replace(/;/g, ' ')
+                    .replace(/\s+/g, ' ')
                     .trim()
-                    .slice(0, 30);              // Coupe strictement à 30 caractères
+                    .slice(0, 30);
 
                 let qteVal = parseInt(row[colQty], 10) || parseFloat(row[colQty]);
                 if (isNaN(qteVal) || qteVal <= 0) qteVal = 1;
 
                 lignesMG.push({ ref, desig: desigPropre, qty: Math.round(qteVal) });
-            }
-
-            genererApercusMG();
-        }
-
-            // Fallback par défaut si non trouvées
-            if (colPart === -1) colPart = 1;
-            if (colName === -1) colName = 2;
-            if (colQty === -1) colQty = 9;
-
-            for (let r = headerRowIdx + 1; r < rows.length; r++) {
-                const row = rows[r] || [];
-                const ref = String(row[colPart] || '').trim();
-                if (!ref || ref.toLowerCase() === 'total' || ref.toLowerCase() === 'part #') continue;
-
-                const desig = String(row[colName] || 'PIECE MG').trim();
-                let qteVal = parseInt(row[colQty], 10) || parseFloat(row[colQty]);
-                if (isNaN(qteVal) || qteVal <= 0) qteVal = 1;
-
-                lignesMG.push({ ref, desig, qty: Math.round(qteVal) });
             }
 
             genererApercusMG();
