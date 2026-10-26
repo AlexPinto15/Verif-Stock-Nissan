@@ -167,16 +167,13 @@
         .btn-glass { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--border-subtle); }
         .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-highlight); }
 
-        /* Fiche Véhicule Microcat */
+        /* Fiche Véhicule en Saisie Directe */
         .vehicule-card {
             background: linear-gradient(135deg, rgba(14, 20, 32, 0.95), rgba(18, 26, 42, 0.95));
-            border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 18px 24px;
+            border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 16px 20px;
             display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .vehicule-details { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-        .vehicule-item span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); display: block; font-weight: 700; }
-        .vehicule-item strong { font-size: 15px; color: #ffffff; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
 
         .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .kpi-card {
@@ -261,7 +258,7 @@
         .table-header-left h3 { font-size: 16px; color: #ffffff; font-weight: 700; }
         .table-header-left p { font-size: 12px; color: var(--text-secondary); }
         .export-group { display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn-export-xlsx { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: gap: 8px; }
+        .btn-export-xlsx { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
         
         .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-subtle); max-width: 100%; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
@@ -590,36 +587,52 @@
         <!-- SECTION STOCK -->
         <section id="screen-stock" class="app-screen">
 
-            <!-- Fiche Véhicule avec Recherche Express & Accès Base de Données -->
+            <!-- Fiche Véhicule en Saisie Directe + Auto-remplissage Base de données -->
             <div id="vehicule-card" class="vehicule-card">
-                <div class="vehicule-details">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="text" id="quick-input-immat" class="modal-input" placeholder="Coller VIN ou Plaque..." style="width: 190px; text-transform: uppercase; font-weight: 800; font-family: 'JetBrains Mono', monospace; text-align: center; border-color: rgba(59, 130, 246, 0.5);">
-                        <button class="btn btn-blue" id="btn-quick-search-veh" style="padding: 8px 14px; font-size: 12px;">Valider</button>
+                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex-grow: 1;">
+                    <!-- Immat -->
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <label for="input-veh-immat" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                            Immatriculation
+                        </label>
+                        <input type="text" id="input-veh-immat" class="modal-input" placeholder="AA-123-AA" maxlength="10" 
+                               style="width: 140px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px; text-align: center; border-color: rgba(59, 130, 246, 0.45);">
                     </div>
-                    <div class="vehicule-item">
-                        <span>Modèle</span>
-                        <strong id="veh-modele">Non renseigné</strong>
+
+                    <!-- Modèle -->
+                    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; max-width: 260px;">
+                        <label for="input-veh-modele" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                            Modèle du véhicule
+                        </label>
+                        <input type="text" id="input-veh-modele" class="modal-input" placeholder="Ex: QASHQAI II 1.2 DIG-T" 
+                               style="font-size: 13px; font-weight: 600;">
                     </div>
-                    <div class="vehicule-item">
-                        <span>Immatriculation</span>
-                        <strong id="veh-immat">--</strong>
+
+                    <!-- VIN / Châssis -->
+                    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; max-width: 240px;">
+                        <label for="input-veh-vin" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                            N° Châssis (VIN)
+                        </label>
+                        <input type="text" id="input-veh-vin" class="modal-input" placeholder="17 caractères..." maxlength="17" 
+                               style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;">
                     </div>
-                    <div class="vehicule-item">
-                        <span>N° Châssis (VIN)</span>
-                        <strong id="veh-vin">--</strong>
-                    </div>
-                    <div class="vehicule-item">
-                        <span>Date constr.</span>
-                        <strong id="veh-date">--</strong>
+
+                    <!-- Date constr (optionnelle) -->
+                    <div style="display: flex; flex-direction: column; gap: 4px; width: 100px;">
+                        <label for="input-veh-date" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                            Date constr.
+                        </label>
+                        <input type="text" id="input-veh-date" class="modal-input" placeholder="MM/AAAA" maxlength="7" 
+                               style="text-align: center; font-size: 12px; font-family: 'JetBrains Mono', monospace;">
                     </div>
                 </div>
-                <div style="display: flex; gap: 8px; align-items: center;">
+
+                <div style="display: flex; align-items: center; gap: 8px;">
                     <button class="btn btn-glass" id="btn-open-db-veh" style="padding: 8px 12px; font-size: 11px;">
-                        📚 Base Véhicules (<span id="db-count-badge">0</span>)
+                        📚 Base (<span id="db-count-badge">0</span>)
                     </button>
-                    <button class="btn btn-glass" id="btn-coller-microcat" style="padding: 8px 12px; font-size: 11px;">
-                        ✏️ Modifier
+                    <button class="btn btn-glass" id="btn-vider-veh" title="Vider les champs" style="padding: 8px 10px; font-size: 11px; color: var(--text-muted);">
+                        ✕
                     </button>
                 </div>
             </div>
@@ -1048,9 +1061,21 @@
         }
 
         /* -------------------------------------------------------------------------
-           BASE DE DONNÉES LOCALE DES VÉHICULES (localStorage)
+           BASE DE DONNÉES LOCALE (localStorage) & AUTO-REMPLISSAGE EN TEMPS RÉEL
            ------------------------------------------------------------------------- */
         const STORAGE_KEY_VEH = 'atelier_sofibrie_vehicules_db';
+
+        const inputImmat = document.getElementById('input-veh-immat');
+        const inputModele = document.getElementById('input-veh-modele');
+        const inputVin = document.getElementById('input-veh-vin');
+        const inputDate = document.getElementById('input-veh-date');
+
+        let infoVehicule = {
+            modele: "Non renseigné",
+            immat: "--",
+            vin: "--",
+            dateConst: "--"
+        };
 
         function chargerBaseVehicules() {
             try {
@@ -1067,181 +1092,111 @@
         }
 
         function mettreAJourCompteurBase() {
-            const base = chargerBaseVehicules();
             const badge = document.getElementById('db-count-badge');
-            if (badge) badge.textContent = base.length;
+            if (badge) badge.textContent = chargerBaseVehicules().length;
         }
 
-        function enregistrerVehiculeDansBase(donnees) {
-            if ((!donnees.immat || donnees.immat === '--') && (!donnees.vin || donnees.vin === '--')) return;
-
-            let base = chargerBaseVehicules();
-            const indexExistant = base.findIndex(v => 
-                (donnees.vin && donnees.vin !== '--' && v.vin === donnees.vin) ||
-                (donnees.immat && donnees.immat !== '--' && v.immat === donnees.immat)
-            );
-
-            const now = new Date();
-            const dateEnreg = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-
-            if (indexExistant !== -1) {
-                base[indexExistant] = {
-                    immat: donnees.immat !== '--' ? donnees.immat : base[indexExistant].immat,
-                    vin: donnees.vin !== '--' ? donnees.vin : base[indexExistant].vin,
-                    modele: (donnees.modele && donnees.modele !== 'Non renseigné') ? donnees.modele : base[indexExistant].modele,
-                    dateConst: donnees.dateConst !== '--' ? donnees.dateConst : base[indexExistant].dateConst,
-                    dateMaj: dateEnreg
-                };
-            } else {
-                base.unshift({
-                    immat: donnees.immat || '--',
-                    vin: donnees.vin || '--',
-                    modele: donnees.modele || 'Non renseigné',
-                    dateConst: donnees.dateConst || '--',
-                    dateMaj: dateEnreg
-                });
-            }
-
-            sauvegarderBaseVehicules(base);
-        }
-
-        function chercherDansBase(recherche) {
-            const clean = recherche.trim().toUpperCase().replace(/[\s-]/g, '');
+        function chercherPlaqueDansBase(plaque) {
+            const cle = plaque.trim().toUpperCase().replace(/[\s-]/g, '');
+            if (cle.length < 4) return null;
             const base = chargerBaseVehicules();
-            return base.find(v => 
-                (v.immat && v.immat.replace(/[\s-]/g, '') === clean) ||
-                (v.vin && v.vin === clean)
-            );
+            return base.find(v => v.immat && v.immat.replace(/[\s-]/g, '') === cle);
         }
 
-        /* -------------------------------------------------------------------------
-           GESTION VÉHICULE EN COURS & PARSER AUTO
-           ------------------------------------------------------------------------- */
-        let infoVehicule = {
-            modele: "Non renseigné",
-            immat: "--",
-            vin: "--",
-            dateConst: "--"
-        };
-
-        function appliquerInfosVehicule(data, enregistrerEnBase = true) {
-            if (data.modele) infoVehicule.modele = data.modele;
-            if (data.immat) infoVehicule.immat = data.immat;
-            if (data.vin) infoVehicule.vin = data.vin;
-            if (data.dateConst) infoVehicule.dateConst = data.dateConst;
-
-            document.getElementById('veh-modele').textContent = infoVehicule.modele;
-            document.getElementById('veh-immat').textContent = infoVehicule.immat;
-            document.getElementById('veh-vin').textContent = infoVehicule.vin;
-            document.getElementById('veh-date').textContent = infoVehicule.dateConst;
-
+        function animerConfirmationDetection() {
             const card = document.getElementById('vehicule-card');
             card.style.borderColor = '#10b981';
-            card.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.3)';
+            card.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.35)';
             setTimeout(() => {
                 card.style.borderColor = 'rgba(59, 130, 246, 0.35)';
                 card.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
-            }, 1200);
-
-            if (enregistrerEnBase) {
-                enregistrerVehiculeDansBase(infoVehicule);
-            }
+            }, 1000);
         }
 
-        function parserTexteVehicule(texte) {
-            if (!texte) return false;
-            let brut = texte.trim();
-            let donnees = {};
+        function synchroniserDonneesVehicule(enregistrerEnBase = true) {
+            infoVehicule.immat = inputImmat.value.trim().toUpperCase() || '--';
+            infoVehicule.modele = inputModele.value.trim() || 'Non renseigné';
+            infoVehicule.vin = inputVin.value.trim().toUpperCase() || '--';
+            infoVehicule.dateConst = inputDate.value.trim() || '--';
 
-            // Vérification si déjà en base de données
-            const autoMatch = chercherDansBase(brut);
-            if (autoMatch) {
-                appliquerInfosVehicule(autoMatch, false);
-                return true;
-            }
+            if (!enregistrerEnBase) return;
 
-            // Détection VIN (17 car.)
-            const vinMatch = brut.match(/\b([A-HJ-NPR-Z0-9]{17})\b/i);
-            if (vinMatch) donnees.vin = vinMatch[1].toUpperCase();
+            if (infoVehicule.immat !== '--' && (infoVehicule.vin !== '--' || infoVehicule.modele !== 'Non renseigné')) {
+                let base = chargerBaseVehicules();
+                const immatNettoyee = infoVehicule.immat.replace(/[\s-]/g, '');
+                const index = base.findIndex(v => v.immat && v.immat.replace(/[\s-]/g, '') === immatNettoyee);
 
-            // Détection Immatriculation (AA-123-AA ou ancien format)
-            const immatMatch = brut.match(/\b([A-Z]{2}[- ]?[0-9]{3}[- ]?[A-Z]{2})\b/i) ||
-                               brut.match(/\b([0-9]{1,4}[- ]?[A-Z]{2,3}[- ]?[0-9]{2})\b/i);
-            if (immatMatch) donnees.immat = immatMatch[1].replace(/[\s-]/g, '').toUpperCase();
+                const fiche = {
+                    immat: infoVehicule.immat,
+                    modele: infoVehicule.modele,
+                    vin: infoVehicule.vin,
+                    dateConst: infoVehicule.dateConst,
+                    dateMaj: new Date().toLocaleDateString('fr-FR')
+                };
 
-            // Détection Modèle
-            const modMatch = brut.match(/\b(PIXO|JUKE|QASHQAI|MICRA|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR)[^\n\r]*/i);
-            if (modMatch) donnees.modele = modMatch[0].replace(/\s+/g, ' ').trim().slice(0, 35);
-
-            // Détection Date (MM/AAAA)
-            const dateMatch = brut.match(/\b(0[1-9]|1[0-2])\/([12][0-9]{3})\b/);
-            if (dateMatch) donnees.dateConst = dateMatch[0];
-
-            if (!donnees.vin && !donnees.immat) {
-                let nettoyee = brut.replace(/[^A-Z0-9]/gi, '').toUpperCase();
-                if (nettoyee.length === 17) donnees.vin = nettoyee;
-                else if (nettoyee.length >= 6 && nettoyee.length <= 9) donnees.immat = nettoyee;
-            }
-
-            // Si on a l'immat ou le VIN seul, tentative de croisement avec la base
-            if (donnees.immat && !donnees.vin) {
-                const existant = chercherDansBase(donnees.immat);
-                if (existant) {
-                    donnees.vin = existant.vin;
-                    if (!donnees.modele) donnees.modele = existant.modele;
-                    if (!donnees.dateConst) donnees.dateConst = existant.dateConst;
+                if (index !== -1) {
+                    base[index] = fiche;
+                } else {
+                    base.unshift(fiche);
                 }
-            } else if (donnees.vin && !donnees.immat) {
-                const existant = chercherDansBase(donnees.vin);
-                if (existant) {
-                    donnees.immat = existant.immat;
-                    if (!donnees.modele) donnees.modele = existant.modele;
-                    if (!donnees.dateConst) donnees.dateConst = existant.dateConst;
-                }
-            }
-
-            if (donnees.vin || donnees.immat || donnees.modele) {
-                appliquerInfosVehicule(donnees, true);
-                return true;
-            }
-            return false;
-        }
-
-        function validerSaisieCase() {
-            const val = document.getElementById('quick-input-immat').value;
-            if (parserTexteVehicule(val)) {
-                document.getElementById('quick-input-immat').value = '';
+                sauvegarderBaseVehicules(base);
             }
         }
 
-        document.getElementById('btn-quick-search-veh').addEventListener('click', validerSaisieCase);
-        document.getElementById('quick-input-immat').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') validerSaisieCase();
+        inputImmat.addEventListener('input', () => {
+            const saisie = inputImmat.value.trim().toUpperCase();
+            if (!saisie) return;
+
+            const trouve = chercherPlaqueDansBase(saisie);
+            if (trouve) {
+                inputModele.value = (trouve.modele && trouve.modele !== 'Non renseigné') ? trouve.modele : '';
+                inputVin.value = (trouve.vin && trouve.vin !== '--') ? trouve.vin : '';
+                inputDate.value = (trouve.dateConst && trouve.dateConst !== '--') ? trouve.dateConst : '';
+                animerConfirmationDetection();
+                synchroniserDonneesVehicule(false);
+            } else {
+                synchroniserDonneesVehicule(true);
+            }
         });
 
+        [inputModele, inputVin, inputDate].forEach(champ => {
+            champ.addEventListener('input', () => synchroniserDonneesVehicule(true));
+        });
+
+        document.getElementById('btn-vider-veh').addEventListener('click', () => {
+            inputImmat.value = '';
+            inputModele.value = '';
+            inputVin.value = '';
+            inputDate.value = '';
+            synchroniserDonneesVehicule(false);
+        });
+
+        function appliquerInfosVehicule(data, enregistrer = false) {
+            inputImmat.value = (data.immat && data.immat !== '--') ? data.immat : '';
+            inputModele.value = (data.modele && data.modele !== 'Non renseigné') ? data.modele : '';
+            inputVin.value = (data.vin && data.vin !== '--') ? data.vin : '';
+            inputDate.value = (data.dateConst && data.dateConst !== '--') ? data.dateConst : '';
+
+            animerConfirmationDetection();
+            synchroniserDonneesVehicule(enregistrer);
+        }
+
+        // Détection de collage rapide partout sur la page
         document.addEventListener('paste', (e) => {
-            if (['TEXTAREA'].includes(e.target.tagName)) return;
+            if (['TEXTAREA', 'INPUT'].includes(e.target.tagName)) return;
             const texteColle = (e.clipboardData || window.clipboardData).getData('text');
-            if (texteColle && parserTexteVehicule(texteColle)) {
-                if (e.target.id === 'quick-input-immat') {
-                    e.preventDefault();
-                    document.getElementById('quick-input-immat').value = '';
-                }
-            }
-        });
+            if (!texteColle) return;
 
-        document.getElementById('btn-coller-microcat').addEventListener('click', () => {
-            const immat = prompt("Numéro d'immatriculation :", infoVehicule.immat !== '--' ? infoVehicule.immat : '');
-            if (immat !== null) {
-                const vin = prompt("Numéro de châssis (VIN) :", infoVehicule.vin !== '--' ? infoVehicule.vin : '');
-                const modele = prompt("Modèle du véhicule :", infoVehicule.modele !== 'Non renseigné' ? infoVehicule.modele : '');
-                const dateConst = prompt("Date de construction (ex: 02/2019) :", infoVehicule.dateConst !== '--' ? infoVehicule.dateConst : '');
-                appliquerInfosVehicule({
-                    immat: immat.trim().toUpperCase() || '--',
-                    vin: vin ? vin.trim().toUpperCase() : '--',
-                    modele: modele ? modele.trim() : 'Non renseigné',
-                    dateConst: dateConst ? dateConst.trim() : '--'
-                }, true);
+            const vinMatch = texteColle.match(/\b([A-HJ-NPR-Z0-9]{17})\b/i);
+            const immatMatch = texteColle.match(/\b([A-Z]{2}[- ]?[0-9]{3}[- ]?[A-Z]{2})\b/i);
+            const modMatch = texteColle.match(/\b(PIXO|JUKE|QASHQAI|MICRA|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR)[^\n\r]*/i);
+
+            if (vinMatch || immatMatch || modMatch) {
+                if (immatMatch) inputImmat.value = immatMatch[1].replace(/[\s-]/g, '').toUpperCase();
+                if (vinMatch) inputVin.value = vinMatch[1].toUpperCase();
+                if (modMatch) inputModele.value = modMatch[0].trim().slice(0, 35);
+                animerConfirmationDetection();
+                synchroniserDonneesVehicule(true);
             }
         });
 
@@ -1270,9 +1225,9 @@
             tbody.innerHTML = '';
 
             const filtres = base.filter(v => 
-                v.immat.toLowerCase().includes(filtre) ||
-                v.vin.toLowerCase().includes(filtre) ||
-                v.modele.toLowerCase().includes(filtre)
+                (v.immat && v.immat.toLowerCase().includes(filtre)) ||
+                (v.vin && v.vin.toLowerCase().includes(filtre)) ||
+                (v.modele && v.modele.toLowerCase().includes(filtre))
             );
 
             if (!filtres.length) {
