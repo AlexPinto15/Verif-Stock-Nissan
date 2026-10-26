@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 168'%3E%3Crect width='200' height='168' rx='36' fill='%2307090e'/%3E%3Cpath d='M 18 65 L 182 65 C 185 65 186 63 185 60 C 170 25 137 4 100 4 C 63 4 30 25 15 60 C 14 63 15 65 18 65 Z M 100 15 C 131 15 158 32 171 56 L 29 56 C 42 32 69 15 100 15 Z' fill='%23ffffff'/%3E%3Cpath d='M 18 103 L 182 103 C 185 103 186 105 185 108 C 170 143 137 164 100 164 C 63 164 30 143 15 108 C 14 105 15 103 18 103 Z M 100 153 C 131 153 158 136 171 112 L 29 112 C 42 136 69 153 100 153 Z' fill='%23ffffff'/%3E%3Crect x='16' y='74' width='168' height='20' rx='3' fill='%23c3002f'/%3E%3C/svg%3E">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- SheetJS pour lecture Excel (.xlsx / .csv) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -33,6 +33,9 @@
             --rose: #f43f5e;
             --rose-dark: rgba(244, 63, 94, 0.15);
             --rose-border: rgba(244, 63, 94, 0.35);
+            --amber: #f59e0b;
+            --amber-dark: rgba(245, 158, 11, 0.15);
+            --amber-border: rgba(245, 158, 11, 0.35);
             --text-main: #f8fafc;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
@@ -354,6 +357,25 @@
         .kpi-value { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .kpi-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 
+        /* Étape Bannière */
+        .step-phase-banner {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(18, 22, 33, 0.85));
+            border: 1px solid var(--blue-border);
+            border-radius: 14px;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .step-phase-banner.phase-usine {
+            background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(18, 22, 33, 0.85));
+            border-color: rgba(234, 88, 12, 0.45);
+        }
+        .phase-title { font-size: 14px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .phase-desc { font-size: 12px; color: var(--text-secondary); }
+
         .card-pas-a-pas {
             background: var(--bg-surface); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
             border-radius: 20px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
@@ -361,6 +383,9 @@
         }
         .card-pas-a-pas::before {
             content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%;
+            background: linear-gradient(180deg, var(--blue), #60a5fa);
+        }
+        .card-pas-a-pas.theme-usine::before {
             background: linear-gradient(180deg, var(--nissan-red), #ff4d6d);
         }
         .pas-header {
@@ -369,8 +394,11 @@
         }
         .pas-header-left { display: flex; align-items: center; gap: 12px; }
         .pas-tag {
-            background: rgba(195, 0, 47, 0.18); color: #ff6b8b; border: 1px solid rgba(195, 0, 47, 0.4);
+            background: rgba(59, 130, 246, 0.18); color: #93c5fd; border: 1px solid var(--blue-border);
             font-size: 11px; font-weight: 700; letter-spacing: 0.8px; padding: 5px 12px; border-radius: 6px; text-transform: uppercase;
+        }
+        .pas-tag.tag-usine {
+            background: rgba(195, 0, 47, 0.18); color: #ff6b8b; border: 1px solid rgba(195, 0, 47, 0.4);
         }
         .pas-counter { font-size: 14px; color: var(--text-main); font-weight: 600; }
         .pas-header-right { display: flex; align-items: center; gap: 16px; }
@@ -381,7 +409,8 @@
         }
         .auto-copy-toggle input { accent-color: var(--nissan-red); cursor: pointer; }
         .progress-wrapper { width: 160px; background: rgba(255, 255, 255, 0.07); height: 8px; border-radius: 999px; overflow: hidden; }
-        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--nissan-red), #ff4d6d); border-radius: 999px; transition: width 0.35s ease; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--blue), #60a5fa); border-radius: 999px; transition: width 0.35s ease; }
+        .progress-bar.bar-usine { background: linear-gradient(90deg, var(--nissan-red), #ff4d6d); }
 
         .ref-card {
             background: linear-gradient(145deg, rgba(10, 13, 20, 0.9), rgba(15, 19, 30, 0.9));
@@ -418,17 +447,23 @@
         .detail-item span { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
         .detail-item strong { font-size: 15px; color: #ffffff; font-weight: 700; }
 
-        .action-btns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+        .action-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
         .btn-decision {
             padding: 18px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease;
         }
-        .btn-dispo { background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12)); color: #6ee7b7; border: 1.5px solid var(--emerald-border); }
-        .btn-dispo:hover { background: linear-gradient(135deg, #10b981, #059669); color: #fff; transform: translateY(-2px); }
         .btn-stock { background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(37, 99, 235, 0.12)); color: #93c5fd; border: 1.5px solid var(--blue-border); }
         .btn-stock:hover { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; transform: translateY(-2px); }
+        
+        .btn-nostock { background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.12)); color: #fcd34d; border: 1.5px solid var(--amber-border); }
+        .btn-nostock:hover { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; transform: translateY(-2px); }
+
+        .btn-dispo { background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12)); color: #6ee7b7; border: 1.5px solid var(--emerald-border); }
+        .btn-dispo:hover { background: linear-gradient(135deg, #10b981, #059669); color: #fff; transform: translateY(-2px); }
+        
         .btn-rupture { background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.12)); color: #fda4af; border: 1.5px solid var(--rose-border); }
         .btn-rupture:hover { background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff; transform: translateY(-2px); }
+
         .key-hint { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.15); }
 
         .nav-btns { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
@@ -460,6 +495,7 @@
 
         .badge-status { padding: 4px 11px; border-radius: 999px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
         .st-attente { background: rgba(148, 163, 184, 0.12); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.25); }
+        .st-nostock { background: var(--amber-dark); color: #fbbf24; border: 1px solid var(--amber-border); }
         .st-dispo { background: var(--emerald-dark); color: #34d399; border: 1px solid var(--emerald-border); }
         .st-stock { background: var(--blue-dark); color: #60a5fa; border: 1px solid var(--blue-border); }
         .st-rupture { background: var(--rose-dark); color: #fb7185; border: 1px solid var(--rose-border); }
@@ -538,7 +574,7 @@
                     </button>
                     <select id="quick-app-select" class="quick-switch-select" onchange="ouvrirEcran(this.value)" title="Basculer rapidement vers un autre outil">
                         <option value="hub">🏠 Accueil Portail</option>
-                        <option value="stock">📦 Vérificateur Stock Usine</option>
+                        <option value="stock">📦 Vérificateur Stock (2 Étapes)</option>
                         <option value="convertisseur">🔄 Convertisseur GASS Nissan</option>
                         <option value="conv-mg">🚗 Convertisseur MG (.xlsx)</option>
                     </select>
@@ -568,21 +604,21 @@
                             <div class="tile-icon" style="background: rgba(195, 0, 47, 0.18); color: #ff4d6d; border: 1px solid rgba(195, 0, 47, 0.4);">
                                 📦
                             </div>
-                            <span class="tile-badge">Outil #1 • EPC & GASS</span>
+                            <span class="tile-badge">Outil #1 • Magasin & Usine</span>
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
-                            <h3>Vérificateur Stock Usine</h3>
-                            <p>Lecture EPC/Excel, mode pas-à-pas avec copie auto, correction de référence usine et affichage automatique du récapitulatif en fin de liste.</p>
+                            <h3>Vérificateur Stock (2 Étapes)</h3>
+                            <p>Étape 1 : Vérification rapide en stock magasin. Étape 2 : Vérification automatique de la disponibilité usine pour les pièces manquantes.</p>
                         </div>
                     </div>
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
-                            <span class="tile-feature-tag">Mode Pas-à-Pas</span>
-                            <span class="tile-feature-tag">Correction Réf Usine</span>
-                            <span class="tile-feature-tag">Bilan Automatique de Fin</span>
+                            <span class="tile-feature-tag">1. Stock Magasin</span>
+                            <span class="tile-feature-tag">2. Dispo Usine</span>
+                            <span class="tile-feature-tag">Bilan Final Auto</span>
                         </div>
                         <div class="tile-footer">
-                            <span>Ouvrir le Vérificateur Stock</span>
+                            <span>Ouvrir le Vérificateur</span>
                             <span class="tile-arrow">➔</span>
                         </div>
                     </div>
@@ -644,14 +680,14 @@
             </div>
         </section>
 
-        <!-- SECTION STOCK -->
+        <!-- SECTION STOCK (NOUVELLE LOGIQUE 2 ÉTAPES) -->
         <section id="screen-stock" class="app-screen">
             <div id="drop-zone" class="drop-zone">
                 <div class="drop-info">
                     <div class="icon-upload">📁</div>
                     <div>
                         <div class="drop-title" id="drop-title-text">Déposez votre fichier d'export EPC (.txt) ou Excel (.xlsx / .csv)</div>
-                        <div class="drop-sub" id="drop-sub-text">Détection automatique du format 3 lignes EPC (Réf, Qté, Désignation)</div>
+                        <div class="drop-sub" id="drop-sub-text">Étape 1 : Contrôle du stock magasin local — Étape 2 : Contrôle usine pour les pièces manquantes</div>
                     </div>
                 </div>
                 <div class="btn-group">
@@ -661,23 +697,32 @@
                 <input type="file" id="file-input" accept=".txt,.xlsx,.xls,.csv" class="hidden">
             </div>
 
+            <!-- Bannière d'Étape Active -->
+            <div id="step-phase-banner" class="step-phase-banner hidden">
+                <div>
+                    <div id="phase-badge-title" class="phase-title">🏠 ÉTAPE 1 : VÉRIFICATION DU STOCK MAGASIN</div>
+                    <div id="phase-badge-desc" class="phase-desc">Indiquez si la pièce est présente dans votre stock local ou non.</div>
+                </div>
+            </div>
+
             <div id="kpi-section" class="kpi-grid hidden">
-                <div class="kpi-card"><div><div class="kpi-label">Total Références</div><div class="kpi-value" id="kpi-total">0</div></div><div class="kpi-icon" style="background: rgba(255,255,255,0.06); color: #fff;">📦</div></div>
-                <div class="kpi-card"><div><div class="kpi-label">Disponible Usine</div><div class="kpi-value" id="kpi-dispo" style="color: #34d399;">0</div></div><div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div></div>
-                <div class="kpi-card"><div><div class="kpi-label">En Stock</div><div class="kpi-value" id="kpi-stock" style="color: #60a5fa;">0</div></div><div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">🏠</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">Total Pièces</div><div class="kpi-value" id="kpi-total">0</div></div><div class="kpi-icon" style="background: rgba(255,255,255,0.06); color: #fff;">📦</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">En Stock Local</div><div class="kpi-value" id="kpi-stock" style="color: #60a5fa;">0</div></div><div class="kpi-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">🏠</div></div>
+                <div class="kpi-card"><div><div class="kpi-label">Dispo Usine</div><div class="kpi-value" id="kpi-dispo" style="color: #34d399;">0</div></div><div class="kpi-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">✓</div></div>
                 <div class="kpi-card"><div><div class="kpi-label">Rupture Usine</div><div class="kpi-value" id="kpi-rupture" style="color: #fb7185;">0</div></div><div class="kpi-icon" style="background: rgba(244, 63, 94, 0.15); color: #fb7185;">✕</div></div>
                 <div class="kpi-card"><div><div class="kpi-label">Reste à traiter</div><div class="kpi-value" id="kpi-attente" style="color: #94a3b8;">0</div></div><div class="kpi-icon" style="background: rgba(148, 163, 184, 0.12); color: #94a3b8;">⏳</div></div>
             </div>
 
+            <!-- Fiche Pas-à-Pas -->
             <div id="pas-a-pas-card" class="card-pas-a-pas hidden">
                 <div class="pas-header">
                     <div class="pas-header-left">
-                        <span class="pas-tag">Recherche Guidée Pas-à-Pas</span>
+                        <span id="pas-tag-indicator" class="pas-tag">1. Stock Magasin</span>
                         <span id="step-counter" class="pas-counter">Pièce 1 sur 6</span>
                     </div>
                     <div class="pas-header-right">
                         <label class="auto-copy-toggle">
-                            <input type="checkbox" id="auto-copy-check" checked> Copie auto au passage suivant
+                            <input type="checkbox" id="auto-copy-check" checked> Copie auto de la référence
                         </label>
                         <div class="progress-wrapper">
                             <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
@@ -687,7 +732,7 @@
 
                 <div class="ref-card">
                     <div class="ref-top-row">
-                        <div class="ref-label">Référence Usine (à coller dans GASS) — <span style="color:#ff6b8b;">Remplacement possible si modifiée</span></div>
+                        <div class="ref-label" id="ref-card-subtitle">Référence Pièce</div>
                         <div id="current-status-badge"></div>
                     </div>
                     <div class="ref-flex">
@@ -703,24 +748,39 @@
                     </div>
                 </div>
 
-                <div class="action-btns">
-                    <button id="btn-dispo" class="btn-decision btn-dispo"><span>✓ Disponible Usine</span> <span class="key-hint">1</span></button>
-                    <button id="btn-stock" class="btn-decision btn-stock"><span>🏠 En Stock</span> <span class="key-hint">2</span></button>
-                    <button id="btn-rupture" class="btn-decision btn-rupture"><span>✕ Rupture Usine</span> <span class="key-hint">3</span></button>
+                <!-- Boutons Étape 1 : Stock Magasin -->
+                <div id="action-btns-phase1" class="action-btns">
+                    <button id="btn-p1-stock" class="btn-decision btn-stock">
+                        <span>🏠 En Stock Magasin</span> <span class="key-hint">Touche 1</span>
+                    </button>
+                    <button id="btn-p1-nostock" class="btn-decision btn-nostock">
+                        <span>❌ Pas en Stock</span> <span class="key-hint">Touche 2</span>
+                    </button>
+                </div>
+
+                <!-- Boutons Étape 2 : Disponibilité Usine -->
+                <div id="action-btns-phase2" class="action-btns hidden">
+                    <button id="btn-p2-dispo" class="btn-decision btn-dispo">
+                        <span>✓ Disponible Usine</span> <span class="key-hint">Touche 1</span>
+                    </button>
+                    <button id="btn-p2-rupture" class="btn-decision btn-rupture">
+                        <span>✕ Rupture Usine</span> <span class="key-hint">Touche 2</span>
+                    </button>
                 </div>
 
                 <div class="nav-btns">
                     <button id="btn-prev" class="btn-nav-item">◀ Pièce précédente</button>
-                    <span style="font-size: 11px; color: var(--text-muted);">Cliquez sur une ligne du tableau pour y accéder directement</span>
+                    <span id="nav-hint-text" style="font-size: 11px; color: var(--text-muted);">Touche 1 = En Stock | Touche 2 = Pas en Stock</span>
                     <button id="btn-next" class="btn-nav-item">Pièce suivante ▶</button>
                 </div>
             </div>
 
+            <!-- Tableau Récapitulatif -->
             <div id="table-card" class="table-card hidden">
                 <div class="table-header">
                     <div class="table-header-left">
                         <h3>Récapitulatif de la liste</h3>
-                        <p id="table-subtitle">Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas</p>
+                        <p id="table-subtitle">Suivi en direct des vérifications</p>
                     </div>
                     <div class="export-group">
                         <button id="btn-export-xlsx" class="btn-export-xlsx">💾 Exporter vers Excel (.xlsx)</button>
@@ -732,10 +792,10 @@
                         <thead>
                             <tr>
                                 <th style="width: 50px;">#</th>
-                                <th>Référence Usine</th>
+                                <th>Référence</th>
                                 <th style="width: 90px; text-align: center;">Quantité</th>
                                 <th>Désignation</th>
-                                <th style="width: 170px; text-align: center;">Disponibilité Usine</th>
+                                <th style="width: 170px; text-align: center;">Statut Final</th>
                             </tr>
                         </thead>
                         <tbody id="table-body"></tbody>
@@ -912,8 +972,8 @@
                 subTitle.textContent = "Sélectionnez un logiciel métier pour démarrer";
             } else if (nomEcran === 'stock') {
                 btnBack.classList.remove('hidden');
-                mainTitle.textContent = "VÉRIFICATION STOCK USINE";
-                subTitle.textContent = "Lecteur EPC (.txt) & Excel avec suivi de disponibilité Usine";
+                mainTitle.textContent = "VÉRIFICATION STOCK (2 ÉTAPES)";
+                subTitle.textContent = "Étape 1 : Stock Magasin — Étape 2 : Disponibilité Usine pour les pièces manquantes";
             } else if (nomEcran === 'convertisseur') {
                 btnBack.classList.remove('hidden');
                 mainTitle.textContent = "CONVERTISSEUR NISSAN GASS → DCSNET";
@@ -927,11 +987,14 @@
         }
 
         /* -------------------------------------------------------------------------
-           OUTIL 1 : VÉRIFICATEUR STOCK
+           OUTIL 1 : VÉRIFICATEUR STOCK AVEC WORKFLOW EN 2 ÉTAPES
+           Étape 1 : En Stock Magasin / Pas en Stock
+           Étape 2 : Pour les "Pas en Stock", Disponible Usine / Rupture Usine
            ------------------------------------------------------------------------- */
         let listePieces = [];
-        let indexActuel = 0;
-        let verificationTerminee = false;
+        let fileIndexList = []; // Liste des index traités dans la phase courante
+        let currentStepPos = 0; // Position dans fileIndexList
+        let phaseActuelle = 1;  // 1 = Stock Magasin, 2 = Usine, 3 = Terminé
 
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
@@ -946,7 +1009,7 @@
 
         document.getElementById('btn-demo').addEventListener('click', (e) => {
             e.stopPropagation();
-            const demo = "921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION";
+            const demo = "921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n540503NF0A\n2\nBUTOIR CAOUTCHOUC";
             document.getElementById('gass-status-text').textContent = "Exemple EPC chargé";
             lireContenuTexte(demo);
         });
@@ -982,7 +1045,7 @@
                     listePieces.push({ ref: lignes[i], qty: lignes[i + 1] || '1', desig: lignes[i + 2] || 'SANS DÉSIGNATION', statut: 'En attente' });
                 }
             }
-            initialiserInterface();
+            initialiserWorkflow2Etapes();
         }
 
         function lireContenuExcel(rows) {
@@ -993,38 +1056,92 @@
                     listePieces.push({ ref: String(r[0]).trim(), qty: r[1] ? String(r[1]).trim() : '1', desig: r[2] ? String(r[2]).trim() : 'SANS DÉSIGNATION', statut: r[3] ? String(r[3]).trim() : 'En attente' });
                 }
             });
-            initialiserInterface();
+            initialiserWorkflow2Etapes();
         }
 
-        function initialiserInterface() {
+        function initialiserWorkflow2Etapes() {
             if (!listePieces.length) return;
-            indexActuel = 0;
-            verificationTerminee = false;
+            phaseActuelle = 1;
+            currentStepPos = 0;
+            // Phase 1 : toutes les pièces
+            fileIndexList = listePieces.map((_, idx) => idx);
+
             dropZone.classList.add('compact');
-            document.getElementById('drop-title-text').textContent = "Fichier chargé avec succès";
-            document.getElementById('drop-sub-text').textContent = "Vous pouvez importer un autre fichier à tout moment";
+            document.getElementById('drop-title-text').textContent = "Fichier chargé (" + listePieces.length + " pièces)";
+            document.getElementById('drop-sub-text').textContent = "Étape 1 : Vérification de votre stock magasin en cours";
+
+            configurerInterfacePhase(1);
+
             document.getElementById('kpi-section').classList.remove('hidden');
+            document.getElementById('step-phase-banner').classList.remove('hidden');
             document.getElementById('pas-a-pas-card').classList.remove('hidden');
             document.getElementById('table-card').classList.remove('hidden');
-            document.getElementById('table-subtitle').textContent = "Cliquez sur une ligne pour sélectionner la pièce dans le mode pas-à-pas";
 
-            afficherPiece(true);
+            afficherPieceCourante(true);
             afficherTableau();
             mettreAJourKPI();
         }
 
-        function afficherPiece(autoCopyIfEnabled = false) {
-            if (verificationTerminee) return;
-            const p = listePieces[indexActuel];
-            document.getElementById('step-counter').textContent = `Pièce ${indexActuel + 1} sur ${listePieces.length}`;
+        function configurerInterfacePhase(phase) {
+            const banner = document.getElementById('step-phase-banner');
+            const card = document.getElementById('pas-a-pas-card');
+            const tag = document.getElementById('pas-tag-indicator');
+            const pBar = document.getElementById('progress-bar');
+            const navHint = document.getElementById('nav-hint-text');
+            const subTitleRef = document.getElementById('ref-card-subtitle');
+
+            const p1Btns = document.getElementById('action-btns-phase1');
+            const p2Btns = document.getElementById('action-btns-phase2');
+
+            if (phase === 1) {
+                banner.classList.remove('phase-usine');
+                card.classList.remove('theme-usine');
+                tag.className = 'pas-tag';
+                tag.textContent = '1. Stock Magasin';
+                pBar.className = 'progress-bar';
+                document.getElementById('phase-badge-title').textContent = '🏠 ÉTAPE 1 : VÉRIFICATION DU STOCK MAGASIN';
+                document.getElementById('phase-badge-desc').textContent = 'Indiquez si la pièce est présente dans votre stock local.';
+                subTitleRef.textContent = 'Référence Pièce — Vérification Stock Magasin';
+                navHint.textContent = 'Touche 1 = En Stock Magasin | Touche 2 = Pas en Stock';
+
+                p1Btns.classList.remove('hidden');
+                p2Btns.classList.add('hidden');
+            } else if (phase === 2) {
+                banner.classList.add('phase-usine');
+                card.classList.add('theme-usine');
+                tag.className = 'pas-tag tag-usine';
+                tag.textContent = '2. Dispo Usine';
+                pBar.className = 'progress-bar bar-usine';
+                document.getElementById('phase-badge-title').textContent = '🏭 ÉTAPE 2 : DISPONIBILITÉ USINE (PIÈCES NON EN STOCK)';
+                document.getElementById('phase-badge-desc').textContent = 'Vérifiez si les pièces manquantes sont disponibles chez l’usine (GASS) ou en rupture.';
+                subTitleRef.textContent = 'Référence Usine (à coller dans GASS) — Remplacement possible si modifiée';
+                navHint.textContent = 'Touche 1 = Disponible Usine | Touche 2 = Rupture Usine';
+
+                p1Btns.classList.add('hidden');
+                p2Btns.classList.remove('hidden');
+            }
+        }
+
+        function getPieceActuelleIndex() {
+            return fileIndexList[currentStepPos];
+        }
+
+        function afficherPieceCourante(autoCopyIfEnabled = false) {
+            if (phaseActuelle === 3 || !fileIndexList.length) return;
+
+            const globalIdx = getPieceActuelleIndex();
+            const p = listePieces[globalIdx];
+
+            document.getElementById('step-counter').textContent = `Pièce ${currentStepPos + 1} sur ${fileIndexList.length}`;
             document.getElementById('current-qty').textContent = p.qty;
             document.getElementById('current-desig').textContent = p.desig;
             resetAffichageReference(p.ref);
 
-            const pct = ((indexActuel + 1) / listePieces.length) * 100;
+            const pct = ((currentStepPos + 1) / fileIndexList.length) * 100;
             document.getElementById('progress-bar').style.width = `${pct}%`;
-            document.getElementById('btn-prev').disabled = (indexActuel === 0);
-            document.getElementById('btn-next').disabled = (indexActuel === listePieces.length - 1);
+
+            document.getElementById('btn-prev').disabled = (currentStepPos === 0);
+            document.getElementById('btn-next').disabled = (currentStepPos === fileIndexList.length - 1);
             document.getElementById('current-status-badge').innerHTML = genererBadgeHTML(p.statut);
 
             if (autoCopyIfEnabled && document.getElementById('auto-copy-check').checked) {
@@ -1046,11 +1163,12 @@
         }
 
         function activerModeEditionRef() {
-            const p = listePieces[indexActuel];
+            const globalIdx = getPieceActuelleIndex();
+            const p = listePieces[globalIdx];
             const container = document.getElementById('ref-display-container');
             container.innerHTML = `
                 <div class="ref-edit-wrapper">
-                    <input type="text" id="input-edit-ref" class="ref-edit-input" value="${p.ref}" placeholder="Ex: 921015FA0A">
+                    <input type="text" id="input-edit-ref" class="ref-edit-input" value="${p.ref}" placeholder="Nouvelle réf">
                     <button class="btn btn-red" id="btn-save-ref" style="padding: 8px 16px; font-size: 13px;">💾 Valider</button>
                     <button class="btn btn-glass" id="btn-cancel-ref" style="padding: 8px 12px; font-size: 13px;">Annuler</button>
                 </div>
@@ -1070,7 +1188,8 @@
             const input = document.getElementById('input-edit-ref');
             const nouvelleRef = input.value.trim().toUpperCase();
             if (nouvelleRef) {
-                listePieces[indexActuel].ref = nouvelleRef;
+                const globalIdx = getPieceActuelleIndex();
+                listePieces[globalIdx].ref = nouvelleRef;
                 resetAffichageReference(nouvelleRef);
                 afficherTableau();
                 copierDansPressePapier(true);
@@ -1078,8 +1197,9 @@
         }
 
         function copierDansPressePapier(silencieux = false) {
-            if (!listePieces.length || verificationTerminee) return;
-            const ref = listePieces[indexActuel].ref;
+            if (!fileIndexList.length || phaseActuelle === 3) return;
+            const globalIdx = getPieceActuelleIndex();
+            const ref = listePieces[globalIdx].ref;
             navigator.clipboard.writeText(ref).then(() => {
                 const btnCopy = document.getElementById('btn-copy');
                 const btnCopyText = document.getElementById('btn-copy-text');
@@ -1093,63 +1213,122 @@
         }
 
         document.getElementById('btn-copy').addEventListener('click', () => copierDansPressePapier(false));
-        document.getElementById('btn-dispo').addEventListener('click', () => enregistrerStatut('Disponible Usine'));
-        document.getElementById('btn-stock').addEventListener('click', () => enregistrerStatut('En Stock'));
-        document.getElementById('btn-rupture').addEventListener('click', () => enregistrerStatut('Rupture Usine'));
 
-        function enregistrerStatut(statut) {
-            if (!listePieces.length || verificationTerminee) return;
-            listePieces[indexActuel].statut = statut;
+        // Actions Étape 1 : Stock Magasin
+        document.getElementById('btn-p1-stock').addEventListener('click', () => enregistrerChoixPhase1('En Stock'));
+        document.getElementById('btn-p1-nostock').addEventListener('click', () => enregistrerChoixPhase1('Pas en stock'));
+
+        function enregistrerChoixPhase1(statut) {
+            if (phaseActuelle !== 1) return;
+            const globalIdx = getPieceActuelleIndex();
+            listePieces[globalIdx].statut = statut;
             mettreAJourKPI();
+            afficherTableau();
 
-            if (indexActuel < listePieces.length - 1) {
-                indexActuel++;
-                afficherPiece(true);
-                afficherTableau();
+            if (currentStepPos < fileIndexList.length - 1) {
+                currentStepPos++;
+                afficherPieceCourante(true);
             } else {
-                verificationTerminee = true;
-                document.getElementById('pas-a-pas-card').classList.add('hidden');
-                document.getElementById('table-subtitle').textContent = "🎉 Vérification terminée avec succès ! Voici le récapitulatif final de votre liste.";
-                afficherTableau();
-                alert("🎉 Bravo ! Toutes les références de votre fichier ont été vérifiées avec succès.");
+                // Fin de l'Étape 1 : vérifier s'il y a des pièces 'Pas en stock'
+                const nonEnStockIndices = [];
+                listePieces.forEach((p, idx) => {
+                    if (p.statut === 'Pas en stock') nonEnStockIndices.push(idx);
+                });
+
+                if (nonEnStockIndices.length > 0) {
+                    // Passage à l'Étape 2 (Vérification Usine)
+                    alert(`Étape 1 terminée : ${listePieces.length - nonEnStockIndices.length} pièces en stock.\n\nOn passe maintenant à l'Étape 2 : vérification de la disponibilité Usine pour les ${nonEnStockIndices.length} pièces manquantes.`);
+                    phaseActuelle = 2;
+                    fileIndexList = nonEnStockIndices;
+                    currentStepPos = 0;
+                    configurerInterfacePhase(2);
+                    afficherPieceCourante(true);
+                } else {
+                    // Tout était déjà en stock !
+                    terminerWorkflow();
+                }
             }
         }
 
+        // Actions Étape 2 : Disponibilité Usine
+        document.getElementById('btn-p2-dispo').addEventListener('click', () => enregistrerChoixPhase2('Disponible Usine'));
+        document.getElementById('btn-p2-rupture').addEventListener('click', () => enregistrerChoixPhase2('Rupture Usine'));
+
+        function enregistrerChoixPhase2(statut) {
+            if (phaseActuelle !== 2) return;
+            const globalIdx = getPieceActuelleIndex();
+            listePieces[globalIdx].statut = statut;
+            mettreAJourKPI();
+            afficherTableau();
+
+            if (currentStepPos < fileIndexList.length - 1) {
+                currentStepPos++;
+                afficherPieceCourante(true);
+            } else {
+                terminerWorkflow();
+            }
+        }
+
+        function terminerWorkflow() {
+            phaseActuelle = 3;
+            document.getElementById('pas-a-pas-card').classList.add('hidden');
+            document.getElementById('step-phase-banner').classList.add('hidden');
+            document.getElementById('table-subtitle').textContent = "🎉 Vérification terminée avec succès ! Voici le récapitulatif final de vos pièces.";
+            afficherTableau();
+            alert("🎉 Bravo ! Toutes les références ont été vérifiées (Stock Magasin & Usine). Voici le récapitulatif final.");
+        }
+
         document.getElementById('btn-prev').addEventListener('click', () => {
-            if (indexActuel > 0 && !verificationTerminee) { indexActuel--; afficherPiece(true); afficherTableau(); }
+            if (currentStepPos > 0 && phaseActuelle !== 3) {
+                currentStepPos--;
+                afficherPieceCourante(true);
+                afficherTableau();
+            }
         });
+
         document.getElementById('btn-next').addEventListener('click', () => {
-            if (indexActuel < listePieces.length - 1 && !verificationTerminee) { indexActuel++; afficherPiece(true); afficherTableau(); }
+            if (currentStepPos < fileIndexList.length - 1 && phaseActuelle !== 3) {
+                currentStepPos++;
+                afficherPieceCourante(true);
+                afficherTableau();
+            }
         });
 
         document.addEventListener('keydown', (e) => {
             const stockVisible = document.getElementById('screen-stock').classList.contains('active-screen');
-            if (!stockVisible || !listePieces.length || verificationTerminee || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-            if (e.key === '1' || e.key === '&') enregistrerStatut('Disponible Usine');
-            else if (e.key === '2' || e.key === 'é') enregistrerStatut('En Stock');
-            else if (e.key === '3' || e.key === '"') enregistrerStatut('Rupture Usine');
-            else if (e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.metaKey) copierDansPressePapier(false);
-            else if (e.key === 'ArrowRight' && indexActuel < listePieces.length - 1) { indexActuel++; afficherPiece(true); afficherTableau(); }
-            else if (e.key === 'ArrowLeft' && indexActuel > 0) { indexActuel--; afficherPiece(true); afficherTableau(); }
+            if (!stockVisible || phaseActuelle === 3 || ['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+
+            if (phaseActuelle === 1) {
+                if (e.key === '1' || e.key === '&') enregistrerChoixPhase1('En Stock');
+                else if (e.key === '2' || e.key === 'é') enregistrerChoixPhase1('Pas en stock');
+            } else if (phaseActuelle === 2) {
+                if (e.key === '1' || e.key === '&') enregistrerChoixPhase2('Disponible Usine');
+                else if (e.key === '2' || e.key === 'é') enregistrerChoixPhase2('Rupture Usine');
+            }
+
+            if (e.key.toLowerCase() === 'c' && !e.ctrlKey && !e.metaKey) copierDansPressePapier(false);
+            else if (e.key === 'ArrowRight' && currentStepPos < fileIndexList.length - 1) { currentStepPos++; afficherPieceCourante(true); afficherTableau(); }
+            else if (e.key === 'ArrowLeft' && currentStepPos > 0) { currentStepPos--; afficherPieceCourante(true); afficherTableau(); }
         });
 
         function genererBadgeHTML(statut) {
+            if (statut === 'En Stock') return '<span class="badge-status st-stock">● En Stock Magasin</span>';
+            if (statut === 'Pas en stock') return '<span class="badge-status st-nostock">● Pas en Stock</span>';
             if (statut === 'Disponible Usine') return '<span class="badge-status st-dispo">● Disponible Usine</span>';
-            if (statut === 'En Stock') return '<span class="badge-status st-stock">● En Stock</span>';
             if (statut === 'Rupture Usine') return '<span class="badge-status st-rupture">● Rupture Usine</span>';
             return '<span class="badge-status st-attente">● En attente</span>';
         }
 
         function mettreAJourKPI() {
             const total = listePieces.length;
-            const dispo = listePieces.filter(p => p.statut === 'Disponible Usine').length;
             const stock = listePieces.filter(p => p.statut === 'En Stock').length;
+            const dispo = listePieces.filter(p => p.statut === 'Disponible Usine').length;
             const rupture = listePieces.filter(p => p.statut === 'Rupture Usine').length;
-            const attente = total - dispo - stock - rupture;
+            const attente = total - stock - dispo - rupture;
 
             document.getElementById('kpi-total').textContent = total;
-            document.getElementById('kpi-dispo').textContent = dispo;
             document.getElementById('kpi-stock').textContent = stock;
+            document.getElementById('kpi-dispo').textContent = dispo;
             document.getElementById('kpi-rupture').textContent = rupture;
             document.getElementById('kpi-attente').textContent = attente;
         }
@@ -1157,16 +1336,23 @@
         function afficherTableau() {
             const tbody = document.getElementById('table-body');
             tbody.innerHTML = '';
+            const activeGlobalIdx = (phaseActuelle !== 3 && fileIndexList.length) ? getPieceActuelleIndex() : -1;
+
             listePieces.forEach((p, idx) => {
                 const tr = document.createElement('tr');
-                if (!verificationTerminee && idx === indexActuel) tr.className = 'active-row';
+                if (idx === activeGlobalIdx) tr.className = 'active-row';
+
                 tr.addEventListener('click', () => {
-                    if (!verificationTerminee) {
-                        indexActuel = idx;
-                        afficherPiece(true);
-                        afficherTableau();
+                    if (phaseActuelle !== 3) {
+                        const posInList = fileIndexList.indexOf(idx);
+                        if (posInList !== -1) {
+                            currentStepPos = posInList;
+                            afficherPieceCourante(true);
+                            afficherTableau();
+                        }
                     }
                 });
+
                 tr.innerHTML = `
                     <td style="color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">${idx + 1}</td>
                     <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #ffffff; font-size: 14px;">${p.ref}</td>
@@ -1181,26 +1367,26 @@
         document.getElementById('btn-export-xlsx').addEventListener('click', () => {
             if (!listePieces.length || typeof XLSX === 'undefined') return;
             const data = listePieces.map(p => ({
-                'Référence Usine': p.ref,
+                'Référence': p.ref,
                 'Quantité': Number(p.qty) || p.qty,
                 'Désignation': p.desig,
-                'Disponibilité Usine': p.statut
+                'Statut': p.statut
             }));
             const ws = XLSX.utils.json_to_sheet(data);
-            ws['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 38 }, { wch: 22 }];
+            ws['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 38 }, { wch: 24 }];
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Stock Usine Nissan");
-            XLSX.writeFile(wb, "verification_stock_nissan.xlsx");
+            XLSX.utils.book_append_sheet(wb, ws, "Contrôle Stock");
+            XLSX.writeFile(wb, "verification_stock_atelier.xlsx");
         });
 
         document.getElementById('btn-export-csv').addEventListener('click', () => {
             if (!listePieces.length) return;
-            let csv = "Référence Usine;Quantité;Désignation;Disponibilité Usine\n";
+            let csv = "Référence;Quantité;Désignation;Statut\n";
             listePieces.forEach(p => { csv += `"${p.ref}";"${p.qty}";"${p.desig}";"${p.statut}"\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=windows-1252;' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = "verification_stock_nissan.csv";
+            a.download = "verification_stock_atelier.csv";
             a.click();
         });
 
