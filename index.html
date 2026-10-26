@@ -11,6 +11,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
     <!-- SheetJS pour lecture/écriture Excel (.xlsx / .csv) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Tesseract.js pour l'OCR (lecture d'images) -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
             --bg-base: #07090e;
@@ -167,12 +169,26 @@
         .btn-glass { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--border-subtle); }
         .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-highlight); }
 
-        /* Fiche Véhicule en Saisie Directe */
+        /* Fiche Véhicule en Saisie Directe + Outils OCR */
         .vehicule-card {
             background: linear-gradient(135deg, rgba(14, 20, 32, 0.95), rgba(18, 26, 42, 0.95));
-            border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 16px 20px;
-            display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+            border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 18px 20px;
+            display: flex; flex-direction: column; gap: 14px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .ocr-banner {
+            display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+            background: rgba(59, 130, 246, 0.08); border: 1px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 12px; padding: 10px 14px;
+        }
+        .ocr-hint {
+            display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-secondary);
+        }
+        .ocr-hint strong { color: #fff; }
+        .ocr-hint kbd {
+            background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2px 6px; border-radius: 4px; font-size: 11px; font-family: monospace; color: #93c5fd;
         }
 
         .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
@@ -514,14 +530,14 @@
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
                             <h3>Vérificateur Stock (2 Étapes)</h3>
-                            <p>Étape 1 : Stock Magasin. Étape 2 : Disponibilité Usine. Base de données locale de véhicules, tri automatique final & impression personnalisée.</p>
+                            <p>Étape 1 : Stock Magasin. Étape 2 : Disponibilité Usine. Scanner OCR capture d'écran, base de données locale & impression personnalisée.</p>
                         </div>
                     </div>
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
                             <span class="tile-feature-tag">1. Stock Magasin</span>
                             <span class="tile-feature-tag">2. Dispo Usine</span>
-                            <span class="tile-feature-tag">Base Véhicules</span>
+                            <span class="tile-feature-tag">📷 Scan Capture OCR</span>
                         </div>
                         <div class="tile-footer">
                             <span>Ouvrir le Vérificateur</span>
@@ -587,53 +603,76 @@
         <!-- SECTION STOCK -->
         <section id="screen-stock" class="app-screen">
 
-            <!-- Fiche Véhicule en Saisie Directe + Auto-remplissage Base de données -->
+            <!-- Fiche Véhicule en Saisie Directe + Outils OCR de capture -->
             <div id="vehicule-card" class="vehicule-card">
-                <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex-grow: 1;">
-                    <!-- Immat -->
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <label for="input-veh-immat" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
-                            Immatriculation
-                        </label>
-                        <input type="text" id="input-veh-immat" class="modal-input" placeholder="AA-123-AA" maxlength="10" 
-                               style="width: 140px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px; text-align: center; border-color: rgba(59, 130, 246, 0.45);">
-                    </div>
 
-                    <!-- Modèle -->
-                    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; max-width: 260px;">
-                        <label for="input-veh-modele" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
-                            Modèle du véhicule
-                        </label>
-                        <input type="text" id="input-veh-modele" class="modal-input" placeholder="Ex: QASHQAI II 1.2 DIG-T" 
-                               style="font-size: 13px; font-weight: 600;">
+                <!-- Bannière d'aide & Scan Capture d'écran -->
+                <div class="ocr-banner">
+                    <div class="ocr-hint">
+                        <span>💡</span>
+                        <div>
+                            <strong>Astuce Capture :</strong> Fais une capture de Microcat ou Mister Auto (<kbd>Win</kbd> + <kbd>Maj</kbd> + <kbd>S</kbd>) puis fais simplement <kbd>Ctrl</kbd> + <kbd>V</kbd> sur cette page.
+                        </div>
                     </div>
-
-                    <!-- VIN / Châssis -->
-                    <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; max-width: 240px;">
-                        <label for="input-veh-vin" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
-                            N° Châssis (VIN)
-                        </label>
-                        <input type="text" id="input-veh-vin" class="modal-input" placeholder="17 caractères..." maxlength="17" 
-                               style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;">
-                    </div>
-
-                    <!-- Date constr (optionnelle) -->
-                    <div style="display: flex; flex-direction: column; gap: 4px; width: 100px;">
-                        <label for="input-veh-date" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
-                            Date constr.
-                        </label>
-                        <input type="text" id="input-veh-date" class="modal-input" placeholder="MM/AAAA" maxlength="7" 
-                               style="text-align: center; font-size: 12px; font-family: 'JetBrains Mono', monospace;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button class="btn btn-blue" id="btn-trigger-ocr" style="padding: 7px 14px; font-size: 12px;">
+                            📷 Scanner une capture
+                        </button>
+                        <input type="file" id="file-input-ocr" accept="image/*" class="hidden">
+                        <span id="ocr-loader-text" class="toast-notif hidden" style="color: #60a5fa; background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35);">
+                            ⏳ Lecture de l'image en cours...
+                        </span>
                     </div>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn btn-glass" id="btn-open-db-veh" style="padding: 8px 12px; font-size: 11px;">
-                        📚 Base (<span id="db-count-badge">0</span>)
-                    </button>
-                    <button class="btn btn-glass" id="btn-vider-veh" title="Vider les champs" style="padding: 8px 10px; font-size: 11px; color: var(--text-muted);">
-                        ✕
-                    </button>
+                <!-- Ligne des champs de saisie manuelle / auto-remplis -->
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap; flex-grow: 1;">
+                        <!-- Immat -->
+                        <div style="display: flex; flex-direction: column; gap: 4px;">
+                            <label for="input-veh-immat" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                                Immatriculation
+                            </label>
+                            <input type="text" id="input-veh-immat" class="modal-input" placeholder="AA-123-AA" maxlength="10" 
+                                   style="width: 140px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 14px; text-align: center; border-color: rgba(59, 130, 246, 0.45);">
+                        </div>
+
+                        <!-- Modèle -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; max-width: 260px;">
+                            <label for="input-veh-modele" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                                Modèle du véhicule
+                            </label>
+                            <input type="text" id="input-veh-modele" class="modal-input" placeholder="Ex: QASHQAI II 1.2 DIG-T" 
+                                   style="font-size: 13px; font-weight: 600;">
+                        </div>
+
+                        <!-- VIN / Châssis -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; max-width: 240px;">
+                            <label for="input-veh-vin" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                                N° Châssis (VIN)
+                            </label>
+                            <input type="text" id="input-veh-vin" class="modal-input" placeholder="17 caractères..." maxlength="17" 
+                                   style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;">
+                        </div>
+
+                        <!-- Date constr -->
+                        <div style="display: flex; flex-direction: column; gap: 4px; width: 100px;">
+                            <label for="input-veh-date" style="font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.8px;">
+                                Date constr.
+                            </label>
+                            <input type="text" id="input-veh-date" class="modal-input" placeholder="MM/AAAA" maxlength="7" 
+                                   style="text-align: center; font-size: 12px; font-family: 'JetBrains Mono', monospace;">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button class="btn btn-glass" id="btn-open-db-veh" style="padding: 8px 12px; font-size: 11px;">
+                            📚 Base (<span id="db-count-badge">0</span>)
+                        </button>
+                        <button class="btn btn-glass" id="btn-vider-veh" title="Vider les champs" style="padding: 8px 10px; font-size: 11px; color: var(--text-muted);">
+                            ✕
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -719,7 +758,7 @@
                     </button>
                 </div>
 
-                <div class="nav-btns">
+                <div id="nav-btns" class="nav-btns">
                     <button id="btn-prev" class="btn-nav-item">◀ Pièce précédente</button>
                     <span id="nav-hint-text" style="font-size: 11px; color: var(--text-muted);">Touche 1 = En Stock | Touche 2 = Pas en Stock</span>
                     <button id="btn-next" class="btn-nav-item">Pièce suivante ▶</button>
@@ -1061,7 +1100,7 @@
         }
 
         /* -------------------------------------------------------------------------
-           BASE DE DONNÉES LOCALE (localStorage) & AUTO-REMPLISSAGE EN TEMPS RÉEL
+           BASE DE DONNÉES LOCALE (localStorage) & GESTION VÉHICULE
            ------------------------------------------------------------------------- */
         const STORAGE_KEY_VEH = 'atelier_sofibrie_vehicules_db';
 
@@ -1181,22 +1220,153 @@
             synchroniserDonneesVehicule(enregistrer);
         }
 
-        // Détection de collage rapide partout sur la page
-        document.addEventListener('paste', (e) => {
-            if (['TEXTAREA', 'INPUT'].includes(e.target.tagName)) return;
-            const texteColle = (e.clipboardData || window.clipboardData).getData('text');
-            if (!texteColle) return;
+        /* -------------------------------------------------------------------------
+           MOTEUR D'EXTRACTION DE TEXTE & SCAN OCR D'IMAGES (Tesseract.js)
+           ------------------------------------------------------------------------- */
+        function extraireInfosDepuisTexte(texteBrut) {
+            if (!texteBrut) return false;
+            let trouve = false;
 
-            const vinMatch = texteColle.match(/\b([A-HJ-NPR-Z0-9]{17})\b/i);
-            const immatMatch = texteColle.match(/\b([A-Z]{2}[- ]?[0-9]{3}[- ]?[A-Z]{2})\b/i);
-            const modMatch = texteColle.match(/\b(PIXO|JUKE|QASHQAI|MICRA|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR)[^\n\r]*/i);
+            // 1. Modèle (Nissan & MG)
+            const modMatch = texteBrut.match(/\b(PIXO|JUKE|QASHQAI|MICRA(?:\s*C\+C)?|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR|MG4|MG ZS|MG3|MG5|MG EHS|CYBERSTER)[^\n\r]*/i);
+            if (modMatch) {
+                inputModele.value = modMatch[0].replace(/\s+/g, ' ').trim().slice(0, 35);
+                trouve = true;
+            }
 
-            if (vinMatch || immatMatch || modMatch) {
-                if (immatMatch) inputImmat.value = immatMatch[1].replace(/[\s-]/g, '').toUpperCase();
-                if (vinMatch) inputVin.value = vinMatch[1].toUpperCase();
-                if (modMatch) inputModele.value = modMatch[0].trim().slice(0, 35);
+            // 2. Immatriculation (Recherche ciblée après "Immatriculation" + correction SIV)
+            let immatBrute = null;
+            const matchApresLabel = texteBrut.match(/Immatriculation[^\w\n\r]*([A-Z0-9\s-]{6,12})/i);
+            if (matchApresLabel) {
+                immatBrute = matchApresLabel[1].replace(/[\s-]/g, '').toUpperCase();
+            } else {
+                const matchGen = texteBrut.match(/\b([A-Z0-9]{2}[- ]?[A-Z0-9]{3}[- ]?[A-Z0-9]{2})\b/i);
+                if (matchGen) immatBrute = matchGen[1].replace(/[\s-]/g, '').toUpperCase();
+            }
+
+            if (immatBrute && immatBrute.length >= 7) {
+                let car = immatBrute.slice(0, 7).split('');
+                // Lettre -> Chiffre -> Lettre (Format SIV strict : LL-NNN-LL)
+                const versLettre = (c) => ({ '8': 'B', '2': 'Z', '0': 'O', '1': 'I', '5': 'S', '6': 'G' }[c] || c);
+                const versChiffre = (c) => ({ 'B': '8', 'Z': '2', 'O': '0', 'I': '1', 'S': '5', 'G': '6' }[c] || c);
+
+                car[0] = versLettre(car[0]);
+                car[1] = versLettre(car[1]);
+                car[2] = versChiffre(car[2]);
+                car[3] = versChiffre(car[3]);
+                car[4] = versChiffre(car[4]);
+                car[5] = versLettre(car[5]);
+                car[6] = versLettre(car[6]);
+
+                inputImmat.value = car.join('');
+                trouve = true;
+            }
+
+            // 3. VIN / N° Châssis (Recherche après "VIN" + correction des confusions OCR)
+            let vinBrut = null;
+            const vinMatchLabel = texteBrut.match(/VIN[^\w\n\r]*([A-Z0-9\s]{15,22})/i);
+            if (vinMatchLabel) {
+                vinBrut = vinMatchLabel[1].replace(/\s+/g, '').toUpperCase();
+            } else {
+                const matchGenVIN = texteBrut.match(/\b([A-Z0-9]{17})\b/i);
+                if (matchGenVIN) vinBrut = matchGenVIN[1].toUpperCase();
+            }
+
+            if (vinBrut && vinBrut.length >= 17) {
+                let vinNet = vinBrut.slice(0, 17);
+                // Correction spécifique Nissan (S1N -> SJN Sunderland)
+                if (vinNet.startsWith("S1N") || vinNet.startsWith("SIN")) {
+                    vinNet = "SJN" + vinNet.slice(3);
+                }
+                // Si la position 4 est un Z sur une Micra/Note, c'est le chiffre 2 (moteur CR12 / HR12)
+                if (vinNet.startsWith("SJN") && vinNet[3] === 'Z') {
+                    vinNet = vinNet.substring(0, 3) + '2' + vinNet.substring(4);
+                }
+                // Remplacement global des lettres interdites en VIN (ISO 3779)
+                vinNet = vinNet.replace(/O/g, '0').replace(/Q/g, '0');
+                inputVin.value = vinNet;
+                trouve = true;
+            }
+
+            // 4. Date de construction (Ciblée après "construction" pour ignorer les années du modèle)
+            const dateConstrMatch = texteBrut.match(/(?:construction|date)[^\d\n\r]*([0-1]?[0-9])\s*[\/]\s*([12][0-9]{3})/i);
+            if (dateConstrMatch) {
+                const mois = dateConstrMatch[1].padStart(2, '0');
+                const annee = dateConstrMatch[2];
+                inputDate.value = `${mois}/${annee}`;
+                trouve = true;
+            }
+
+            if (trouve) {
                 animerConfirmationDetection();
                 synchroniserDonneesVehicule(true);
+            }
+            return trouve;
+        }
+
+        async function analyserImageOCR(imageSource) {
+            const loader = document.getElementById('ocr-loader-text');
+            loader.classList.remove('hidden');
+            loader.textContent = "⏳ Analyse de l'image (OCR)...";
+
+            try {
+                if (typeof Tesseract === 'undefined') {
+                    throw new Error("Bibliothèque OCR non chargée.");
+                }
+                const res = await Tesseract.recognize(imageSource, 'fra+eng', {
+                    logger: m => {
+                        if (m.status === 'recognizing text') {
+                            loader.textContent = `⏳ Détection du texte : ${Math.round(m.progress * 100)}%`;
+                        }
+                    }
+                });
+
+                const texteExtrait = res.data.text;
+                const reussi = extraireInfosDepuisTexte(texteExtrait);
+
+                if (reussi) {
+                    loader.textContent = "✓ Véhicule détecté !";
+                    setTimeout(() => loader.classList.add('hidden'), 2200);
+                } else {
+                    loader.textContent = "⚠️ Aucun VIN ou Plaque lisible";
+                    setTimeout(() => loader.classList.add('hidden'), 2600);
+                }
+            } catch (err) {
+                loader.textContent = "✕ Erreur lecture image";
+                setTimeout(() => loader.classList.add('hidden'), 2600);
+            }
+        }
+
+        // Détection de collage rapide partout sur la page (Texte ou Image Presse-Papier)
+        document.addEventListener('paste', (e) => {
+            const items = (e.clipboardData || window.clipboardData).items;
+            let imageTrouvee = false;
+
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const blob = items[i].getAsFile();
+                    analyserImageOCR(blob);
+                    imageTrouvee = true;
+                    break;
+                }
+            }
+
+            if (imageTrouvee) return;
+
+            // Si ce n'est pas une image, analyse du texte collé
+            if (['TEXTAREA', 'INPUT'].includes(e.target.tagName)) return;
+            const texteColle = (e.clipboardData || window.clipboardData).getData('text');
+            if (texteColle) {
+                extraireInfosDepuisTexte(texteColle);
+            }
+        });
+
+        // Bouton de sélection manuelle d'une capture d'écran
+        const fileInputOcr = document.getElementById('file-input-ocr');
+        document.getElementById('btn-trigger-ocr').addEventListener('click', () => fileInputOcr.click());
+        fileInputOcr.addEventListener('change', (e) => {
+            if (e.target.files.length) {
+                analyserImageOCR(e.target.files[0]);
             }
         });
 
@@ -1266,7 +1436,6 @@
             });
         }
 
-        // Export JSON & CSV de la base
         document.getElementById('btn-export-db-json').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chargerBaseVehicules(), null, 2));
             const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "base_vehicules_atelier.json"); dl.click();
@@ -1282,7 +1451,6 @@
             const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "base_vehicules_atelier.csv"; a.click();
         });
 
-        // Import JSON
         const fileImportDb = document.getElementById('file-import-db');
         document.getElementById('btn-import-db-trigger').addEventListener('click', () => fileImportDb.click());
         fileImportDb.addEventListener('change', (e) => {
