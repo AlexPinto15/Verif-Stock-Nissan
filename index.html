@@ -7,9 +7,9 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 168'%3E%3Crect width='200' height='168' rx='36' fill='%2307090e'/%3E%3Cpath d='M 18 65 L 182 65 C 185 65 186 63 185 60 C 170 25 137 4 100 4 C 63 4 30 25 15 60 C 14 63 15 65 18 65 Z M 100 15 C 131 15 158 32 171 56 L 29 56 C 42 32 69 15 100 15 Z' fill='%23ffffff'/%3E%3Cpath d='M 18 103 L 182 103 C 185 103 186 105 185 108 C 170 143 137 164 100 164 C 63 164 30 143 15 108 C 14 105 15 103 18 103 Z M 100 153 C 131 153 158 136 171 112 L 29 112 C 42 136 69 153 100 153 Z' fill='%23ffffff'/%3E%3Crect x='16' y='74' width='168' height='20' rx='3' fill='%23c3002f'/%3E%3C/svg%3E">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
-    <!-- SheetJS pour lecture Excel (.xlsx / .csv) -->
+    <!-- SheetJS pour lecture/écriture Excel (.xlsx / .csv) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -80,272 +80,103 @@
             flex-wrap: wrap;
         }
 
-        .logo-title {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            cursor: pointer;
-        }
+        .logo-title { display: flex; align-items: center; gap: 16px; cursor: pointer; }
 
         .nissan-logo-wrapper {
-            width: 56px;
-            height: 46px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            filter: drop-shadow(0 2px 10px rgba(255, 255, 255, 0.15));
-            transition: transform 0.25s ease, filter 0.25s ease;
+            width: 56px; height: 46px; display: flex; align-items: center; justify-content: center;
+            filter: drop-shadow(0 2px 10px rgba(255, 255, 255, 0.15)); transition: transform 0.25s ease;
         }
-
-        .logo-title:hover .nissan-logo-wrapper {
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 14px rgba(195, 0, 47, 0.55));
-        }
-
+        .logo-title:hover .nissan-logo-wrapper { transform: scale(1.05); }
         .nissan-logo-svg { width: 100%; height: 100%; display: block; }
 
-        .title-container h1 {
-            font-size: 17px;
-            font-weight: 800;
-            letter-spacing: 0.6px;
-            color: #ffffff;
-            text-transform: uppercase;
-        }
+        .title-container h1 { font-size: 17px; font-weight: 800; letter-spacing: 0.6px; color: #ffffff; text-transform: uppercase; }
+        .title-container p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
-        .title-container p {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .app-switcher-bar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .app-switcher-bar { display: flex; align-items: center; gap: 8px; }
 
         .btn-portal {
-            background: rgba(255, 255, 255, 0.06);
-            color: #ffffff;
-            border: 1px solid var(--border-highlight);
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-            font-family: inherit;
+            background: rgba(255, 255, 255, 0.06); color: #ffffff; border: 1px solid var(--border-highlight);
+            padding: 8px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; font-family: inherit;
         }
-
-        .btn-portal:hover {
-            background: var(--nissan-red);
-            border-color: var(--nissan-red);
-            box-shadow: 0 4px 15px var(--nissan-red-glow);
-            transform: translateY(-1px);
-        }
+        .btn-portal:hover { background: var(--nissan-red); border-color: var(--nissan-red); }
 
         .quick-switch-select {
-            background: rgba(18, 22, 33, 0.95);
-            color: var(--text-main);
-            border: 1px solid var(--border-subtle);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            font-family: inherit;
-            outline: none;
+            background: rgba(18, 22, 33, 0.95); color: var(--text-main); border: 1px solid var(--border-subtle);
+            padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; outline: none;
         }
-
-        .quick-switch-select:hover { border-color: var(--border-highlight); }
 
         .badge-gass {
-            background: rgba(16, 185, 129, 0.12);
-            color: #34d399;
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 6px 14px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 6px 14px; border-radius: 999px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;
         }
+        .badge-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
 
-        .badge-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #10b981;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.15); }
-        }
-
-        main {
-            max-width: 1120px;
-            width: 100%;
-            margin: 32px auto;
-            padding: 0 24px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-        }
-
-        .app-screen {
-            display: none;
-            flex-direction: column;
-            gap: 24px;
-            width: 100%;
-            min-width: 0;
-            animation: fadeIn 0.25s ease-out;
-        }
-
+        main { max-width: 1120px; width: 100%; margin: 32px auto; padding: 0 24px; flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
+        .app-screen { display: none; flex-direction: column; gap: 24px; width: 100%; min-width: 0; }
         .app-screen.active-screen { display: flex; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
 
         .hub-hero { text-align: center; margin: 16px 0 12px 0; }
         .hub-hero h2 { font-size: 28px; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; margin-bottom: 8px; }
         .hub-hero p { font-size: 14px; color: var(--text-secondary); }
 
-        .launcher-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 22px;
-            margin-top: 12px;
-        }
+        .launcher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 22px; margin-top: 12px; }
 
         .app-tile {
-            background: var(--bg-surface);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 22px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 22px;
-            cursor: pointer;
-            transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            background: var(--bg-surface); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle);
+            border-radius: 22px; padding: 30px; display: flex; flex-direction: column; justify-content: space-between;
+            gap: 22px; cursor: pointer; transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
         }
-
-        .app-tile::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 4px;
-            background: var(--tile-accent, var(--nissan-red));
-            opacity: 0.85;
-        }
-
-        .app-tile:hover {
-            transform: translateY(-6px);
-            border-color: var(--border-highlight);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55);
-        }
+        .app-tile::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--tile-accent, var(--nissan-red)); opacity: 0.85; }
+        .app-tile:hover { transform: translateY(-6px); border-color: var(--border-highlight); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.55); }
 
         .tile-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-        .tile-icon {
-            width: 58px; height: 58px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
-        }
-        .tile-badge {
-            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 10px; border-radius: 999px;
-            background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); border: 1px solid var(--border-subtle);
-        }
+        .tile-icon { width: 58px; height: 58px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25); }
+        .tile-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; padding: 4px 10px; border-radius: 999px; background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
         .tile-body h3 { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 8px; }
         .tile-body p { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
         .tile-features { display: flex; flex-wrap: wrap; gap: 8px; }
-        .tile-feature-tag {
-            font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.04);
-            color: var(--text-main); border: 1px solid var(--border-subtle);
-        }
-        .tile-footer {
-            display: flex; align-items: center; justify-content: space-between; padding-top: 16px;
-            border-top: 1px solid var(--border-subtle); font-size: 13px; font-weight: 700; color: #ffffff;
-        }
-        .tile-arrow { transition: transform 0.2s ease; }
-        .app-tile:hover .tile-arrow { transform: translateX(5px); }
+        .tile-feature-tag { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; background: rgba(255, 255, 255, 0.04); color: var(--text-main); border: 1px solid var(--border-subtle); }
+        .tile-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border-subtle); font-size: 13px; font-weight: 700; color: #ffffff; }
 
         .drop-zone {
-            background: var(--bg-surface);
-            backdrop-filter: blur(12px);
-            border: 2px dashed rgba(255, 255, 255, 0.12);
-            border-radius: 20px;
-            padding: 44px 30px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-            cursor: pointer;
+            background: var(--bg-surface); backdrop-filter: blur(12px); border: 2px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 20px; padding: 38px 30px; text-align: center; transition: all 0.3s; position: relative;
+            overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35); cursor: pointer;
         }
-
-        .drop-zone.compact {
-            padding: 20px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-align: left;
-            border-style: solid;
-            border-width: 1px;
-        }
-
-        .drop-zone.compact .icon-upload { margin: 0; width: 42px; height: 42px; }
+        .drop-zone.compact { padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; text-align: left; border-style: solid; border-width: 1px; }
+        .drop-zone.compact .icon-upload { margin: 0; width: 40px; height: 40px; }
         .drop-zone.compact .drop-info { display: flex; align-items: center; gap: 16px; }
-        .drop-zone.compact .drop-sub { margin-bottom: 0; }
 
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: var(--nissan-red);
-            background: rgba(24, 20, 30, 0.85);
-            box-shadow: 0 20px 50px rgba(195, 0, 47, 0.12);
-        }
-
-        .icon-upload {
-            width: 56px; height: 56px;
-            background: linear-gradient(135deg, rgba(195, 0, 47, 0.25), rgba(195, 0, 47, 0.08));
-            border: 1px solid rgba(195, 0, 47, 0.4); color: #ff4d6d; border-radius: 16px;
-            display: flex; align-items: center; justify-content: center; margin: 0 auto 18px auto;
-            box-shadow: 0 8px 24px rgba(195, 0, 47, 0.2);
-        }
-
-        .drop-title { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
-        .drop-sub { font-size: 13px; color: var(--text-secondary); margin-bottom: 24px; }
+        .icon-upload { width: 52px; height: 52px; background: linear-gradient(135deg, rgba(195, 0, 47, 0.25), rgba(195, 0, 47, 0.08)); border: 1px solid rgba(195, 0, 47, 0.4); color: #ff4d6d; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px auto; }
+        .drop-title { font-size: 17px; font-weight: 700; color: #ffffff; margin-bottom: 4px; }
+        .drop-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 20px; }
         .btn-group { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
 
         .btn {
-            border: none; padding: 11px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
+            border: none; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer;
             transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; font-family: inherit;
         }
         .btn:active { transform: scale(0.97); }
         .btn-red { background: linear-gradient(135deg, var(--nissan-red), #9e0026); color: #ffffff; box-shadow: 0 4px 15px var(--nissan-red-glow); }
-        .btn-red:hover { background: linear-gradient(135deg, var(--nissan-red-hover), var(--nissan-red)); box-shadow: 0 6px 22px rgba(195, 0, 47, 0.5); transform: translateY(-1px); }
         .btn-blue { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #ffffff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35); }
-        .btn-blue:hover { background: linear-gradient(135deg, #60a5fa, #3b82f6); transform: translateY(-1px); }
+        .btn-purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: #ffffff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.35); }
         .btn-orange { background: linear-gradient(135deg, var(--mg-orange), #c2410c); color: #ffffff; box-shadow: 0 4px 15px var(--mg-orange-glow); }
-        .btn-orange:hover { background: linear-gradient(135deg, var(--mg-orange-hover), var(--mg-orange)); transform: translateY(-1px); }
         .btn-glass { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--border-subtle); }
-        .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-highlight); transform: translateY(-1px); }
+        .btn-glass:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-highlight); }
+
+        /* Fiche Véhicule Microcat */
+        .vehicule-card {
+            background: linear-gradient(135deg, rgba(14, 20, 32, 0.95), rgba(18, 26, 42, 0.95));
+            border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 18px 24px;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .vehicule-details { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+        .vehicule-item span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); display: block; font-weight: 700; }
+        .vehicule-item strong { font-size: 15px; color: #ffffff; font-family: 'JetBrains Mono', monospace; font-weight: 700; }
 
         .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
         .kpi-card {
@@ -357,22 +188,12 @@
         .kpi-value { font-size: 24px; font-weight: 800; font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
         .kpi-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
 
-        /* Étape Bannière */
         .step-phase-banner {
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.18), rgba(18, 22, 33, 0.85));
-            border: 1px solid var(--blue-border);
-            border-radius: 14px;
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            flex-wrap: wrap;
+            border: 1px solid var(--blue-border); border-radius: 14px; padding: 14px 20px;
+            display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
         }
-        .step-phase-banner.phase-usine {
-            background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(18, 22, 33, 0.85));
-            border-color: rgba(234, 88, 12, 0.45);
-        }
+        .step-phase-banner.phase-usine { background: linear-gradient(135deg, rgba(234, 88, 12, 0.18), rgba(18, 22, 33, 0.85)); border-color: rgba(234, 88, 12, 0.45); }
         .phase-title { font-size: 14px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
         .phase-desc { font-size: 12px; color: var(--text-secondary); }
 
@@ -381,41 +202,21 @@
             border-radius: 20px; padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative; overflow: hidden;
         }
-        .card-pas-a-pas::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%;
-            background: linear-gradient(180deg, var(--blue), #60a5fa);
-        }
-        .card-pas-a-pas.theme-usine::before {
-            background: linear-gradient(180deg, var(--nissan-red), #ff4d6d);
-        }
-        .pas-header {
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
-            margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle);
-        }
+        .card-pas-a-pas::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: linear-gradient(180deg, var(--blue), #60a5fa); }
+        .card-pas-a-pas.theme-usine::before { background: linear-gradient(180deg, var(--nissan-red), #ff4d6d); }
+
+        .pas-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-subtle); }
         .pas-header-left { display: flex; align-items: center; gap: 12px; }
-        .pas-tag {
-            background: rgba(59, 130, 246, 0.18); color: #93c5fd; border: 1px solid var(--blue-border);
-            font-size: 11px; font-weight: 700; letter-spacing: 0.8px; padding: 5px 12px; border-radius: 6px; text-transform: uppercase;
-        }
-        .pas-tag.tag-usine {
-            background: rgba(195, 0, 47, 0.18); color: #ff6b8b; border: 1px solid rgba(195, 0, 47, 0.4);
-        }
+        .pas-tag { background: rgba(59, 130, 246, 0.18); color: #93c5fd; border: 1px solid var(--blue-border); font-size: 11px; font-weight: 700; letter-spacing: 0.8px; padding: 5px 12px; border-radius: 6px; text-transform: uppercase; }
+        .pas-tag.tag-usine { background: rgba(195, 0, 47, 0.18); color: #ff6b8b; border: 1px solid rgba(195, 0, 47, 0.4); }
         .pas-counter { font-size: 14px; color: var(--text-main); font-weight: 600; }
         .pas-header-right { display: flex; align-items: center; gap: 16px; }
-        .auto-copy-toggle {
-            display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary);
-            cursor: pointer; user-select: none; background: rgba(255, 255, 255, 0.03); padding: 6px 12px;
-            border-radius: 8px; border: 1px solid var(--border-subtle);
-        }
-        .auto-copy-toggle input { accent-color: var(--nissan-red); cursor: pointer; }
+        .auto-copy-toggle { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); cursor: pointer; user-select: none; background: rgba(255, 255, 255, 0.03); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border-subtle); }
         .progress-wrapper { width: 160px; background: rgba(255, 255, 255, 0.07); height: 8px; border-radius: 999px; overflow: hidden; }
         .progress-bar { height: 100%; background: linear-gradient(90deg, var(--blue), #60a5fa); border-radius: 999px; transition: width 0.35s ease; }
         .progress-bar.bar-usine { background: linear-gradient(90deg, var(--nissan-red), #ff4d6d); }
 
-        .ref-card {
-            background: linear-gradient(145deg, rgba(10, 13, 20, 0.9), rgba(15, 19, 30, 0.9));
-            border: 1px solid var(--border-highlight); border-radius: 16px; padding: 24px 28px; margin-bottom: 22px;
-        }
+        .ref-card { background: linear-gradient(145deg, rgba(10, 13, 20, 0.9), rgba(15, 19, 30, 0.9)); border: 1px solid var(--border-highlight); border-radius: 16px; padding: 24px 28px; margin-bottom: 22px; }
         .ref-top-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .ref-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-secondary); font-weight: 700; }
         .ref-flex { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; padding: 6px 0 16px 0; }
@@ -423,23 +224,12 @@
 
         .ref-edit-wrapper { display: flex; align-items: center; gap: 10px; width: 100%; flex-wrap: wrap; }
         .ref-edit-input {
-            background: rgba(7, 9, 14, 0.95);
-            border: 2px solid var(--nissan-red); color: #ffffff; font-size: 28px;
-            font-family: 'JetBrains Mono', monospace; font-weight: 800; padding: 6px 14px;
-            border-radius: 10px; outline: none; letter-spacing: 1px; flex-grow: 1; max-width: 420px;
+            background: rgba(7, 9, 14, 0.95); border: 2px solid var(--nissan-red); color: #ffffff; font-size: 28px;
+            font-family: 'JetBrains Mono', monospace; font-weight: 800; padding: 6px 14px; border-radius: 10px; outline: none; letter-spacing: 1px; flex-grow: 1; max-width: 420px;
         }
 
-        .btn-edit-ref {
-            background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle); color: var(--text-secondary);
-            font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px;
-        }
-        .btn-edit-ref:hover { background: rgba(255, 255, 255, 0.15); color: #fff; }
-
-        .btn-copy {
-            background: linear-gradient(135deg, var(--nissan-red), #9e0026); color: #fff; border: none;
-            padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer;
-            transition: all 0.2s ease; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 20px var(--nissan-red-glow);
-        }
+        .btn-edit-ref { background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border-subtle); color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-copy { background: linear-gradient(135deg, var(--nissan-red), #9e0026); color: #fff; border: none; padding: 14px 24px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 6px 20px var(--nissan-red-glow); }
         .btn-copy.copied { background: linear-gradient(135deg, #10b981, #059669); }
 
         .details-grid { display: grid; grid-template-columns: auto 1fr; gap: 32px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
@@ -448,27 +238,19 @@
         .detail-item strong { font-size: 15px; color: #ffffff; font-weight: 700; }
 
         .action-btns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 18px; }
-        .btn-decision {
-            padding: 18px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease;
-        }
+        .btn-decision { padding: 18px; border-radius: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s ease; }
         .btn-stock { background: linear-gradient(135deg, rgba(59, 130, 246, 0.22), rgba(37, 99, 235, 0.12)); color: #93c5fd; border: 1.5px solid var(--blue-border); }
         .btn-stock:hover { background: linear-gradient(135deg, #3b82f6, #2563eb); color: #fff; transform: translateY(-2px); }
-        
         .btn-nostock { background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.12)); color: #fcd34d; border: 1.5px solid var(--amber-border); }
         .btn-nostock:hover { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; transform: translateY(-2px); }
-
         .btn-dispo { background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.12)); color: #6ee7b7; border: 1.5px solid var(--emerald-border); }
         .btn-dispo:hover { background: linear-gradient(135deg, #10b981, #059669); color: #fff; transform: translateY(-2px); }
-        
         .btn-rupture { background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(225, 29, 72, 0.12)); color: #fda4af; border: 1.5px solid var(--rose-border); }
         .btn-rupture:hover { background: linear-gradient(135deg, #f43f5e, #e11d48); color: #fff; transform: translateY(-2px); }
-
         .key-hint { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.15); }
 
         .nav-btns { display: flex; justify-content: space-between; align-items: center; padding-top: 8px; }
         .btn-nav-item { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); color: var(--text-secondary); cursor: pointer; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; }
-        .btn-nav-item:hover:not(:disabled) { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
         .btn-nav-item:disabled { opacity: 0.35; cursor: not-allowed; }
 
         .table-card {
@@ -479,11 +261,8 @@
         .table-header-left h3 { font-size: 16px; color: #ffffff; font-weight: 700; }
         .table-header-left p { font-size: 12px; color: var(--text-secondary); }
         .export-group { display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn-export-xlsx {
-            background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none;
-            padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 8px;
-        }
+        .btn-export-xlsx { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; border: none; padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: gap: 8px; }
+        
         .table-container { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border-subtle); max-width: 100%; }
         table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
         th { background: rgba(10, 13, 20, 0.85); color: var(--text-secondary); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 14px 16px; border-bottom: 1px solid var(--border-subtle); }
@@ -505,41 +284,172 @@
             padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
         }
         .conv-field { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-secondary); }
-        
         .conv-input {
             background: rgba(10, 13, 20, 0.9); border: 1px solid var(--border-highlight); color: #ffffff;
             padding: 8px 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 800; text-align: center; letter-spacing: 1.5px;
         }
-        .conv-input:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 10px rgba(59, 130, 246, 0.35); }
-        
         .btn-mini-step {
             background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-subtle); color: #fff;
-            width: 30px; height: 34px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 14px; transition: all 0.15s;
+            width: 30px; height: 34px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 14px;
         }
-        .btn-mini-step:hover { background: rgba(59, 130, 246, 0.25); border-color: var(--blue); }
 
         .preview-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; width: 100%; min-width: 0; }
         .preview-col { min-width: 0; max-width: 100%; display: flex; flex-direction: column; }
         .code-box {
             background: #06080d; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 16px;
-            font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #34d399; height: 260px; width: 100%; max-width: 100%;
-            overflow-x: auto; overflow-y: auto; white-space: pre; box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #34d399; height: 260px; width: 100%;
+            overflow: auto; white-space: pre; box-sizing: border-box;
         }
         .toast-notif {
             display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: #34d399;
-            background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); padding: 4px 10px; border-radius: 999px; transition: opacity 0.3s;
+            background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); padding: 4px 10px; border-radius: 999px;
         }
         .hidden { display: none !important; }
 
+        /* Fenêtre Modale d'Impression et de Base de données */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #10141e; border: 1px solid var(--border-highlight);
+            border-radius: 20px; padding: 30px; width: 100%; max-width: 480px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        }
+        .modal-title { font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .modal-desc { font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; }
+        .modal-checkbox-row {
+            display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.04);
+            padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-subtle); cursor: pointer; margin-bottom: 18px;
+        }
+        .modal-checkbox-row input { accent-color: var(--blue); width: 18px; height: 18px; cursor: pointer; }
+        .modal-form-fields { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+        .modal-field { display: flex; flex-direction: column; gap: 6px; }
+        .modal-field label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+        .modal-input {
+            background: #090c13; border: 1px solid var(--border-subtle); color: #fff;
+            padding: 10px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none;
+        }
+        .modal-input:focus { border-color: var(--blue); }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
+
+        /* Conteneur d'impression A4 uniquement visible à l'impression */
+        #print-container { display: none; }
+
+        /* ================= STYLE STRICT IMPRESSION PAPIER (A4) ================= */
+        @page {
+            size: A4 portrait;
+            margin: 8mm 10mm 8mm 10mm;
+        }
+
+        @media print {
+            html, body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+
+            header, footer, main, .modal-overlay, #screen-hub, #screen-stock, 
+            #screen-convertisseur, #screen-conv-mg, #vehicule-card {
+                display: none !important;
+            }
+
+            #print-container {
+                display: block !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .print-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                border-bottom: 2px solid #000;
+                padding-bottom: 6px;
+                margin-top: 0 !important;
+                margin-bottom: 10px;
+            }
+            .print-header h1 { font-size: 16pt; font-weight: 800; margin: 0; color: #000; text-transform: uppercase; }
+            .print-header p { font-size: 8pt; color: #444; margin: 2px 0 0 0; }
+            .print-date { font-size: 8pt; text-align: right; color: #333; }
+
+            .print-grid-cards {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 12px;
+            }
+            .print-card {
+                border: 1px solid #000;
+                border-radius: 6px;
+                padding: 7px 10px;
+            }
+            .print-card-title {
+                font-size: 8pt;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 2px;
+                margin-bottom: 5px;
+                color: #000;
+            }
+            .print-info-row { display: flex; justify-content: space-between; font-size: 8.5pt; margin-bottom: 2px; }
+            .print-info-row span { color: #555; }
+            .print-info-row strong { color: #000; font-family: monospace; font-size: 9pt; }
+
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 4px;
+                font-size: 8.5pt;
+            }
+            .print-table th {
+                background: #f0f0f0 !important;
+                color: #000 !important;
+                border: 1px solid #000 !important;
+                padding: 4px 6px !important;
+                font-size: 8pt !important;
+                text-transform: uppercase;
+                text-align: left;
+            }
+            .print-table td {
+                border: 1px solid #bbb !important;
+                padding: 4px 6px !important;
+                color: #000 !important;
+            }
+            .print-st-badge {
+                font-weight: 800;
+                font-size: 7.5pt;
+                text-transform: uppercase;
+                display: inline-block;
+                padding: 1px 4px;
+                border-radius: 3px;
+                border: 1px solid #000;
+            }
+            .print-footer {
+                margin-top: 14px;
+                border-top: 1px solid #ccc;
+                padding-top: 5px;
+                display: flex;
+                justify-content: space-between;
+                font-size: 7.5pt;
+                color: #666;
+            }
+        }
+
         footer { background: rgba(10, 13, 20, 0.85); border-top: 1px solid var(--border-subtle); padding: 18px 36px; font-size: 12px; color: var(--text-muted); }
         .footer-inner { max-width: 1120px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-
-        @media (max-width: 900px) {
-            .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-            .action-btns, .preview-grid { grid-template-columns: minmax(0, 1fr); }
-            .ref-code { font-size: 26px; }
-            .drop-zone.compact { flex-direction: column; gap: 14px; text-align: center; }
-        }
     </style>
 </head>
 <body>
@@ -572,7 +482,7 @@
                     <button id="btn-back-hub" class="btn-portal hidden" onclick="ouvrirEcran('hub')">
                         ⬅ Menu des Outils
                     </button>
-                    <select id="quick-app-select" class="quick-switch-select" onchange="ouvrirEcran(this.value)" title="Basculer rapidement vers un autre outil">
+                    <select id="quick-app-select" class="quick-switch-select" onchange="ouvrirEcran(this.value)">
                         <option value="hub">🏠 Accueil Portail</option>
                         <option value="stock">📦 Vérificateur Stock (2 Étapes)</option>
                         <option value="convertisseur">🔄 Convertisseur GASS Nissan</option>
@@ -597,7 +507,6 @@
             </div>
 
             <div class="launcher-grid">
-                <!-- Outil 1 : Nissan Stock -->
                 <div class="app-tile" style="--tile-accent: #c3002f;" onclick="ouvrirEcran('stock')">
                     <div>
                         <div class="tile-top">
@@ -608,14 +517,14 @@
                         </div>
                         <div class="tile-body" style="margin-top: 18px;">
                             <h3>Vérificateur Stock (2 Étapes)</h3>
-                            <p>Étape 1 : Vérification rapide en stock magasin. Étape 2 : Vérification automatique de la disponibilité usine pour les pièces manquantes.</p>
+                            <p>Étape 1 : Stock Magasin. Étape 2 : Disponibilité Usine. Base de données locale de véhicules, tri automatique final & impression personnalisée.</p>
                         </div>
                     </div>
                     <div>
                         <div class="tile-features" style="margin-bottom: 18px;">
                             <span class="tile-feature-tag">1. Stock Magasin</span>
                             <span class="tile-feature-tag">2. Dispo Usine</span>
-                            <span class="tile-feature-tag">Bilan Final Auto</span>
+                            <span class="tile-feature-tag">Base Véhicules</span>
                         </div>
                         <div class="tile-footer">
                             <span>Ouvrir le Vérificateur</span>
@@ -624,7 +533,6 @@
                     </div>
                 </div>
 
-                <!-- Outil 2 : Nissan GASS -->
                 <div class="app-tile" style="--tile-accent: #3b82f6;" onclick="ouvrirEcran('convertisseur')">
                     <div>
                         <div class="tile-top">
@@ -651,7 +559,6 @@
                     </div>
                 </div>
 
-                <!-- Outil 3 : Convertisseur MG -->
                 <div class="app-tile" style="--tile-accent: var(--mg-orange);" onclick="ouvrirEcran('conv-mg')">
                     <div>
                         <div class="tile-top">
@@ -680,8 +587,43 @@
             </div>
         </section>
 
-        <!-- SECTION STOCK (NOUVELLE LOGIQUE 2 ÉTAPES) -->
+        <!-- SECTION STOCK -->
         <section id="screen-stock" class="app-screen">
+
+            <!-- Fiche Véhicule avec Recherche Express & Accès Base de Données -->
+            <div id="vehicule-card" class="vehicule-card">
+                <div class="vehicule-details">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="text" id="quick-input-immat" class="modal-input" placeholder="Coller VIN ou Plaque..." style="width: 190px; text-transform: uppercase; font-weight: 800; font-family: 'JetBrains Mono', monospace; text-align: center; border-color: rgba(59, 130, 246, 0.5);">
+                        <button class="btn btn-blue" id="btn-quick-search-veh" style="padding: 8px 14px; font-size: 12px;">Valider</button>
+                    </div>
+                    <div class="vehicule-item">
+                        <span>Modèle</span>
+                        <strong id="veh-modele">Non renseigné</strong>
+                    </div>
+                    <div class="vehicule-item">
+                        <span>Immatriculation</span>
+                        <strong id="veh-immat">--</strong>
+                    </div>
+                    <div class="vehicule-item">
+                        <span>N° Châssis (VIN)</span>
+                        <strong id="veh-vin">--</strong>
+                    </div>
+                    <div class="vehicule-item">
+                        <span>Date constr.</span>
+                        <strong id="veh-date">--</strong>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-glass" id="btn-open-db-veh" style="padding: 8px 12px; font-size: 11px;">
+                        📚 Base Véhicules (<span id="db-count-badge">0</span>)
+                    </button>
+                    <button class="btn btn-glass" id="btn-coller-microcat" style="padding: 8px 12px; font-size: 11px;">
+                        ✏️ Modifier
+                    </button>
+                </div>
+            </div>
+
             <div id="drop-zone" class="drop-zone">
                 <div class="drop-info">
                     <div class="icon-upload">📁</div>
@@ -697,7 +639,6 @@
                 <input type="file" id="file-input" accept=".txt,.xlsx,.xls,.csv" class="hidden">
             </div>
 
-            <!-- Bannière d'Étape Active -->
             <div id="step-phase-banner" class="step-phase-banner hidden">
                 <div>
                     <div id="phase-badge-title" class="phase-title">🏠 ÉTAPE 1 : VÉRIFICATION DU STOCK MAGASIN</div>
@@ -713,7 +654,6 @@
                 <div class="kpi-card"><div><div class="kpi-label">Reste à traiter</div><div class="kpi-value" id="kpi-attente" style="color: #94a3b8;">0</div></div><div class="kpi-icon" style="background: rgba(148, 163, 184, 0.12); color: #94a3b8;">⏳</div></div>
             </div>
 
-            <!-- Fiche Pas-à-Pas -->
             <div id="pas-a-pas-card" class="card-pas-a-pas hidden">
                 <div class="pas-header">
                     <div class="pas-header-left">
@@ -748,7 +688,6 @@
                     </div>
                 </div>
 
-                <!-- Boutons Étape 1 : Stock Magasin -->
                 <div id="action-btns-phase1" class="action-btns">
                     <button id="btn-p1-stock" class="btn-decision btn-stock">
                         <span>🏠 En Stock Magasin</span> <span class="key-hint">Touche 1</span>
@@ -758,7 +697,6 @@
                     </button>
                 </div>
 
-                <!-- Boutons Étape 2 : Disponibilité Usine -->
                 <div id="action-btns-phase2" class="action-btns hidden">
                     <button id="btn-p2-dispo" class="btn-decision btn-dispo">
                         <span>✓ Disponible Usine</span> <span class="key-hint">Touche 1</span>
@@ -779,11 +717,12 @@
             <div id="table-card" class="table-card hidden">
                 <div class="table-header">
                     <div class="table-header-left">
-                        <h3>Récapitulatif de la liste</h3>
+                        <h3>Récapitulatif de la liste (Trié : Stock → Dispo → Rupture)</h3>
                         <p id="table-subtitle">Suivi en direct des vérifications</p>
                     </div>
                     <div class="export-group">
-                        <button id="btn-export-xlsx" class="btn-export-xlsx">💾 Exporter vers Excel (.xlsx)</button>
+                        <button id="btn-open-print-modal" class="btn btn-purple">🖨️ Imprimer la fiche</button>
+                        <button id="btn-export-xlsx" class="btn-export-xlsx">💾 Exporter Excel (.xlsx)</button>
                         <button id="btn-export-csv" class="btn btn-glass">Exporter (.csv)</button>
                     </div>
                 </div>
@@ -804,7 +743,7 @@
             </div>
         </section>
 
-        <!-- SECTION CONVERTISSEUR NISSAN GASS -->
+        <!-- SECTION NISSAN GASS -->
         <section id="screen-convertisseur" class="app-screen">
             <div class="conv-settings-bar">
                 <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -875,7 +814,7 @@
             </div>
         </section>
 
-        <!-- SECTION CONVERTISSEUR MG -->
+        <!-- SECTION MG -->
         <section id="screen-conv-mg" class="app-screen">
             <div class="conv-settings-bar">
                 <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap;">
@@ -948,6 +887,128 @@
 
     </main>
 
+    <!-- FENÊTRE MODALE DE PARAMÉTRAGE D'IMPRESSION -->
+    <div id="modal-print" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-title">🖨️ Impression de la Fiche Atelier</div>
+            <div class="modal-desc">Configurez les options avant de lancer l'impression papier ou PDF.</div>
+
+            <label class="modal-checkbox-row">
+                <input type="checkbox" id="check-attribuer-garage">
+                <span style="font-size: 13px; font-weight: 700; color: #fff;">Attitrer cette fiche à un garage / client professionnel ?</span>
+            </label>
+
+            <div id="modal-garage-fields" class="modal-form-fields hidden">
+                <div class="modal-field">
+                    <label for="input-nom-garage">Nom du garage / Client :</label>
+                    <input type="text" id="input-nom-garage" class="modal-input" placeholder="Ex: GARAGE DU CENTRE">
+                </div>
+                <div class="modal-field">
+                    <label for="input-code-client">Code Client :</label>
+                    <input type="text" id="input-code-client" class="modal-input" placeholder="Ex: CLI-353096">
+                </div>
+                <div class="modal-field">
+                    <label for="input-comm-garage">Commentaire (facultatif) :</label>
+                    <input type="text" id="input-comm-garage" class="modal-input" placeholder="Ex: À livrer demain matin / Devis carrosserie">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-glass" id="btn-cancel-modal-print">Annuler</button>
+                <button class="btn btn-purple" id="btn-confirm-print">🖨️ Lancer l'impression</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE BASE DE DONNÉES VÉHICULES -->
+    <div id="modal-db-veh" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 720px; width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div class="modal-title" style="margin: 0;">📚 Base de Données Véhicules Atelier</div>
+                <button class="btn btn-glass" id="btn-close-db-veh" style="padding: 4px 10px; font-size: 12px;">✕ Fermer</button>
+            </div>
+            <div class="modal-desc" style="margin-bottom: 14px;">
+                Historique des véhicules enregistrés localement. Cliquez sur « Charger » pour appliquer immédiatement la fiche.
+            </div>
+
+            <div style="display: flex; justify-content: space-between; gap: 10px; margin-bottom: 14px; flex-wrap: wrap;">
+                <input type="text" id="input-search-db-veh" class="modal-input" placeholder="🔍 Filtrer par immat, VIN ou modèle..." style="flex-grow: 1; max-width: 320px;">
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-glass" id="btn-export-db-json" style="font-size: 11px;">💾 Exporter (.json)</button>
+                    <button class="btn btn-glass" id="btn-export-db-csv" style="font-size: 11px;">💾 Exporter (.csv)</button>
+                    <button class="btn btn-glass" id="btn-import-db-trigger" style="font-size: 11px;">📥 Importer</button>
+                    <input type="file" id="file-import-db" accept=".json" class="hidden">
+                </div>
+            </div>
+
+            <div style="max-height: 340px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 10px;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                    <thead>
+                        <tr style="background: rgba(10, 13, 20, 0.95); position: sticky; top: 0;">
+                            <th style="padding: 10px; text-align: left;">Immat</th>
+                            <th style="padding: 10px; text-align: left;">VIN</th>
+                            <th style="padding: 10px; text-align: left;">Modèle</th>
+                            <th style="padding: 10px; text-align: center;">Date</th>
+                            <th style="padding: 10px; text-align: center; width: 140px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="db-veh-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEUR DÉDIÉ STRICTEMENT À L'IMPRESSION PAPIER A4 -->
+    <div id="print-container">
+        <div class="print-header">
+            <div>
+                <h1>SOFIBRIE AUTOMOBILES</h1>
+                <p>Magasin Pièces de Rechange & Atelier — Fiche de Contrôle Disponibilité</p>
+            </div>
+            <div class="print-date">
+                Édité le : <strong id="print-date-display">--/--/----</strong>
+            </div>
+        </div>
+
+        <div class="print-grid-cards">
+            <!-- Fiche Véhicule -->
+            <div class="print-card">
+                <div class="print-card-title">Informations Véhicule</div>
+                <div class="print-info-row"><span>Modèle :</span> <strong id="print-veh-modele">--</strong></div>
+                <div class="print-info-row"><span>Immatriculation :</span> <strong id="print-veh-immat">--</strong></div>
+                <div class="print-info-row"><span>N° Châssis (VIN) :</span> <strong id="print-veh-vin">--</strong></div>
+                <div class="print-info-row"><span>Date constr. :</span> <strong id="print-veh-date">--</strong></div>
+            </div>
+
+            <!-- Fiche Garage (Optionnelle) -->
+            <div class="print-card" id="print-card-garage" style="display: none;">
+                <div class="print-card-title">Attribution Garage / Client</div>
+                <div class="print-info-row"><span>Nom du Garage :</span> <strong id="print-garage-nom">--</strong></div>
+                <div class="print-info-row"><span>Code Client :</span> <strong id="print-garage-code">--</strong></div>
+                <div class="print-info-row" id="print-row-comm" style="display: none;"><span>Commentaire :</span> <strong id="print-garage-comm" style="font-family: inherit; font-size: 9pt;">--</strong></div>
+            </div>
+        </div>
+
+        <!-- Tableau des Pièces Imprimées -->
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th style="width: 35px;">#</th>
+                    <th style="width: 140px;">Référence</th>
+                    <th style="width: 50px; text-align: center;">Qté</th>
+                    <th>Désignation Pièce</th>
+                    <th style="width: 150px; text-align: center;">Disponibilité</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body"></tbody>
+        </table>
+
+        <div class="print-footer">
+            <div>Fiche interne éditée pour traitement atelier / magasin</div>
+            <div>Sofibrie Automobiles — Les Pavillons-sous-Bois</div>
+        </div>
+    </div>
+
     <footer>
         <div class="footer-inner">
             <div>© 2026 Outils Atelier — Centralisation Nissan & MG</div>
@@ -987,14 +1048,315 @@
         }
 
         /* -------------------------------------------------------------------------
-           OUTIL 1 : VÉRIFICATEUR STOCK AVEC WORKFLOW EN 2 ÉTAPES
-           Étape 1 : En Stock Magasin / Pas en Stock
-           Étape 2 : Pour les "Pas en Stock", Disponible Usine / Rupture Usine
+           BASE DE DONNÉES LOCALE DES VÉHICULES (localStorage)
+           ------------------------------------------------------------------------- */
+        const STORAGE_KEY_VEH = 'atelier_sofibrie_vehicules_db';
+
+        function chargerBaseVehicules() {
+            try {
+                const brut = localStorage.getItem(STORAGE_KEY_VEH);
+                return brut ? JSON.parse(brut) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function sauvegarderBaseVehicules(base) {
+            localStorage.setItem(STORAGE_KEY_VEH, JSON.stringify(base));
+            mettreAJourCompteurBase();
+        }
+
+        function mettreAJourCompteurBase() {
+            const base = chargerBaseVehicules();
+            const badge = document.getElementById('db-count-badge');
+            if (badge) badge.textContent = base.length;
+        }
+
+        function enregistrerVehiculeDansBase(donnees) {
+            if ((!donnees.immat || donnees.immat === '--') && (!donnees.vin || donnees.vin === '--')) return;
+
+            let base = chargerBaseVehicules();
+            const indexExistant = base.findIndex(v => 
+                (donnees.vin && donnees.vin !== '--' && v.vin === donnees.vin) ||
+                (donnees.immat && donnees.immat !== '--' && v.immat === donnees.immat)
+            );
+
+            const now = new Date();
+            const dateEnreg = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            if (indexExistant !== -1) {
+                base[indexExistant] = {
+                    immat: donnees.immat !== '--' ? donnees.immat : base[indexExistant].immat,
+                    vin: donnees.vin !== '--' ? donnees.vin : base[indexExistant].vin,
+                    modele: (donnees.modele && donnees.modele !== 'Non renseigné') ? donnees.modele : base[indexExistant].modele,
+                    dateConst: donnees.dateConst !== '--' ? donnees.dateConst : base[indexExistant].dateConst,
+                    dateMaj: dateEnreg
+                };
+            } else {
+                base.unshift({
+                    immat: donnees.immat || '--',
+                    vin: donnees.vin || '--',
+                    modele: donnees.modele || 'Non renseigné',
+                    dateConst: donnees.dateConst || '--',
+                    dateMaj: dateEnreg
+                });
+            }
+
+            sauvegarderBaseVehicules(base);
+        }
+
+        function chercherDansBase(recherche) {
+            const clean = recherche.trim().toUpperCase().replace(/[\s-]/g, '');
+            const base = chargerBaseVehicules();
+            return base.find(v => 
+                (v.immat && v.immat.replace(/[\s-]/g, '') === clean) ||
+                (v.vin && v.vin === clean)
+            );
+        }
+
+        /* -------------------------------------------------------------------------
+           GESTION VÉHICULE EN COURS & PARSER AUTO
+           ------------------------------------------------------------------------- */
+        let infoVehicule = {
+            modele: "Non renseigné",
+            immat: "--",
+            vin: "--",
+            dateConst: "--"
+        };
+
+        function appliquerInfosVehicule(data, enregistrerEnBase = true) {
+            if (data.modele) infoVehicule.modele = data.modele;
+            if (data.immat) infoVehicule.immat = data.immat;
+            if (data.vin) infoVehicule.vin = data.vin;
+            if (data.dateConst) infoVehicule.dateConst = data.dateConst;
+
+            document.getElementById('veh-modele').textContent = infoVehicule.modele;
+            document.getElementById('veh-immat').textContent = infoVehicule.immat;
+            document.getElementById('veh-vin').textContent = infoVehicule.vin;
+            document.getElementById('veh-date').textContent = infoVehicule.dateConst;
+
+            const card = document.getElementById('vehicule-card');
+            card.style.borderColor = '#10b981';
+            card.style.boxShadow = '0 0 15px rgba(16, 185, 129, 0.3)';
+            setTimeout(() => {
+                card.style.borderColor = 'rgba(59, 130, 246, 0.35)';
+                card.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
+            }, 1200);
+
+            if (enregistrerEnBase) {
+                enregistrerVehiculeDansBase(infoVehicule);
+            }
+        }
+
+        function parserTexteVehicule(texte) {
+            if (!texte) return false;
+            let brut = texte.trim();
+            let donnees = {};
+
+            // Vérification si déjà en base de données
+            const autoMatch = chercherDansBase(brut);
+            if (autoMatch) {
+                appliquerInfosVehicule(autoMatch, false);
+                return true;
+            }
+
+            // Détection VIN (17 car.)
+            const vinMatch = brut.match(/\b([A-HJ-NPR-Z0-9]{17})\b/i);
+            if (vinMatch) donnees.vin = vinMatch[1].toUpperCase();
+
+            // Détection Immatriculation (AA-123-AA ou ancien format)
+            const immatMatch = brut.match(/\b([A-Z]{2}[- ]?[0-9]{3}[- ]?[A-Z]{2})\b/i) ||
+                               brut.match(/\b([0-9]{1,4}[- ]?[A-Z]{2,3}[- ]?[0-9]{2})\b/i);
+            if (immatMatch) donnees.immat = immatMatch[1].replace(/[\s-]/g, '').toUpperCase();
+
+            // Détection Modèle
+            const modMatch = brut.match(/\b(PIXO|JUKE|QASHQAI|MICRA|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR)[^\n\r]*/i);
+            if (modMatch) donnees.modele = modMatch[0].replace(/\s+/g, ' ').trim().slice(0, 35);
+
+            // Détection Date (MM/AAAA)
+            const dateMatch = brut.match(/\b(0[1-9]|1[0-2])\/([12][0-9]{3})\b/);
+            if (dateMatch) donnees.dateConst = dateMatch[0];
+
+            if (!donnees.vin && !donnees.immat) {
+                let nettoyee = brut.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+                if (nettoyee.length === 17) donnees.vin = nettoyee;
+                else if (nettoyee.length >= 6 && nettoyee.length <= 9) donnees.immat = nettoyee;
+            }
+
+            // Si on a l'immat ou le VIN seul, tentative de croisement avec la base
+            if (donnees.immat && !donnees.vin) {
+                const existant = chercherDansBase(donnees.immat);
+                if (existant) {
+                    donnees.vin = existant.vin;
+                    if (!donnees.modele) donnees.modele = existant.modele;
+                    if (!donnees.dateConst) donnees.dateConst = existant.dateConst;
+                }
+            } else if (donnees.vin && !donnees.immat) {
+                const existant = chercherDansBase(donnees.vin);
+                if (existant) {
+                    donnees.immat = existant.immat;
+                    if (!donnees.modele) donnees.modele = existant.modele;
+                    if (!donnees.dateConst) donnees.dateConst = existant.dateConst;
+                }
+            }
+
+            if (donnees.vin || donnees.immat || donnees.modele) {
+                appliquerInfosVehicule(donnees, true);
+                return true;
+            }
+            return false;
+        }
+
+        function validerSaisieCase() {
+            const val = document.getElementById('quick-input-immat').value;
+            if (parserTexteVehicule(val)) {
+                document.getElementById('quick-input-immat').value = '';
+            }
+        }
+
+        document.getElementById('btn-quick-search-veh').addEventListener('click', validerSaisieCase);
+        document.getElementById('quick-input-immat').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') validerSaisieCase();
+        });
+
+        document.addEventListener('paste', (e) => {
+            if (['TEXTAREA'].includes(e.target.tagName)) return;
+            const texteColle = (e.clipboardData || window.clipboardData).getData('text');
+            if (texteColle && parserTexteVehicule(texteColle)) {
+                if (e.target.id === 'quick-input-immat') {
+                    e.preventDefault();
+                    document.getElementById('quick-input-immat').value = '';
+                }
+            }
+        });
+
+        document.getElementById('btn-coller-microcat').addEventListener('click', () => {
+            const immat = prompt("Numéro d'immatriculation :", infoVehicule.immat !== '--' ? infoVehicule.immat : '');
+            if (immat !== null) {
+                const vin = prompt("Numéro de châssis (VIN) :", infoVehicule.vin !== '--' ? infoVehicule.vin : '');
+                const modele = prompt("Modèle du véhicule :", infoVehicule.modele !== 'Non renseigné' ? infoVehicule.modele : '');
+                const dateConst = prompt("Date de construction (ex: 02/2019) :", infoVehicule.dateConst !== '--' ? infoVehicule.dateConst : '');
+                appliquerInfosVehicule({
+                    immat: immat.trim().toUpperCase() || '--',
+                    vin: vin ? vin.trim().toUpperCase() : '--',
+                    modele: modele ? modele.trim() : 'Non renseigné',
+                    dateConst: dateConst ? dateConst.trim() : '--'
+                }, true);
+            }
+        });
+
+        /* -------------------------------------------------------------------------
+           GESTION MODALE BASE DE DONNÉES VÉHICULES
+           ------------------------------------------------------------------------- */
+        const modalDbVeh = document.getElementById('modal-db-veh');
+        const inputSearchDb = document.getElementById('input-search-db-veh');
+
+        document.getElementById('btn-open-db-veh').addEventListener('click', () => {
+            inputSearchDb.value = '';
+            afficherTableauBase();
+            modalDbVeh.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-close-db-veh').addEventListener('click', () => {
+            modalDbVeh.classList.add('hidden');
+        });
+
+        inputSearchDb.addEventListener('input', afficherTableauBase);
+
+        function afficherTableauBase() {
+            const base = chargerBaseVehicules();
+            const filtre = inputSearchDb.value.trim().toLowerCase();
+            const tbody = document.getElementById('db-veh-table-body');
+            tbody.innerHTML = '';
+
+            const filtres = base.filter(v => 
+                v.immat.toLowerCase().includes(filtre) ||
+                v.vin.toLowerCase().includes(filtre) ||
+                v.modele.toLowerCase().includes(filtre)
+            );
+
+            if (!filtres.length) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Aucun véhicule enregistré pour le moment.</td></tr>`;
+                return;
+            }
+
+            filtres.forEach(v => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid var(--border-subtle)';
+                tr.innerHTML = `
+                    <td style="padding: 8px 10px; font-family: monospace; font-weight: 700; color: #fff;">${v.immat}</td>
+                    <td style="padding: 8px 10px; font-family: monospace; color: var(--text-secondary);">${v.vin}</td>
+                    <td style="padding: 8px 10px;">${v.modele}</td>
+                    <td style="padding: 8px 10px; text-align: center;">${v.dateConst || '--'}</td>
+                    <td style="padding: 8px 10px; text-align: center; display: flex; gap: 6px; justify-content: center;">
+                        <button class="btn btn-blue btn-charger-veh" style="padding: 4px 8px; font-size: 11px;">⚡ Charger</button>
+                        <button class="btn btn-glass btn-suppr-veh" style="padding: 4px 8px; font-size: 11px; color: #fb7185;">✕</button>
+                    </td>
+                `;
+
+                tr.querySelector('.btn-charger-veh').addEventListener('click', () => {
+                    appliquerInfosVehicule(v, false);
+                    modalDbVeh.classList.add('hidden');
+                });
+
+                tr.querySelector('.btn-suppr-veh').addEventListener('click', () => {
+                    if (confirm(`Supprimer le véhicule ${v.immat} (${v.vin}) de la base ?`)) {
+                        const nouvelleBase = chargerBaseVehicules().filter(item => !(item.vin === v.vin && item.immat === v.immat));
+                        sauvegarderBaseVehicules(nouvelleBase);
+                        afficherTableauBase();
+                    }
+                });
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Export JSON & CSV de la base
+        document.getElementById('btn-export-db-json').addEventListener('click', () => {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chargerBaseVehicules(), null, 2));
+            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "base_vehicules_atelier.json"); dl.click();
+        });
+
+        document.getElementById('btn-export-db-csv').addEventListener('click', () => {
+            const base = chargerBaseVehicules();
+            let csv = "Immatriculation;VIN;Modele;DateConstruction;DerniereMaj\n";
+            base.forEach(v => {
+                csv += `"${v.immat}";"${v.vin}";"${v.modele}";"${v.dateConst}";"${v.dateMaj || ''}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=windows-1252;' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "base_vehicules_atelier.csv"; a.click();
+        });
+
+        // Import JSON
+        const fileImportDb = document.getElementById('file-import-db');
+        document.getElementById('btn-import-db-trigger').addEventListener('click', () => fileImportDb.click());
+        fileImportDb.addEventListener('change', (e) => {
+            if (!e.target.files.length) return;
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                try {
+                    const imported = JSON.parse(evt.target.result);
+                    if (Array.isArray(imported)) {
+                        sauvegarderBaseVehicules(imported);
+                        afficherTableauBase();
+                        alert(`✅ ${imported.length} véhicules importés avec succès !`);
+                    }
+                } catch (err) {
+                    alert("Erreur lors de la lecture du fichier JSON.");
+                }
+            };
+            reader.readAsText(e.target.files[0]);
+        });
+
+        mettreAJourCompteurBase();
+
+        /* -------------------------------------------------------------------------
+           OUTIL 1 : VÉRIFICATEUR STOCK AVEC 2 ÉTAPES ET TRI DU BILAN FINAL
            ------------------------------------------------------------------------- */
         let listePieces = [];
-        let fileIndexList = []; // Liste des index traités dans la phase courante
-        let currentStepPos = 0; // Position dans fileIndexList
-        let phaseActuelle = 1;  // 1 = Stock Magasin, 2 = Usine, 3 = Terminé
+        let fileIndexList = [];
+        let currentStepPos = 0;
+        let phaseActuelle = 1;
 
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
@@ -1063,7 +1425,6 @@
             if (!listePieces.length) return;
             phaseActuelle = 1;
             currentStepPos = 0;
-            // Phase 1 : toutes les pièces
             fileIndexList = listePieces.map((_, idx) => idx);
 
             dropZone.classList.add('compact');
@@ -1101,7 +1462,7 @@
                 pBar.className = 'progress-bar';
                 document.getElementById('phase-badge-title').textContent = '🏠 ÉTAPE 1 : VÉRIFICATION DU STOCK MAGASIN';
                 document.getElementById('phase-badge-desc').textContent = 'Indiquez si la pièce est présente dans votre stock local.';
-                subTitleRef.textContent = 'Référence Pièce — Vérification Stock Magasin';
+                subTitleRef.textContent = 'Référence Pièce — Contrôle Stock Magasin';
                 navHint.textContent = 'Touche 1 = En Stock Magasin | Touche 2 = Pas en Stock';
 
                 p1Btns.classList.remove('hidden');
@@ -1214,7 +1575,6 @@
 
         document.getElementById('btn-copy').addEventListener('click', () => copierDansPressePapier(false));
 
-        // Actions Étape 1 : Stock Magasin
         document.getElementById('btn-p1-stock').addEventListener('click', () => enregistrerChoixPhase1('En Stock'));
         document.getElementById('btn-p1-nostock').addEventListener('click', () => enregistrerChoixPhase1('Pas en stock'));
 
@@ -1229,28 +1589,24 @@
                 currentStepPos++;
                 afficherPieceCourante(true);
             } else {
-                // Fin de l'Étape 1 : vérifier s'il y a des pièces 'Pas en stock'
                 const nonEnStockIndices = [];
                 listePieces.forEach((p, idx) => {
                     if (p.statut === 'Pas en stock') nonEnStockIndices.push(idx);
                 });
 
                 if (nonEnStockIndices.length > 0) {
-                    // Passage à l'Étape 2 (Vérification Usine)
-                    alert(`Étape 1 terminée : ${listePieces.length - nonEnStockIndices.length} pièces en stock.\n\nOn passe maintenant à l'Étape 2 : vérification de la disponibilité Usine pour les ${nonEnStockIndices.length} pièces manquantes.`);
+                    alert(`Étape 1 terminée : ${listePieces.length - nonEnStockIndices.length} pièces en stock.\n\nOn passe à l'Étape 2 : vérification Usine (GASS) pour les ${nonEnStockIndices.length} pièces non en stock.`);
                     phaseActuelle = 2;
                     fileIndexList = nonEnStockIndices;
                     currentStepPos = 0;
                     configurerInterfacePhase(2);
                     afficherPieceCourante(true);
                 } else {
-                    // Tout était déjà en stock !
                     terminerWorkflow();
                 }
             }
         }
 
-        // Actions Étape 2 : Disponibilité Usine
         document.getElementById('btn-p2-dispo').addEventListener('click', () => enregistrerChoixPhase2('Disponible Usine'));
         document.getElementById('btn-p2-rupture').addEventListener('click', () => enregistrerChoixPhase2('Rupture Usine'));
 
@@ -1269,13 +1625,30 @@
             }
         }
 
+        function trierPiecesParStatutFinal() {
+            const priorites = {
+                'En Stock': 1,
+                'Disponible Usine': 2,
+                'Rupture Usine': 3,
+                'Pas en stock': 4,
+                'En attente': 5
+            };
+            listePieces.sort((a, b) => {
+                const pA = priorites[a.statut] || 99;
+                const pB = priorites[b.statut] || 99;
+                return pA - pB;
+            });
+        }
+
         function terminerWorkflow() {
             phaseActuelle = 3;
+            trierPiecesParStatutFinal();
+
             document.getElementById('pas-a-pas-card').classList.add('hidden');
             document.getElementById('step-phase-banner').classList.add('hidden');
-            document.getElementById('table-subtitle').textContent = "🎉 Vérification terminée avec succès ! Voici le récapitulatif final de vos pièces.";
+            document.getElementById('table-subtitle').textContent = "🎉 Vérification terminée ! Tableau trié automatiquement par disponibilité.";
             afficherTableau();
-            alert("🎉 Bravo ! Toutes les références ont été vérifiées (Stock Magasin & Usine). Voici le récapitulatif final.");
+            alert("🎉 Bravo ! Toutes les références ont été vérifiées.\n\nLe récapitulatif a été trié automatiquement (En Stock ➔ Disponible Usine ➔ Rupture Usine).");
         }
 
         document.getElementById('btn-prev').addEventListener('click', () => {
@@ -1364,19 +1737,113 @@
             });
         }
 
+        /* -------------------------------------------------------------------------
+           GESTION MODALE D'IMPRESSION + GÉNÉRATION DE LA FICHE PAPIER A4
+           ------------------------------------------------------------------------- */
+        const modalPrint = document.getElementById('modal-print');
+        const checkGarage = document.getElementById('check-attribuer-garage');
+        const fieldsGarage = document.getElementById('modal-garage-fields');
+
+        document.getElementById('btn-open-print-modal').addEventListener('click', () => {
+            if (!listePieces.length) {
+                alert("Veuillez d'abord charger un fichier de pièces.");
+                return;
+            }
+            modalPrint.classList.remove('hidden');
+        });
+
+        checkGarage.addEventListener('change', () => {
+            if (checkGarage.checked) {
+                fieldsGarage.classList.remove('hidden');
+            } else {
+                fieldsGarage.classList.add('hidden');
+            }
+        });
+
+        document.getElementById('btn-cancel-modal-print').addEventListener('click', () => {
+            modalPrint.classList.add('hidden');
+        });
+
+        document.getElementById('btn-confirm-print').addEventListener('click', () => {
+            modalPrint.classList.add('hidden');
+            preparerEtLancerImpression();
+        });
+
+        function preparerEtLancerImpression() {
+            document.getElementById('print-veh-modele').textContent = infoVehicule.modele;
+            document.getElementById('print-veh-immat').textContent = infoVehicule.immat;
+            document.getElementById('print-veh-vin').textContent = infoVehicule.vin;
+            document.getElementById('print-veh-date').textContent = infoVehicule.dateConst;
+
+            const now = new Date();
+            document.getElementById('print-date-display').textContent = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            const cardGarage = document.getElementById('print-card-garage');
+            if (checkGarage.checked) {
+                const nomG = document.getElementById('input-nom-garage').value.trim() || 'Non renseigné';
+                const codeG = document.getElementById('input-code-client').value.trim() || 'Non renseigné';
+                const commG = document.getElementById('input-comm-garage').value.trim();
+
+                document.getElementById('print-garage-nom').textContent = nomG;
+                document.getElementById('print-garage-code').textContent = codeG;
+
+                const rowComm = document.getElementById('print-row-comm');
+                if (commG) {
+                    document.getElementById('print-garage-comm').textContent = commG;
+                    rowComm.style.display = 'flex';
+                } else {
+                    rowComm.style.display = 'none';
+                }
+                cardGarage.style.display = 'block';
+            } else {
+                cardGarage.style.display = 'none';
+            }
+
+            trierPiecesParStatutFinal();
+
+            const printTbody = document.getElementById('print-table-body');
+            printTbody.innerHTML = '';
+            listePieces.forEach((p, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: center; font-family: monospace;">${idx + 1}</td>
+                    <td style="font-family: monospace; font-weight: 700; font-size: 10pt;">${p.ref}</td>
+                    <td style="text-align: center; font-weight: 700;">${p.qty}</td>
+                    <td>${p.desig}</td>
+                    <td style="text-align: center;"><span class="print-st-badge">${p.statut}</span></td>
+                `;
+                printTbody.appendChild(tr);
+            });
+
+            setTimeout(() => {
+                window.print();
+            }, 250);
+        }
+
+        /* EXPORT EXCEL */
         document.getElementById('btn-export-xlsx').addEventListener('click', () => {
             if (!listePieces.length || typeof XLSX === 'undefined') return;
-            const data = listePieces.map(p => ({
-                'Référence': p.ref,
-                'Quantité': Number(p.qty) || p.qty,
-                'Désignation': p.desig,
-                'Statut': p.statut
-            }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            ws['!cols'] = [{ wch: 18 }, { wch: 10 }, { wch: 38 }, { wch: 24 }];
+
+            const donneesExcel = [
+                ['VÉHICULE', infoVehicule.modele],
+                ['IMMATRICULATION', infoVehicule.immat],
+                ['NUMÉRO VIN', infoVehicule.vin],
+                ['DATE DE CONSTR.', infoVehicule.dateConst],
+                [],
+                ['#', 'Référence', 'Quantité', 'Désignation', 'Statut']
+            ];
+
+            listePieces.forEach((p, idx) => {
+                donneesExcel.push([idx + 1, p.ref, Number(p.qty) || p.qty, p.desig, p.statut]);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(donneesExcel);
+            ws['!cols'] = [{ wch: 6 }, { wch: 20 }, { wch: 10 }, { wch: 40 }, { wch: 22 }];
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Contrôle Stock");
-            XLSX.writeFile(wb, "verification_stock_atelier.xlsx");
+            
+            const immatNom = infoVehicule.immat !== '--' ? '_' + infoVehicule.immat.replace(/\s+/g, '') : '';
+            XLSX.writeFile(wb, `controle_stock${immatNom}.xlsx`);
         });
 
         document.getElementById('btn-export-csv').addEventListener('click', () => {
@@ -1386,10 +1853,9 @@
             const blob = new Blob([csv], { type: 'text/csv;charset=windows-1252;' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = "verification_stock_atelier.csv";
+            a.download = "controle_stock.csv";
             a.click();
         });
-
 
         /* -------------------------------------------------------------------------
            GESTION COMMUNE N° COMMANDE (2000 - 9999) ET SAUVEGARDE
@@ -1442,7 +1908,6 @@
 
         const cmdInitiale = chargerNumCmdMemorise();
         synchroniserAffichageCmd(cmdInitiale);
-
 
         /* -------------------------------------------------------------------------
            OUTIL 2 : CONVERTISSEUR NISSAN GASS
@@ -1617,7 +2082,6 @@
             }, 250);
         });
 
-
         /* -------------------------------------------------------------------------
            OUTIL 3 : CONVERTISSEUR MG
            ------------------------------------------------------------------------- */
@@ -1789,9 +2253,9 @@
             telechargerCSVMoteur(lignesMG, inputCodeMG.value || '6000', numCmd, forcerNeg, 'import_dcsnet_mg');
             setTimeout(() => {
                 telechargerWFTMoteur(lignesMG, forcerNeg, numCmd, 'import_dcsnet_mg');
-                if (document.getElementById('mg-auto-next-file').checked && !dejaIncrementeMG) {
+                if (document.getElementById('conv-auto-next-file').checked && !dejaIncrementeMG) {
                     dejaIncrementeMG = true;
-                    setTimeout(() => avancerNumCmdDe1('mg-saved-toast', 'mg-toast-next-num'), 400);
+                    setTimeout(() => avancerNumCmdDe1('cmd-saved-toast', 'toast-next-num'), 400);
                 }
             }, 250);
         });
