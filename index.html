@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Portail Outils — Nissan & MG Atelier</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23ff3b5c%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ea580c%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2260%22%20height%3D%2260%22%20rx%3D%2218%22%20fill%3D%22url%28%23g%29%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2219%22%20stroke%3D%22%23fff%22%20stroke-width%3D%227%22%20stroke-dasharray%3D%225.97%203.98%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2217%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%228.5%22%20fill%3D%22%230b0f19%22/%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%223%22%20fill%3D%22%23ff5a36%22/%3E%3C/svg%3E">
     <!-- Fonts -->
@@ -12,7 +12,7 @@
     <!-- SheetJS pour lecture/écriture Excel (.xlsx / .csv) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Tesseract.js pour l'OCR (lecture d'images) -->
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
     <style>
         :root {
             --bg-base: #07090e;
@@ -573,6 +573,12 @@
         .cs-top { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; font-weight: 700; color: #fff; }
         .cs-code { font-family: 'JetBrains Mono', monospace; color: #60a5fa; font-size: 12px; flex: none; }
         .cs-sub { font-size: 11px; color: var(--text-secondary); }
+
+        :root { color-scheme: dark; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+        html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+        header { top: env(safe-area-inset-top, 0px); }
+        body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: rgba(10, 13, 22, 0.9); }
+        .bn-pill { display: inline-block; min-width: 20px; padding: 1px 7px; margin-left: 8px; border-radius: 999px; background: rgba(255,255,255,0.14); font-size: 11px; font-weight: 800; }
     </style>
 </head>
 <body>
@@ -914,7 +920,7 @@
 
         <!-- SECTION 2 : BLOC-NOTES ATELIER & CLIENT (NOUVEL ONGLET DÉDIÉ) -->
         <section id="screen-blocnote" class="app-screen">
-            <div style="display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start;">
+            <div style="max-width: 920px; margin: 0 auto;">
                 
                 <!-- Panneau de Saisie -->
                 <div class="table-card" style="padding: 24px;">
@@ -923,7 +929,8 @@
                             <h3 style="font-size: 17px;">📝 Fiche Client & Véhicule en cours</h3>
                             <p>Prise de note rapide pour devis, demande comptoir ou commande téléphonique</p>
                         </div>
-                        <div style="display: flex; gap: 8px;">
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-glass" id="btn-bn-ouvrir-notes" style="font-size: 12px;">📚 Notes enregistrées<span class="bn-pill" id="bn-notes-count-btn">0</span></button>
                             <button class="btn btn-glass" id="btn-bn-nouveau" style="font-size: 12px;">📄 Vider</button>
                             <button class="btn btn-emerald" id="btn-bn-sauvegarder" style="font-size: 12px;">💾 Sauvegarder</button>
                         </div>
@@ -1004,23 +1011,11 @@
 
                     <div style="display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-blue" id="btn-bn-copier-recap">📋 Copier le récapitulatif complet</button>
+                        <button class="btn btn-purple" id="btn-bn-imprimer">🖨️ Imprimer la note</button>
                         <button class="btn btn-red" id="btn-bn-vers-stock">📦 Transférer véhicule vers Stock ➔</button>
                     </div>
                 </div>
 
-                <!-- Panneau Historique des Notes Enregistrées -->
-                <div class="table-card" style="padding: 24px;">
-                    <div class="table-header" style="margin-bottom: 14px;">
-                        <div class="table-header-left">
-                            <h3 style="font-size: 16px;">📚 Notes Enregistrées (<span id="bn-notes-count">0</span>)</h3>
-                            <p>Historique mémorisé localement</p>
-                        </div>
-                    </div>
-                    <div style="margin-bottom: 12px;">
-                        <input type="text" id="bn-filtre-notes" class="modal-input" placeholder="🔍 Filtrer client, immat, pièce..." style="width: 100%;">
-                    </div>
-                    <div id="bn-liste-notes" style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;"></div>
-                </div>
 
             </div>
         </section>
@@ -1241,11 +1236,24 @@
     </div>
 
     <!-- CONTENEUR DÉDIÉ STRICTEMENT À L'IMPRESSION PAPIER A4 -->
+    <!-- MODALE NOTES ENREGISTRÉES -->
+    <div id="modal-notes" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 680px; width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px;">
+                <div class="modal-title" style="margin: 0;"><span>📚 Notes enregistrées (<span id="bn-notes-count">0</span>)</span></div>
+                <button class="btn btn-glass" id="btn-fermer-notes" style="font-size: 12px; padding: 6px 10px;">✕ Fermer</button>
+            </div>
+            <div class="modal-desc">Historique mémorisé localement : chargez, imprimez ou supprimez une note.</div>
+            <input type="text" id="bn-filtre-notes" class="modal-input" placeholder="🔍 Filtrer client, immat, pièce..." style="width: 100%; margin-bottom: 12px;">
+            <div id="bn-liste-notes" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
     <div id="print-container">
         <div class="print-header">
             <div>
                 <h1>SOFIBRIE AUTOMOBILES</h1>
-                <p>Magasin Pièces de Rechange & Atelier — Fiche de Contrôle Disponibilité</p>
+                <p id="print-sous-titre">Magasin Pièces de Rechange & Atelier — Fiche de Contrôle Disponibilité</p>
             </div>
             <div class="print-date">
                 Édité le : <strong id="print-date-display">--/--/----</strong>
@@ -1258,13 +1266,16 @@
                 <div class="print-info-row"><span>Modèle :</span> <strong id="print-veh-modele">--</strong></div>
                 <div class="print-info-row"><span>Immatriculation :</span> <strong id="print-veh-immat">--</strong></div>
                 <div class="print-info-row"><span>N° Châssis (VIN) :</span> <strong id="print-veh-vin">--</strong></div>
-                <div class="print-info-row"><span>Date constr. :</span> <strong id="print-veh-date">--</strong></div>
+                <div class="print-info-row" id="print-row-date"><span>Date constr. :</span> <strong id="print-veh-date">--</strong></div>
             </div>
 
             <div class="print-card" id="print-card-garage" style="display: none;">
-                <div class="print-card-title">Attribution Garage / Client</div>
+                <div class="print-card-title" id="print-card-garage-title">Attribution Garage / Client</div>
                 <div class="print-info-row"><span>Nom du Garage :</span> <strong id="print-garage-nom">--</strong></div>
                 <div class="print-info-row"><span>Code Client :</span> <strong id="print-garage-code">--</strong></div>
+                <div class="print-info-row" id="print-row-tel" style="display: none;"><span>Téléphone :</span> <strong id="print-garage-tel">--</strong></div>
+                <div class="print-info-row" id="print-row-mail" style="display: none;"><span>Mail :</span> <strong id="print-garage-mail">--</strong></div>
+                <div class="print-info-row" id="print-row-adr" style="display: none;"><span>Adresse :</span> <strong id="print-garage-adr" style="font-family: inherit; font-size: 9pt; text-align: right;">--</strong></div>
                 <div class="print-info-row" id="print-row-comm" style="display: none;"><span>Commentaire :</span> <strong id="print-garage-comm" style="font-family: inherit; font-size: 9pt;">--</strong></div>
             </div>
         </div>
@@ -1281,6 +1292,11 @@
             </thead>
             <tbody id="print-table-body"></tbody>
         </table>
+
+        <div id="print-notes-bloc" style="display: none; margin-top: 14px; font-size: 9pt;">
+            <div class="print-card-title">Notes / Remarques</div>
+            <div id="print-notes-text" style="white-space: pre-wrap; border: 1px solid #ccc; border-radius: 6px; padding: 8px;"></div>
+        </div>
 
         <div class="print-footer">
             <div>Fiche interne éditée pour traitement atelier / magasin</div>
@@ -1666,7 +1682,7 @@
 
         document.getElementById('btn-export-db-json').addEventListener('click', () => {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(chargerBaseVehicules(), null, 2));
-            const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "base_vehicules_atelier.json"); dl.click();
+            sauverFichier("base_vehicules_atelier.json", JSON.stringify(chargerBaseVehicules(), null, 2));
         });
 
         document.getElementById('btn-export-db-csv').addEventListener('click', () => {
@@ -1676,7 +1692,7 @@
                 csv += `"${v.immat}";"${v.vin}";"${v.modele}";"${v.dateConst}";"${v.dateMaj || ''}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv;charset=windows-1252;' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "base_vehicules_atelier.csv"; a.click();
+            sauverFichier("base_vehicules_atelier.csv", blob);
         });
 
         const fileImportDb = document.getElementById('file-import-db');
@@ -1730,18 +1746,15 @@
             }
         });
 
-        document.getElementById('btn-bn-nouveau').addEventListener('click', () => {
-            if ((bnTexte.value.trim() || bnRefs.length) && !confirm("Effacer les champs pour une nouvelle note ?")) return;
-            bnNomClient.value = '';
-            bnCodeClient.value = '';
-            bnTelClient.value = '';
-            $id('bn-mail-client').value = ''; $id('bn-adresse-client').value = '';
-            bnImmat.value = '';
-            bnModele.value = '';
-            bnVin.value = '';
-            bnTexte.value = '';
+        function viderFormulaireBn() {
+            [bnNomClient, bnCodeClient, bnTelClient, bnImmat, bnModele, bnVin, bnTexte, $id('bn-mail-client'), $id('bn-adresse-client'), $id('bn-ref-input'), $id('bn-ref-desig')].forEach(el => { el.value = ''; });
+            $id('bn-ref-qty').value = 1;
             bnRefs = []; renderBnRefs();
             bnNomClient.focus();
+        }
+        document.getElementById('btn-bn-nouveau').addEventListener('click', () => {
+            if ((bnTexte.value.trim() || bnRefs.length || bnNomClient.value.trim()) && !confirm("Effacer les champs pour une nouvelle note ?")) return;
+            viderFormulaireBn();
         });
 
         document.getElementById('btn-bn-sauvegarder').addEventListener('click', () => {
@@ -1784,7 +1797,8 @@
 
             localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(liste));
             chargerHistoriqueNotes();
-            alert("✓ Fiche note enregistrée avec succès !");
+            viderFormulaireBn();
+            alert("✓ Note enregistrée. La fiche a été vidée, retrouvez-la dans « Notes enregistrées ».");
         });
 
         /* ---- Liste de références du bloc-notes ---- */
@@ -1865,15 +1879,11 @@
         function chargerHistoriqueNotes() {
             const liste = chargerToutesLesNotes();
             bnCountBadge.textContent = liste.length;
-            const recherche = bnFiltre.value.trim().toLowerCase();
+            $id('bn-notes-count-btn').textContent = liste.length;
+            const q = bnFiltre.value.trim().toLowerCase();
             bnListeConteneur.innerHTML = '';
 
-            const filtres = liste.filter(n => 
-                n.client.toLowerCase().includes(recherche) ||
-                n.immat.toLowerCase().includes(recherche) ||
-                (n.codeClient && n.codeClient.toLowerCase().includes(recherche)) ||
-                (n.notes && n.notes.toLowerCase().includes(recherche))
-            );
+            const filtres = liste.filter(n => !q || [n.client, n.immat, n.codeClient, n.modele, n.notes, (n.refs || []).map(r => r.ref + ' ' + r.desig).join(' ')].join(' ').toLowerCase().includes(q));
 
             if (!filtres.length) {
                 bnListeConteneur.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 0;">Aucune note enregistrée pour l'instant.</div>`;
@@ -1882,20 +1892,23 @@
 
             filtres.forEach(note => {
                 const card = document.createElement('div');
-                card.style.cssText = "background: rgba(10, 13, 20, 0.7); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; cursor: pointer; transition: all 0.2s;";
+                card.style.cssText = "background: rgba(10, 13, 20, 0.7); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;";
+                const refs = note.refs || [], nb = k => refs.filter(r => r.st === k).length;
                 card.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="color: #fff; font-size: 13px;">${note.client}</strong>
-                        <span style="font-size: 10px; color: var(--text-muted);">${note.date}</span>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <strong style="color: #fff; font-size: 13px;">${esc(note.client)}</strong>
+                        <span style="font-size: 10px; color: var(--text-muted); white-space: nowrap;">${esc(note.date)}</span>
                     </div>
-                    <div style="display: flex; gap: 8px; font-size: 11px; flex-wrap: wrap;">
-                        ${note.immat !== '--' ? `<span style="font-family: monospace; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); padding: 2px 6px; border-radius: 4px;">${note.immat}</span>` : ''}
-                        ${note.modele ? `<span style="color: var(--text-secondary);">${note.modele}</span>` : ''}
-                        ${note.codeClient ? `<span style="color: #34d399; font-weight: 600;">Code: ${note.codeClient}</span>` : ''}
+                    <div style="display: flex; gap: 8px; font-size: 11px; flex-wrap: wrap; align-items: center;">
+                        ${note.immat !== '--' ? `<span style="font-family: monospace; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); padding: 2px 6px; border-radius: 4px;">${esc(note.immat)}</span>` : ''}
+                        ${note.modele ? `<span style="color: var(--text-secondary);">${esc(note.modele)}</span>` : ''}
+                        ${note.codeClient ? `<span style="color: #34d399; font-weight: 600;">Code: ${esc(note.codeClient)}</span>` : ''}
+                        ${refs.length ? `<span style="color: var(--text-secondary);">📋 ${refs.length} réf. · 🏠 ${nb('stock')} · 🏭 ${nb('usine')} · ❌ ${nb('pasdispo')}</span>` : ''}
                     </div>
-                    ${note.notes ? `<div style="font-size: 12px; color: var(--text-muted); white-space: pre-wrap; max-height: 40px; overflow: hidden; text-overflow: ellipsis; font-family: monospace;">${note.notes}</div>` : ''}
+                    ${note.notes ? `<div style="font-size: 12px; color: var(--text-muted); white-space: pre-wrap; max-height: 40px; overflow: hidden; font-family: monospace;">${esc(note.notes)}</div>` : ''}
                     <div style="display: flex; justify-content: flex-end; gap: 6px; margin-top: 4px;">
                         <button class="btn btn-blue btn-charger-cette-note" style="padding: 3px 8px; font-size: 11px;">⚡ Charger</button>
+                        <button class="btn btn-purple btn-imprimer-cette-note" style="padding: 3px 8px; font-size: 11px;">🖨️ Imprimer</button>
                         <button class="btn btn-glass btn-suppr-cette-note" style="padding: 3px 8px; font-size: 11px; color: #fb7185;">✕</button>
                     </div>
                 `;
@@ -1910,14 +1923,21 @@
                     bnModele.value = note.modele || '';
                     bnVin.value = note.vin || '';
                     bnTexte.value = note.notes || '';
-                    bnRefs = (note.refs || []).map(r => ({ ...r, id: ++bnRefSeq })); renderBnRefs();
+                    bnRefs = refs.map(r => ({ ...r, id: ++bnRefSeq })); renderBnRefs();
+                    fermerNotes();
+                });
+
+                card.querySelector('.btn-imprimer-cette-note').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    fermerNotes();
+                    imprimerNote(note);
                 });
 
                 card.querySelector('.btn-suppr-cette-note').addEventListener('click', (e) => {
                     e.stopPropagation();
                     if (confirm("Supprimer cette note de l'historique ?")) {
                         const nouvelleListe = chargerToutesLesNotes().filter(item => item.id !== note.id);
-                        localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(nouvelleListe));
+                        try { localStorage.setItem(STORAGE_KEY_NOTES, JSON.stringify(nouvelleListe)); } catch (err) {}
                         chargerHistoriqueNotes();
                     }
                 });
@@ -2024,13 +2044,21 @@
         function nbQty(v) { return Math.round(Math.abs(parseFloat(String(v ?? '').replace(',', '.')))) || 1; }
         function dateFichier() { return new Date().toISOString().slice(0, 10); }
 
-        function telecharger(nom, contenu, type) {
+        async function sauverFichier(nom, data) {
+            try {
+                const d = window.claude ? await window.claude.use('downloads') : null;
+                if (d) { await d.save({ filename: nom, data }); return; }
+            } catch (e) {
+                if (e && e.code === 'declined') return;
+                if (e && e.code === 'rejected_extension') { alert('Le format .' + nom.split('.').pop() + ' ne peut pas être téléchargé depuis la version publiée. Utilisez le fichier HTML en local pour cet export.'); return; }
+            }
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([contenu], { type: type + ';charset=utf-8' }));
-            a.download = nom;
-            a.click();
+            a.href = URL.createObjectURL(data instanceof Blob ? data : new Blob([data]));
+            a.download = nom; a.click();
             setTimeout(() => URL.revokeObjectURL(a.href), 2000);
         }
+
+        function telecharger(nom, contenu, type) { return sauverFichier(nom, new Blob([contenu], { type: type + ';charset=utf-8' })); }
 
         function extraireDepuisLignes(rows) {
             const re = { ref: /part\s*(#|no|number|n°)|r[ée]f|^\s*pi[èe]ce/i, des: /part\s*name|d[ée]sign|libell|descr/i, qty: /^\s*(qty|quantity|qt[eé]|quantit)/i };
@@ -2175,7 +2203,7 @@
             if (typeof XLSX === 'undefined') { alert('Librairie Excel non chargée (connexion internet requise).'); return; }
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(lignesExport()), 'Stock');
-            XLSX.writeFile(wb, `verification_stock_${dateFichier()}.xlsx`);
+            sauverFichier(`verification_stock_${dateFichier()}.xlsx`, new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], { type: 'application/octet-stream' }));
         });
         $id('btn-export-csv').addEventListener('click', () => {
             if (!listePieces.length) return;
@@ -2188,6 +2216,7 @@
         $id('btn-cancel-modal-print').addEventListener('click', () => $id('modal-print').classList.add('hidden'));
         $id('check-attribuer-garage').addEventListener('change', (e) => montrer('modal-garage-fields', e.target.checked));
         $id('btn-confirm-print').addEventListener('click', () => {
+            reinitialiserImpressionStock();
             synchroniserDonneesVehicule(false);
             $id('print-date-display').textContent = new Date().toLocaleDateString('fr-FR');
             $id('print-veh-modele').textContent = infoVehicule.modele;
@@ -2252,11 +2281,11 @@
                 rafraichir();
             }
 
-            function exporter(types) {
+            async function exporter(types) {
                 if (!pieces.length) return;
                 const { csv, wft } = lignes(), base = `${codeFourn()}_${numCmd}`;
-                if (types.includes('csv')) telecharger(base + '.csv', csv.join('\r\n') + '\r\n', 'text/csv');
-                if (types.includes('wft')) setTimeout(() => telecharger(base + '.wft', wft.join('\r\n') + '\r\n', 'text/plain'), types.length > 1 ? 400 : 0);
+                if (types.includes('csv')) await telecharger(base + '.csv', csv.join('\r\n') + '\r\n', 'text/csv');
+                if (types.includes('wft')) await telecharger(base + '.wft', wft.join('\r\n') + '\r\n', 'text/plain');
                 if ($('auto').checked) {
                     definirCmd(numCmd === 9999 ? 2000 : numCmd + 1);
                     $('toastNum').textContent = numCmd;
@@ -2433,6 +2462,61 @@
             try { indexerClients(await decompresser($id('clients-data').textContent.trim()), 'base intégrée'); }
             catch (e) { indexerClients([], 'aucune base (utilisez le bouton de mise à jour)'); }
         })();
+
+        /* ---- Popup « Notes enregistrées » + impression d'une note ---- */
+        const modalNotes = $id('modal-notes');
+        function ouvrirNotes() { chargerHistoriqueNotes(); modalNotes.classList.remove('hidden'); bnFiltre.focus(); }
+        function fermerNotes() { modalNotes.classList.add('hidden'); }
+        $id('btn-bn-ouvrir-notes').addEventListener('click', ouvrirNotes);
+        $id('btn-fermer-notes').addEventListener('click', fermerNotes);
+        modalNotes.addEventListener('mousedown', e => { if (e.target === modalNotes) fermerNotes(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerNotes(); });
+
+        function reinitialiserImpressionStock() {
+            $id('print-sous-titre').textContent = 'Magasin Pièces de Rechange & Atelier — Fiche de Contrôle Disponibilité';
+            $id('print-card-garage-title').textContent = 'Attribution Garage / Client';
+            ['print-row-tel', 'print-row-mail', 'print-row-adr', 'print-notes-bloc'].forEach(i => { $id(i).style.display = 'none'; });
+            $id('print-row-date').style.display = '';
+            document.querySelector('.print-table').style.display = '';
+        }
+
+        const LIB_PRINT = { stock: 'En stock', usine: 'Dispo usine', pasdispo: 'Pas dispo' };
+        function noteDepuisFormulaire() {
+            return {
+                client: bnNomClient.value.trim(), codeClient: bnCodeClient.value.trim(), tel: bnTelClient.value.trim(),
+                mail: $id('bn-mail-client').value.trim(), adresse: $id('bn-adresse-client').value.trim(),
+                immat: bnImmat.value.trim().toUpperCase(), modele: bnModele.value.trim(), vin: bnVin.value.trim().toUpperCase(),
+                notes: bnTexte.value.trim(), refs: bnRefs.map(({ ref, qty, desig, st }) => ({ ref, qty, desig, st }))
+            };
+        }
+
+        function imprimerNote(n) {
+            const refs = n.refs || [], immat = (n.immat && n.immat !== '--') ? n.immat : '';
+            const client = (n.client && n.client !== 'Client sans nom') ? n.client : '';
+            if (!client && !immat && !n.notes && !refs.length) { alert('La note est vide : rien à imprimer.'); return; }
+            reinitialiserImpressionStock();
+            $id('print-sous-titre').textContent = 'Magasin Pièces de Rechange & Atelier — Fiche Client & Commande Pièces';
+            $id('print-date-display').textContent = new Date().toLocaleDateString('fr-FR');
+            $id('print-veh-modele').textContent = n.modele || '--';
+            $id('print-veh-immat').textContent = immat || '--';
+            $id('print-veh-vin').textContent = n.vin || '--';
+            $id('print-row-date').style.display = 'none';
+            $id('print-card-garage-title').textContent = 'Client / Garage';
+            $id('print-card-garage').style.display = 'block';
+            $id('print-garage-nom').textContent = client || '--';
+            $id('print-garage-code').textContent = n.codeClient || '--';
+            $id('print-row-comm').style.display = 'none';
+            [['tel', n.tel], ['mail', n.mail], ['adr', n.adresse]].forEach(([k, v]) => {
+                $id('print-garage-' + k).textContent = v || '--';
+                $id('print-row-' + k).style.display = v ? '' : 'none';
+            });
+            document.querySelector('.print-table').style.display = refs.length ? '' : 'none';
+            $id('print-table-body').innerHTML = refs.map((r, i) => `<tr><td>${i + 1}</td><td style="font-family:monospace;font-weight:700;">${esc(r.ref)}</td><td style="text-align:center;">${esc(r.qty)}</td><td>${esc(r.desig)}</td><td style="text-align:center;"><span class="print-st-badge">${LIB_PRINT[r.st] || 'À vérifier'}</span></td></tr>`).join('');
+            $id('print-notes-text').textContent = n.notes || '';
+            $id('print-notes-bloc').style.display = n.notes ? 'block' : 'none';
+            setTimeout(() => window.print(), 150);
+        }
+        $id('btn-bn-imprimer').addEventListener('click', () => imprimerNote(noteDepuisFormulaire()));
 
         /* ---- Menu rapide (liste déroulante personnalisée) ---- */
         const ECRANS_MENU = [
