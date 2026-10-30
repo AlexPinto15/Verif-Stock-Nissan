@@ -2234,8 +2234,8 @@
             setTimeout(() => window.print(), 150);
         });
 
-        /* ===== CONVERTISSEURS NISSAN (GASS) & MG → DCSnet ===== */
-        const CLE_CMD = 'atelier_sofibrie_num_cmd';
+        /* ===== CONVERTISSEURS NISSAN (GASS) & MG → DCSnet (logique d'origine Gemini) ===== */
+        const CLE_CMD = 'dcsnet_last_cmd_num';
         const convertisseurs = [];
         const bornerCmd = n => { n = parseInt(n, 10); return (n >= 2000 && n <= 9999) ? n : 2000; };
         let numCmd = 2000;
@@ -2247,74 +2247,138 @@
             convertisseurs.forEach(c => c.rafraichir());
         }
 
-        const net = (s, n) => String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[;\t\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().toUpperCase().slice(0, n).trim();
-
-        function creerConvertisseur(I, defCode, demoFn) {
-            const $ = k => $id(I[k]);
-            let pieces = [], timer;
-            const codeFourn = () => ($('code').value.replace(/\D/g, '') || defCode).slice(0, 4);
-
-            function lignes() {
-                const code = codeFourn(), sg = $('neg').checked ? -1 : 1;
-                const ref = p => p.ref.replace(/\s+/g, '');
-                return {
-                    csv: pieces.map(p => [code, numCmd, 'S', ref(p), net(p.desig, 30), sg * p.qty].join(';')),
-                    wft: pieces.map(p => 'X'.repeat(28) + (sg * p.qty) + '    ' + ref(p) + '\t'.repeat(8))
-                };
+        /* Lecture fichier GASS : on ne garde que les lignes « ZPN » */
+        function parserNissan(texte) {
+            const lignes = texte.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
+            const res = [], lignesZPN = lignes.filter(l => /\bZPN\b/.test(l));
+            if (lignesZPN.length > 0) {
+                lignesZPN.forEach(ligne => {
+                    const cols = (ligne.includes('\t') ? ligne.split('\t') : ligne.split(/\s{2,}/)).map(c => c.trim()).filter(c => c.length > 0);
+                    const zpnIdx = cols.findIndex(c => c === 'ZPN');
+                    if (zpnIdx !== -1 && cols[zpnIdx + 1]) {
+                        const ref = cols[zpnIdx + 1], desig = cols[zpnIdx + 2] || 'PIECE NISSAN';
+                        let qty = 1;
+                        const eaIdx = cols.findIndex((c, idx) => idx > zpnIdx && c === 'EA');
+                        if (eaIdx !== -1) {
+                            const v = parseInt(cols[eaIdx - 2], 10) || parseFloat(cols[eaIdx - 1]);
+                            if (!isNaN(v) && v > 0) qty = Math.round(v);
+                        } else {
+                            const i2 = cols.findIndex((c, idx) => idx > zpnIdx + 1 && c === ref);
+                            if (i2 !== -1 && cols[i2 + 1]) { const v = parseInt(cols[i2 + 1], 10); if (!isNaN(v) && v > 0) qty = v; }
+                        }
+                        res.push({ ref, desig, qty });
+                    }
+                });
+            } else {
+                for (let i = 0; i < lignes.length; i += 3) if (lignes[i]) res.push({ ref: lignes[i], qty: parseInt(lignes[i + 1], 10) || 1, desig: lignes[i + 2] || 'PIECE NISSAN' });
             }
+            return res;
+        }
+
+        /* Lecture facture MG (xlsx / csv) */
+        function parserMatriceMG(rows) {
+            const res = [];
+            if (!rows || rows.length < 2) return res;
+            let colPart = -1, colName = -1, colQty = -1, headerRowIdx = 0;
+            for (let r = 0; r < Math.min(rows.length, 10); r++) {
+                (rows[r] || []).forEach((cell, c) => {
+                    const t = String(cell || '').trim().toLowerCase();
+                    if (['part #', 'part#', 'part no', 'part_number'].includes(t)) colPart = c;
+                    if (['part name', 'part_name', 'description', 'designation'].includes(t)) colName = c;
+                    if (['qty', 'quantite', 'quantity'].includes(t)) colQty = c;
+                });
+                if (colPart !== -1 && colQty !== -1) { headerRowIdx = r; break; }
+            }
+            if (colPart === -1) colPart = 1;
+            if (colName === -1) colName = 2;
+            if (colQty === -1) colQty = 9;
+            for (let r = headerRowIdx + 1; r < rows.length; r++) {
+                const row = rows[r] || [], ref = String(row[colPart] || '').trim();
+                if (!ref || ref.toLowerCase() === 'total' || ref.toLowerCase() === 'part #') continue;
+                const desig = String(row[colName] || 'PIECE MG').replace(/[\r\n]+/g, ' ').replace(/;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 30);
+                let q = parseInt(row[colQty], 10) || parseFloat(row[colQty]);
+                if (isNaN(q) || q <= 0) q = 1;
+                res.push({ ref, desig, qty: Math.round(q) });
+            }
+            return res;
+        }
+        function parserCSV_MG(texte) {
+            return parserMatriceMG(texte.split(/\r?\n/).map(l => l.trim()).filter(l => l).map(l => l.split(l.includes(';') ? ';' : ',').map(c => c.replace(/^"|"$/g, '').trim())));
+        }
+
+        /* Construction des fichiers DCSnet */
+        const TABS8 = '\t\t\t\t\t\t\t\t';
+        function construireCSV(lignes, code, cmd, neg) {
+            return lignes.map(it => `${code};${cmd};S;${it.ref};${it.desig};${neg ? -Math.abs(it.qty) : it.qty}`).join('\r\n');
+        }
+        function construireWFT(lignes, neg) {
+            const entete = Array(18).fill('0' + TABS8).join('\r\n');
+            const corps = lignes.map(it => 'X'.repeat(28) + String(neg ? -Math.abs(it.qty) : it.qty) + '    ' + it.ref.trim() + TABS8).join('\r\n');
+            return entete + '\r\n' + corps;
+        }
+
+        function creerConvertisseur(I, defCode, prefixe, lecteurs, demoFn) {
+            const $ = k => $id(I[k]);
+            let pieces = [], verrou = null, timer;
+            const codeFourn = () => ($('code').value.replace(/\D/g, '') || defCode).padStart(4, '0');
+            const numAffiche = () => verrou !== null ? verrou : numCmd;
 
             function rafraichir() {
                 $('cmd').value = numCmd;
                 $('active').textContent = numCmd;
                 if (!pieces.length) return;
-                const { csv, wft } = lignes();
+                const neg = $('neg').checked;
                 $('count').textContent = pieces.length;
-                $('pcsv').textContent = csv.join('\n');
-                $('pwft').textContent = wft.join('\n').replace(/\t/g, '→');
+                $('pcsv').textContent = construireCSV(pieces, codeFourn(), numAffiche(), neg);
+                $('pwft').textContent = construireWFT(pieces, neg).replace(/\t/g, '→');
                 [$('pcsv'), $('pwft')].forEach(b => { b.style.whiteSpace = 'pre'; b.style.overflowX = 'auto'; });
             }
 
             function definir(liste) {
                 if (!liste.length) { alert('Aucune pièce lisible dans ce fichier.'); return; }
-                pieces = liste;
+                pieces = liste; verrou = null;
                 $('res').classList.remove('hidden');
                 rafraichir();
             }
 
             async function exporter(types) {
                 if (!pieces.length) return;
-                const { csv, wft } = lignes(), base = `${codeFourn()}_${numCmd}`;
-                if (types.includes('csv')) await telecharger(base + '.csv', csv.join('\r\n') + '\r\n', 'text/csv');
-                if (types.includes('wft')) await telecharger(base + '.wft', wft.join('\r\n') + '\r\n', 'text/plain');
-                if ($('auto').checked) {
+                const premier = verrou === null;
+                verrou = numAffiche();
+                const neg = $('neg').checked, base = `import_dcsnet_${prefixe}_${verrou}`;
+                if (types.includes('csv')) await telecharger(base + '.csv', construireCSV(pieces, codeFourn(), verrou, neg), 'text/csv');
+                if (types.includes('wft')) await telecharger(base + '.wft', construireWFT(pieces, neg), 'text/plain');
+                if (premier && $('auto').checked) {
                     definirCmd(numCmd === 9999 ? 2000 : numCmd + 1);
                     $('toastNum').textContent = numCmd;
                     $('toast').classList.remove('hidden');
                     clearTimeout(timer);
-                    timer = setTimeout(() => $('toast').classList.add('hidden'), 2500);
+                    timer = setTimeout(() => $('toast').classList.add('hidden'), 2800);
                 }
             }
 
             function charger(file) {
                 const ext = file.name.split('.').pop().toLowerCase(), r = new FileReader();
-                if (ext === 'xlsx' || ext === 'xls') {
+                if (lecteurs.lignes && (ext === 'xlsx' || ext === 'xls')) {
                     if (typeof XLSX === 'undefined') { alert('Librairie Excel non chargée (connexion internet requise).'); return; }
                     r.onload = e => {
                         const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
-                        definir(extraireDepuisLignes(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 })));
+                        definir(lecteurs.lignes(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 })));
                     };
                     r.readAsArrayBuffer(file);
                 } else {
-                    r.onload = e => definir(parserTexte(e.target.result));
+                    r.onload = e => definir(lecteurs.texte(e.target.result));
                     r.readAsText(file);
                 }
+                if (I.titre) $('titre').textContent = 'Fichier : ' + file.name;
             }
 
-            $('minus').addEventListener('click', () => definirCmd(numCmd === 2000 ? 9999 : numCmd - 1));
-            $('plus').addEventListener('click', () => definirCmd(numCmd === 9999 ? 2000 : numCmd + 1));
+            const recalcul = () => { verrou = null; rafraichir(); };
+            $('minus').addEventListener('click', () => { definirCmd(numCmd === 2000 ? 9999 : numCmd - 1); recalcul(); });
+            $('plus').addEventListener('click', () => { definirCmd(numCmd === 9999 ? 2000 : numCmd + 1); recalcul(); });
             $('cmd').addEventListener('input', () => { $('cmd').value = $('cmd').value.replace(/\D/g, '').slice(0, 4); });
-            $('cmd').addEventListener('change', () => definirCmd($('cmd').value));
-            $('code').addEventListener('input', rafraichir);
+            $('cmd').addEventListener('change', () => { definirCmd($('cmd').value); recalcul(); });
+            $('code').addEventListener('input', () => { $('code').value = $('code').value.replace(/\D/g, '').slice(0, 4); rafraichir(); });
             $('neg').addEventListener('change', rafraichir);
             $('csv').addEventListener('click', () => exporter(['csv']));
             $('wft').addEventListener('click', () => exporter(['wft']));
@@ -2335,20 +2399,31 @@
             code: 'conv-code-fourn', cmd: 'conv-num-cmd', minus: 'btn-cmd-minus', plus: 'btn-cmd-plus', auto: 'conv-auto-next-file', neg: 'conv-neg-qty',
             toast: 'cmd-saved-toast', toastNum: 'toast-next-num', demo: 'btn-demo-conv', drop: 'drop-zone-conv', pick: 'btn-select-conv', file: 'file-input-conv',
             res: 'conv-results-card', count: 'conv-count', active: 'active-cmd-display', csv: 'btn-dl-csv', wft: 'btn-dl-wft', both: 'btn-dl-both',
-            pcsv: 'preview-csv-box', pwft: 'preview-wft-box'
-        }, '9000', () => parserTexte("921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n540503NF0A\n2\nBUTOIR CAOUTCHOUC"));
+            pcsv: 'preview-csv-box', pwft: 'preview-wft-box', titre: 'conv-drop-title'
+        }, '9000', 'nissan', { texte: parserNissan }, () => {
+            $id('conv-drop-title').textContent = 'Exemple GASS (ZPN) chargé';
+            return parserNissan([
+                "1201509402", "EUR", "1", "S580", "NFRD9310",
+                "000001\t000000\tZPN\t260424CA0A\tSUPPORT PROJECTEUR DROIT\t503T\t0220180801\tsb Clt 353096\t000001\tZSO\t783044\t260424CA0A\t1\t1.000\tEA\t183.78",
+                "000002\t000000\tZPN\t285334BA5C\tENJOLIVEUR SONAR\t503T\t0220180801\tsb Clt 353096\t000002\tZSO\t783044\t285334BA5C\t1\t1.000\tEA\t18.000"
+            ].join('\n'));
+        });
 
         creerConvertisseur({
             code: 'mg-code-fourn', cmd: 'mg-num-cmd', minus: 'btn-mg-minus', plus: 'btn-mg-plus', auto: 'mg-auto-next-file', neg: 'mg-neg-qty',
             toast: 'mg-saved-toast', toastNum: 'mg-toast-next-num', demo: 'btn-demo-mg', drop: 'drop-zone-mg', pick: 'btn-select-mg', file: 'file-input-mg',
             res: 'mg-results-card', count: 'mg-count', active: 'mg-active-cmd-display', csv: 'btn-mg-dl-csv', wft: 'btn-mg-dl-wft', both: 'btn-mg-dl-both',
-            pcsv: 'preview-mg-csv-box', pwft: 'preview-mg-wft-box'
-        }, '6000', () => extraireDepuisLignes([
-            ['Part #', 'Part Name', 'QTY'],
-            ['10123456', 'BRAKE PAD SET FRONT', 1],
-            ['10234567', 'OIL FILTER ELEMENT', 2],
-            ['10345678', 'WIPER BLADE ASSY LH', 1]
-        ]));
+            pcsv: 'preview-mg-csv-box', pwft: 'preview-mg-wft-box', titre: 'mg-drop-title'
+        }, '6000', 'mg', { texte: parserCSV_MG, lignes: parserMatriceMG }, () => {
+            $id('mg-drop-title').textContent = 'Exemple MG (Sales Invoice) chargé';
+            return parserMatriceMG([
+                ['Brand Name', 'Part #', 'Part Name', 'Processed Part #', 'Order #', 'Buyers Ref #', 'COO', 'Inbound HS Code', 'Outbound HS Code', 'QTY', 'MSRP'],
+                ['MG', '10754438-SPRP', 'FASCIA-RR BPR UPR(PARE-CHOCS AR PARTIE SUPERIEURE)', '10754438-SPRP', '4ARENC126A087', 'N.302198', 'China', '8708109090', '', 1, 323.99],
+                ['MG', '11026137', 'FASCIA-RR BPR LWR(PARE-CHOCS AR PARTIE INFERIEURE)', '11026137', '4ARENC126A087', 'N.302198', 'China', '8708109090', '', 1, 799.65],
+                ['MG', '11026159', "COVER-RR TOW HOOK OPG(TRAPPE D'ANNEAU DE REMORQUAGE AR)", '11026159', '4ARENC126A087', 'N.302198', 'China', '8708109090', '', 1, 26.76],
+                ['MG', '10639344-SPRP', "COVER-RR TOW HOOK OPG(TRAPPE D'ANNEAU DE REMORQUAGE AR)", '10639344-SPRP', '4ARENC126A087', 'N.302198', 'China', '8708109090', '', 1, 7.16]
+            ]);
+        });
 
         /* ===== BASE CLIENTS DCSnet : recherche automatique par nom ou code ===== */
         let CLIENTS = [], CLIENTS_IDX = [];
