@@ -579,6 +579,10 @@
         header { top: env(safe-area-inset-top, 0px); }
         body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: rgba(10, 13, 22, 0.9); }
         .bn-pill { display: inline-block; min-width: 20px; padding: 1px 7px; margin-left: 8px; border-radius: 999px; background: rgba(255,255,255,0.14); font-size: 11px; font-weight: 800; }
+        .td-ref, .td-desig { cursor: text; transition: background 0.15s; }
+        .td-ref:hover, .td-desig:hover { background: rgba(255,255,255,0.06); }
+        .td-ref:not(.editing):hover::after, .td-desig:not(.editing):hover::after { content: ' ✎'; font-size: 11px; color: var(--text-muted); }
+        .td-ref input, .td-desig input { width: 100%; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -1246,6 +1250,16 @@
             <div class="modal-desc">Historique mémorisé localement : chargez, imprimez ou supprimez une note.</div>
             <input type="text" id="bn-filtre-notes" class="modal-input" placeholder="🔍 Filtrer client, immat, pièce..." style="width: 100%; margin-bottom: 12px;">
             <div id="bn-liste-notes" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- MODALE FIN D'ÉTAPE -->
+    <div id="modal-etape" class="modal-overlay hidden">
+        <div class="modal-content" style="max-width: 460px; width: 92%; text-align: center;">
+            <div style="font-size: 46px; margin-bottom: 8px;">✅</div>
+            <div class="modal-title" id="etape-titre" style="margin-bottom: 10px;">Étape 1 terminée</div>
+            <div class="modal-desc" id="etape-texte" style="margin-bottom: 18px; line-height: 1.55;"></div>
+            <button class="btn btn-emerald" id="btn-etape-ok" style="width: 100%; justify-content: center; padding: 12px;">Continuer</button>
         </div>
     </div>
 
@@ -2100,6 +2114,7 @@
         const triees = () => listePieces.map(p => ({ p, s: statut(p) })).sort((a, b) => RANG[a.s] - RANG[b.s]);
         const montrer = (id, on) => $id(id).classList.toggle('hidden', !on);
 
+        let ignorerCopie = false;
         function demarrerVerification(liste) {
             const l = liste.filter(p => p.ref);
             if (!l.length) { alert('Aucune pièce lisible dans ce fichier.'); return; }
@@ -2132,15 +2147,15 @@
                 $id('step-counter').textContent = `Pièce ${currentStepPos + 1} sur ${n}`;
                 $id('progress-bar').style.width = Math.round(fileIndexList.filter(i => decide(listePieces[i])).length / n * 100) + '%';
                 $id('current-status-badge').innerHTML = `<span class="badge-status st-${s}">${LIB[s]}</span>`;
-                if ($id('auto-copy-check').checked) copierRef();
+                if ($id('auto-copy-check').checked && !ignorerCopie) copierRef();
             }
             const cnt = k => listePieces.filter(p => statut(p) === k).length;
             const total = listePieces.length, st = cnt('stock'), di = cnt('dispo'), ru = cnt('rupture');
             $id('kpi-total').textContent = total; $id('kpi-stock').textContent = st;
             $id('kpi-dispo').textContent = di; $id('kpi-rupture').textContent = ru;
             $id('kpi-attente').textContent = total - st - di - ru;
-            $id('table-subtitle').textContent = actif ? `${total - (total - st - di - ru)}/${total} pièces traitées` : 'Vérification terminée ✓';
-            $id('table-body').innerHTML = triees().map(({ p, s }, i) => `<tr><td>${i + 1}</td><td style="font-family:monospace;font-weight:700;">${esc(p.ref)}</td><td style="text-align:center;">${esc(p.qty)}</td><td>${esc(p.desig)}</td><td style="text-align:center;"><span class="badge-status st-${s}">${LIB[s]}</span></td></tr>`).join('');
+            $id('table-subtitle').textContent = (actif ? `${total - (total - st - di - ru)}/${total} pièces traitées` : 'Vérification terminée ✓') + ' · ✎ cliquez sur une référence ou une désignation pour la corriger';
+            $id('table-body').innerHTML = triees().map(({ p, s }, i) => `<tr><td>${i + 1}</td><td class="td-ref" data-i="${listePieces.indexOf(p)}" title="Cliquer pour modifier" style="font-family:monospace;font-weight:700;">${esc(p.ref)}</td><td style="text-align:center;">${esc(p.qty)}</td><td class="td-desig" data-i="${listePieces.indexOf(p)}" title="Cliquer pour modifier">${esc(p.desig)}</td><td style="text-align:center;"><span class="badge-status st-${s}">${LIB[s]}</span></td></tr>`).join('');
         }
 
         function copierRef() {
@@ -2163,9 +2178,24 @@
         }
 
         function avancer() {
+            const avant = phaseActuelle;
             if (currentStepPos < fileIndexList.length - 1) currentStepPos++; else finPhase();
             renderStock();
+            if (avant === 1 && phaseActuelle !== 1) afficherMessageEtape1();
         }
+
+        function afficherMessageEtape1() {
+            const enStock = listePieces.filter(p => p.stock === true).length, manquantes = fileIndexList.length;
+            const pl = (n, mot) => n + ' ' + mot + (n > 1 ? 's' : '');
+            $id('etape-titre').textContent = 'Étape 1 terminée : stock magasin vérifié';
+            $id('etape-texte').innerHTML = phaseActuelle === 2
+                ? `<strong style="color:#60a5fa;">${pl(enStock, 'pièce')}</strong> en stock au magasin.<br><strong style="color:#fb7185;">${pl(manquantes, 'pièce')}</strong> absente${manquantes > 1 ? 's' : ''} du stock.<br><br>Passons à l'<strong>étape 2</strong> : vérification de la disponibilité usine pour les pièces manquantes.`
+                : `Toutes les pièces (<strong style="color:#60a5fa;">${enStock}</strong>) sont en stock au magasin.<br><br>L'étape 2 (disponibilité usine) n'est pas nécessaire.`;
+            $id('btn-etape-ok').textContent = phaseActuelle === 2 ? "Commencer l'étape 2 →" : 'Voir le récapitulatif';
+            $id('modal-etape').classList.remove('hidden');
+            $id('btn-etape-ok').focus();
+        }
+        $id('btn-etape-ok').addEventListener('click', () => $id('modal-etape').classList.add('hidden'));
 
         function decider(val) {
             const p = pieceCourante(); if (!p) return;
@@ -2180,16 +2210,42 @@
         $id('btn-prev').addEventListener('click', () => { if (currentStepPos > 0) { currentStepPos--; renderStock(); } });
         $id('btn-next').addEventListener('click', () => { if (pieceCourante()) avancer(); });
         $id('btn-copy').addEventListener('click', copierRef);
-        $id('btn-toggle-edit-ref').addEventListener('click', () => {
-            const p = pieceCourante(); if (!p) return;
-            const v = prompt('Modifier la référence :', p.ref);
-            if (v && v.trim()) { p.ref = v.trim().toUpperCase(); renderStock(); }
-        });
+        function editerRefCourante() {
+            const p = pieceCourante(), el = $id('current-ref'); if (!p || el.querySelector('input')) return;
+            const inp = document.createElement('input');
+            inp.type = 'text'; inp.value = p.ref; inp.className = 'ref-edit-input';
+            el.textContent = ''; el.appendChild(inp); inp.focus(); inp.select();
+            let fini = false;
+            const fin = ok => { if (fini) return; fini = true; const v = inp.value.trim().toUpperCase(); if (ok && v) p.ref = v; renderStock(); };
+            inp.addEventListener('keydown', e => { if (e.key === 'Enter') fin(true); else if (e.key === 'Escape') fin(false); });
+            inp.addEventListener('blur', () => fin(true));
+        }
+        $id('btn-toggle-edit-ref').addEventListener('click', editerRefCourante);
+        $id('current-ref').addEventListener('click', editerRefCourante);
+
+        function editerCellule(td) {
+            const champ = td.classList.contains('td-ref') ? 'ref' : 'desig', p = listePieces[Number(td.dataset.i)];
+            if (!p || td.querySelector('input')) return;
+            const inp = document.createElement('input');
+            inp.type = 'text'; inp.value = p[champ]; inp.className = 'modal-input';
+            if (champ === 'ref') inp.style.fontFamily = "'JetBrains Mono', monospace";
+            td.classList.add('editing'); td.textContent = ''; td.appendChild(inp); inp.focus(); inp.select();
+            let fini = false;
+            const fin = ok => {
+                if (fini) return; fini = true;
+                const v = inp.value.trim();
+                if (ok && v) p[champ] = champ === 'ref' ? v.toUpperCase() : v;
+                ignorerCopie = true; renderStock(); ignorerCopie = false;
+            };
+            inp.addEventListener('keydown', e => { if (e.key === 'Enter') fin(true); else if (e.key === 'Escape') fin(false); });
+            inp.addEventListener('blur', () => fin(true));
+        }
+        $id('table-body').addEventListener('click', e => { const td = e.target.closest('.td-ref, .td-desig'); if (td) editerCellule(td); });
 
         document.addEventListener('keydown', (e) => {
             if (!$id('screen-stock').classList.contains('active-screen') || !pieceCourante()) return;
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-            if (!$id('modal-print').classList.contains('hidden') || !$id('modal-db-veh').classList.contains('hidden')) return;
+            if (['modal-print', 'modal-db-veh', 'modal-etape', 'modal-notes'].some(m => !$id(m).classList.contains('hidden'))) return;
             if (e.key === '1') decider(true);
             else if (e.key === '2') decider(false);
             else if (e.key === 'ArrowLeft') $id('btn-prev').click();
