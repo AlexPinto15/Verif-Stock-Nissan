@@ -755,6 +755,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         let fileIndexList = [];
         let currentStepPos = 0;
         let phaseActuelle = 1;
+        let verificationDepuisBlocNote = false;
 
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
@@ -864,6 +865,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const l = liste.filter(p => p.ref);
             if (!l.length) { alert('Aucune pièce lisible dans ce fichier.'); return false; }
             listePieces = l.map(p => ({ ...p, stock: null, usine: null }));
+            verificationDepuisBlocNote = l.every(p => Number.isInteger(p.bnRefId));
             phaseActuelle = 1;
             fileIndexList = listePieces.map((_, i) => i);
             currentStepPos = 0;
@@ -938,6 +940,10 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const avant = phaseActuelle;
             if (currentStepPos < fileIndexList.length - 1) currentStepPos++; else finPhase();
             renderStock();
+            if (phaseActuelle === 3 && verificationDepuisBlocNote) {
+                ouvrirEcran('blocnote');
+                return;
+            }
             if (avant === 1 && phaseActuelle !== 1) afficherMessageEtape1();
         }
 
