@@ -734,21 +734,18 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             });
         });
 
-        document.getElementById('btn-bn-vers-stock').addEventListener('click', () => {
-            const immat = bnImmat.value.trim().toUpperCase();
-            const modele = bnModele.value.trim();
-            const vin = bnVin.value.trim().toUpperCase();
-
-            if (immat || vin || modele) {
-                appliquerInfosVehicule({
-                    immat: immat || '--',
-                    modele: modele || 'Non renseigné',
-                    vin: vin || '--',
-                    dateConst: '--'
-                }, true);
+        document.getElementById('btn-bn-verifier-refs').addEventListener('click', () => {
+            if (!bnRefs.length) {
+                alert('Ajoute ou importe des références dans la liste avant de lancer la vérification.');
+                return;
             }
-
-            ouvrirEcran('stock');
+            const pieces = bnRefs.map(({ id, ref, qty, desig }) => ({
+                ref,
+                qty,
+                desig: desig || 'SANS DÉSIGNATION',
+                bnRefId: id
+            }));
+            if (demarrerVerification(pieces)) ouvrirEcran('stock');
         });
 
         /* -------------------------------------------------------------------------
@@ -865,13 +862,14 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         let ignorerCopie = false;
         function demarrerVerification(liste) {
             const l = liste.filter(p => p.ref);
-            if (!l.length) { alert('Aucune pièce lisible dans ce fichier.'); return; }
+            if (!l.length) { alert('Aucune pièce lisible dans ce fichier.'); return false; }
             listePieces = l.map(p => ({ ...p, stock: null, usine: null }));
             phaseActuelle = 1;
             fileIndexList = listePieces.map((_, i) => i);
             currentStepPos = 0;
             dropZone.classList.add('compact');
             renderStock();
+            return true;
         }
 
         function renderStock() {
@@ -904,6 +902,17 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             $id('kpi-attente').textContent = total - st - di - ru;
             $id('table-subtitle').textContent = (actif ? `${total - (total - st - di - ru)}/${total} pièces traitées` : 'Vérification terminée ✓') + ' · ✎ cliquez sur une référence ou une désignation pour la corriger';
             $id('table-body').innerHTML = triees().map(({ p, s }, i) => `<tr><td>${i + 1}</td><td class="td-ref" data-i="${listePieces.indexOf(p)}" title="Cliquer pour modifier" style="font-family:monospace;font-weight:700;">${esc(p.ref)}</td><td style="text-align:center;">${esc(p.qty)}</td><td class="td-desig" data-i="${listePieces.indexOf(p)}" title="Cliquer pour modifier">${esc(p.desig)}</td><td style="text-align:center;"><span class="badge-status st-${s}">${LIB[s]}</span></td></tr>`).join('');
+            if (phaseActuelle === 3) {
+                let refsNotesMisesAJour = false;
+                listePieces.forEach(piece => {
+                    if (!Number.isInteger(piece.bnRefId)) return;
+                    const refNote = bnRefs.find(ref => ref.id === piece.bnRefId);
+                    if (!refNote) return;
+                    refNote.st = piece.stock ? 'stock' : piece.usine === 'dispo' ? 'usine' : 'pasdispo';
+                    refsNotesMisesAJour = true;
+                });
+                if (refsNotesMisesAJour) renderBnRefs();
+            }
         }
 
         function copierRef() {
