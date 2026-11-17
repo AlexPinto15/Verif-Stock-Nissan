@@ -467,6 +467,20 @@
                             <label style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted);">Liste des références</label>
                             <span id="bn-ref-resume" style="font-size: 11px; color: var(--text-secondary); font-weight: 600;"></span>
                         </div>
+                        <div id="bn-epc-drop-zone" class="drop-zone compact bn-epc-drop-zone">
+                            <div class="drop-info">
+                                <div class="icon-upload">📁</div>
+                                <div>
+                                    <div class="drop-title">Déposez un export EPC (.txt, .xlsx, .csv)</div>
+                                    <div id="bn-epc-status" class="drop-sub" role="status" aria-live="polite">Les références seront ajoutées à cette liste.</div>
+                                </div>
+                            </div>
+                            <div class="btn-group bn-epc-actions">
+                                <button type="button" class="btn btn-red" id="bn-epc-select-file">📂 Sélectionner un fichier</button>
+                                <button type="button" class="btn btn-glass" id="bn-epc-demo">✏️ Charger exemple EPC</button>
+                            </div>
+                            <input type="file" id="bn-epc-file-input" accept=".txt,.xlsx,.xls,.csv" class="hidden">
+                        </div>
                         <div class="bn-ref-add">
                             <input type="text" id="bn-ref-input" class="modal-input" placeholder="Référence (Entrée pour ajouter)" style="flex: 2 1 180px; font-family: 'JetBrains Mono', monospace;">
                             <input type="number" id="bn-ref-qty" class="modal-input" value="1" min="1" title="Quantité" style="flex: 0 0 70px;">

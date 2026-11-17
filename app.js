@@ -539,6 +539,28 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             return n;
         }
 
+        function importerPiecesEpcDansBlocNote(pieces) {
+            const refsExistantes = new Set(bnRefs.map(ref => ref.ref));
+            let ajoutees = 0;
+            pieces.forEach(piece => {
+                const ref = String(piece.ref || '').trim().toUpperCase().replace(/\s+/g, '');
+                if (!ref || refsExistantes.has(ref)) return;
+                if (ajouterRefBn(ref, piece.qty, piece.desig)) {
+                    refsExistantes.add(ref);
+                    ajoutees++;
+                }
+            });
+            renderBnRefs();
+            $id('bn-epc-status').textContent = ajoutees
+                ? `${ajoutees} nouvelle(s) référence(s) ajoutée(s). Les doublons sont ignorés.`
+                : pieces.some(piece => String(piece.ref || '').trim())
+                    ? 'Aucune nouvelle référence : elles sont déjà dans la liste.'
+                    : 'Aucune référence lisible dans ce fichier.';
+            if (!ajoutees && !pieces.some(piece => String(piece.ref || '').trim())) {
+                alert('Aucune référence lisible dans ce fichier.');
+            }
+        }
+
         function renderBnRefs() {
             const c = $id('bn-ref-liste'), cnt = k => bnRefs.filter(r => r.st === k).length;
             $id('bn-ref-resume').textContent = bnRefs.length ? `${bnRefs.length} réf. · 🏠 ${cnt('stock')} · 🏭 ${cnt('usine')} · ❌ ${cnt('pasdispo')}` : '';
@@ -566,6 +588,36 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         });
         $id('bn-ref-import').addEventListener('click', () => {
             if (!importerRefsDuTexte(bnTexte.value)) alert("Aucune nouvelle référence détectée dans la zone de texte.\nFormat attendu : 260424CA0A x2 - Désignation");
+        });
+        const bnEpcDropZone = $id('bn-epc-drop-zone');
+        const bnEpcFileInput = $id('bn-epc-file-input');
+        $id('bn-epc-select-file').addEventListener('click', event => {
+            event.stopPropagation();
+            bnEpcFileInput.click();
+        });
+        bnEpcDropZone.addEventListener('click', event => {
+            if (!event.target.closest('button')) bnEpcFileInput.click();
+        });
+        bnEpcFileInput.addEventListener('change', event => {
+            const file = event.target.files[0];
+            if (file) lireFichierEpc(file, importerPiecesEpcDansBlocNote);
+            event.target.value = '';
+        });
+        ['dragenter', 'dragover'].forEach(type => bnEpcDropZone.addEventListener(type, event => {
+            event.preventDefault();
+            bnEpcDropZone.classList.add('dragover');
+        }));
+        ['dragleave', 'drop'].forEach(type => bnEpcDropZone.addEventListener(type, event => {
+            event.preventDefault();
+            bnEpcDropZone.classList.remove('dragover');
+        }));
+        bnEpcDropZone.addEventListener('drop', event => {
+            const file = event.dataTransfer.files[0];
+            if (file) lireFichierEpc(file, importerPiecesEpcDansBlocNote);
+        });
+        $id('bn-epc-demo').addEventListener('click', event => {
+            event.stopPropagation();
+            importerPiecesEpcDansBlocNote(parserTexte(EXEMPLE_EPC));
         });
         $id('bn-ref-liste').addEventListener('click', e => {
             const b = e.target.closest('button[data-act]'); if (!b) return;
@@ -770,32 +822,48 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
 
         document.getElementById('btn-demo').addEventListener('click', (e) => {
             e.stopPropagation();
-            const demo = "921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n540503NF0A\n2\nBUTOIR CAOUTCHOUC";
             document.getElementById('gass-status-text').textContent = "Exemple EPC chargé";
-            lireContenuTexte(demo);
+            lireContenuTexte(EXEMPLE_EPC);
         });
+
+        const EXEMPLE_EPC = "921005FA0A\n1\nTUYAU CLIMATISATION\nE43033ZL0D\n1\nJAMBE SUSPENSION AVANT GAUCHE\n543201KA0B\n1\nTAMPON ELAST FIXAT JAMBE SUSPENSION\n540503NF0A\n2\nBUTOIR CAOUTCHOUC";
+
+        function lireFichierEpc(file, recevoirPieces) {
+            const ext = file.name.split('.').pop().toLowerCase();
+            if (!['txt', 'xlsx', 'xls', 'csv'].includes(ext)) {
+                alert('Format non pris en charge. Choisis un fichier .txt, .xlsx, .xls ou .csv.');
+                return;
+            }
+            if (ext !== 'txt' && typeof XLSX === 'undefined') {
+                alert('La bibliothèque Excel n’est pas chargée. Vérifie la connexion Internet puis réessaie.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onerror = () => alert(`Impossible de lire le fichier « ${file.name} ».`);
+            reader.onload = event => {
+                try {
+                    if (ext === 'txt') {
+                        recevoirPieces(parserTexte(String(event.target.result || '')));
+                        return;
+                    }
+                    const data = new Uint8Array(event.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const firstSheet = wb.SheetNames[0];
+                    if (!firstSheet || !wb.Sheets[firstSheet]) throw new Error('Aucune feuille lisible dans le fichier.');
+                    const rows = XLSX.utils.sheet_to_json(wb.Sheets[firstSheet], { header: 1 });
+                    recevoirPieces(extraireDepuisLignes(rows));
+                } catch (error) {
+                    alert(`Impossible de traiter le fichier « ${file.name} » : ${error.message || 'format non reconnu.'}`);
+                }
+            };
+            if (ext === 'txt') reader.readAsText(file);
+            else reader.readAsArrayBuffer(file);
+        }
 
         function chargerFichier(file) {
             document.getElementById('gass-status-text').textContent = file.name;
-            const ext = file.name.split('.').pop().toLowerCase();
-            const reader = new FileReader();
-
-            if (ext === 'txt') {
-                reader.onload = (e) => lireContenuTexte(e.target.result);
-                reader.readAsText(file);
-            } else if (['xlsx', 'xls', 'csv'].includes(ext) && typeof XLSX !== 'undefined') {
-                reader.onload = (e) => {
-                    const data = new Uint8Array(e.target.result);
-                    const wb = XLSX.read(data, { type: 'array' });
-                    const sheet = wb.Sheets[wb.SheetNames[0]];
-                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                    lireContenuExcel(rows);
-                };
-                reader.readAsArrayBuffer(file);
-            } else {
-                reader.onload = (e) => lireContenuTexte(e.target.result);
-                reader.readAsText(file);
-            }
+            lireFichierEpc(file, demarrerVerification);
         }
 
         /* ===== OUTILS COMMUNS ===== */
