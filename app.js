@@ -3,7 +3,9 @@ const SUPABASE_CONFIG = window.SOFIBRIE_SUPABASE_CONFIG || {};
 const DOMAINE_EMAIL_AUTORISE = '@sofibrie.fr';
 let supabaseClient = null;
 let currentUser = null;
-let notesChannel = null;
+let synchronizationInterval = null;
+let synchronizationInProgress = false;
+const SYNCHRONIZATION_INTERVAL_MS = 30_000;
 
         function ouvrirEcran(nomEcran) {
             document.querySelectorAll('.app-screen').forEach(s => s.classList.remove('active-screen'));
@@ -603,8 +605,8 @@ let notesChannel = null;
             };
         }
 
-        async function chargerHistoriqueNotes() {
-            if (!supabaseClient || !currentUser) return;
+        async function chargerHistoriqueNotes(afficherErreur = true) {
+            if (!supabaseClient || !currentUser) return false;
             const userId = currentUser.id;
             try {
                 const { data, error } = await supabaseClient
@@ -612,11 +614,15 @@ let notesChannel = null;
                     .select('*')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
-                if (!currentUser || currentUser.id !== userId) return;
+                if (!currentUser || currentUser.id !== userId) return false;
                 notesPartagees = data.map(noteDepuisBase);
                 afficherHistoriqueNotes();
+                return true;
             } catch (error) {
-                alert(`Impossible de charger les fiches partagées : ${error.message || 'erreur de connexion à la base de données.'}`);
+                if (afficherErreur) {
+                    alert(`Impossible de charger les fiches partagées : ${error.message || 'erreur de connexion à la base de données.'}`);
+                }
+                return false;
             }
         }
 
@@ -1325,10 +1331,10 @@ let notesChannel = null;
             e.target.value = '';
         });
 
-        async function chargerClientsPartages() {
-            if (!supabaseClient || !currentUser) return;
+        async function chargerClientsPartages(afficherErreur = true) {
+            if (!supabaseClient || !currentUser) return false;
             const userId = currentUser.id;
-            $id('clients-status').textContent = 'chargement de la base partagée…';
+            if (afficherErreur) $id('clients-status').textContent = 'chargement de la base partagée…';
             try {
                 const { data, error } = await supabaseClient
                     .from('atelier_client_directory')
@@ -1336,19 +1342,25 @@ let notesChannel = null;
                     .eq('id', 'shared')
                     .maybeSingle();
                 if (error) throw error;
-                if (!currentUser || currentUser.id !== userId) return;
+                if (!currentUser || currentUser.id !== userId) return false;
                 if (!data) {
                     indexerClients([], 'base partagée vide · importez le CSV DCSnet');
-                    return;
+                    return true;
                 }
                 if (!Array.isArray(data.clients)) throw new Error('Le contenu de la base clients est invalide.');
                 const date = new Date(data.updated_at).toLocaleDateString('fr-FR');
                 indexerClients(data.clients, 'base partagée · mise à jour le ' + date);
+                return true;
             } catch (error) {
-                CLIENTS = [];
-                CLIENTS_IDX = [];
-                $id('clients-status').textContent = 'erreur de chargement';
-                alert(`Impossible de charger l’annuaire client partagé : ${error.message || 'erreur de connexion à la base de données.'}`);
+                if (afficherErreur) {
+                    CLIENTS = [];
+                    CLIENTS_IDX = [];
+                    $id('clients-status').textContent = 'erreur de chargement';
+                    alert(`Impossible de charger l’annuaire client partagé : ${error.message || 'erreur de connexion à la base de données.'}`);
+                } else {
+                    $id('clients-status').textContent = 'connexion interrompue · données précédentes conservées';
+                }
+                return false;
             }
         }
 
@@ -1529,12 +1541,30 @@ let notesChannel = null;
         const authStatus = $id('auth-status');
         const authSetupMessage = $id('auth-setup-message');
         const accountControls = $id('account-controls');
-        const realtimeStatus = $id('realtime-status');
+        const synchronizationStatus = $id('sync-status');
         let modeInscription = false;
 
         function afficherStatutAuth(message, estErreur = false) {
             authStatus.textContent = message;
             authStatus.classList.toggle('error', estErreur);
+        }
+
+        async function actualiserDonneesPartagees(afficherErreur = true) {
+            if (!supabaseClient || !currentUser || synchronizationInProgress) return;
+            synchronizationInProgress = true;
+            try {
+                const results = await Promise.all([
+                    chargerHistoriqueNotes(afficherErreur),
+                    chargerClientsPartages(afficherErreur)
+                ]);
+                const hasError = results.some(result => !result);
+                synchronizationStatus.textContent = hasError
+                    ? 'Actualisation automatique impossible. Vérifie la connexion.'
+                    : '';
+                synchronizationStatus.classList.toggle('hidden', !hasError);
+            } finally {
+                synchronizationInProgress = false;
+            }
         }
 
         function mettreAJourSession(session) {
@@ -1544,10 +1574,6 @@ let notesChannel = null;
                 notesPartagees = [];
                 CLIENTS = [];
                 CLIENTS_IDX = [];
-                if (notesChannel) {
-                    supabaseClient.removeChannel(notesChannel);
-                    notesChannel = null;
-                }
             }
             currentUser = nextUser;
             const connecte = Boolean(currentUser);
@@ -1562,37 +1588,26 @@ let notesChannel = null;
                 const nom = currentUser.user_metadata && currentUser.user_metadata.full_name;
                 $id('account-user-name').textContent = nom || currentUser.email;
                 actualiserBoutonImportNotes();
-                void chargerHistoriqueNotes();
-                void chargerClientsPartages();
-                if (!notesChannel) {
-                    notesChannel = supabaseClient
-                        .channel('atelier-notes-team')
-                        .on('postgres_changes', { event: '*', schema: 'public', table: 'atelier_notes' }, () => {
-                            void chargerHistoriqueNotes();
-                        })
-                        .on('postgres_changes', { event: '*', schema: 'public', table: 'atelier_client_directory' }, () => {
-                            void chargerClientsPartages();
-                        })
-                        .subscribe(status => {
-                            const indisponible = status === 'CHANNEL_ERROR' || status === 'TIMED_OUT';
-                            realtimeStatus.textContent = indisponible
-                                ? 'Synchronisation en direct indisponible — rouvre « Notes enregistrées » pour actualiser.'
-                                : '';
-                            realtimeStatus.classList.toggle('hidden', !indisponible);
-                        });
+                void actualiserDonneesPartagees();
+                if (synchronizationInterval === null) {
+                    synchronizationInterval = window.setInterval(() => {
+                        if (currentUser && !document.hidden) void actualiserDonneesPartagees(false);
+                    }, SYNCHRONIZATION_INTERVAL_MS);
                 }
                 return;
             }
 
+            if (synchronizationInterval !== null) {
+                window.clearInterval(synchronizationInterval);
+                synchronizationInterval = null;
+            }
+            synchronizationStatus.textContent = '';
+            synchronizationStatus.classList.add('hidden');
             notesPartagees = [];
             CLIENTS = [];
             CLIENTS_IDX = [];
             $id('clients-status').textContent = 'connecte-toi pour charger la base partagée';
             afficherHistoriqueNotes();
-            if (notesChannel) {
-                supabaseClient.removeChannel(notesChannel);
-                notesChannel = null;
-            }
         }
 
         authToggleMode.addEventListener('click', () => {
