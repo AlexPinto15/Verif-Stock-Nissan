@@ -1529,6 +1529,7 @@ let notesChannel = null;
         const authStatus = $id('auth-status');
         const authSetupMessage = $id('auth-setup-message');
         const accountControls = $id('account-controls');
+        const realtimeStatus = $id('realtime-status');
         let modeInscription = false;
 
         function afficherStatutAuth(message, estErreur = false) {
@@ -1573,9 +1574,11 @@ let notesChannel = null;
                             void chargerClientsPartages();
                         })
                         .subscribe(status => {
-                            if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-                                alert('La synchronisation en direct est indisponible. Rouvre « Notes enregistrées » pour actualiser.');
-                            }
+                            const indisponible = status === 'CHANNEL_ERROR' || status === 'TIMED_OUT';
+                            realtimeStatus.textContent = indisponible
+                                ? 'Synchronisation en direct indisponible — rouvre « Notes enregistrées » pour actualiser.'
+                                : '';
+                            realtimeStatus.classList.toggle('hidden', !indisponible);
                         });
                 }
                 return;
