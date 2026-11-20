@@ -603,6 +603,33 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
 
         const bnCatalogStatus = new Map();
         const bnCatalogLoading = new Set();
+        const bnTranslationSuggestions = new Map();
+        const bnTranslationStatus = new Map();
+        const bnTranslationLoading = new Set();
+
+        async function traduireDesignationEnFrancais(designation) {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 15000);
+            try {
+                const url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=fr&dt=t&q='
+                    + encodeURIComponent(designation);
+                const response = await fetch(url, { signal: controller.signal });
+                if (!response.ok) throw new Error(`Le service de traduction a répondu avec l’erreur ${response.status}.`);
+                const result = await response.json();
+                const segments = result && Array.isArray(result[0]) ? result[0] : [];
+                const traduction = segments
+                    .map(segment => Array.isArray(segment) && typeof segment[0] === 'string' ? segment[0] : '')
+                    .join('')
+                    .trim();
+                if (!traduction) throw new Error('Aucune traduction n’a été renvoyée.');
+                return traduction;
+            } catch (error) {
+                if (error.name === 'AbortError') throw new Error('La traduction a dépassé le délai autorisé. Réessaie.');
+                throw error;
+            } finally {
+                clearTimeout(timeout);
+            }
+        }
 
         async function chercherDesignationCatalogue(r) {
             if (r.desig || bnCatalogLoading.has(r.id)) return;
@@ -654,11 +681,15 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const btns = [['stock', '🏠 En stock'], ['usine', '🏭 Dispo usine'], ['pasdispo', '❌ Pas dispo']];
             c.innerHTML = bnRefs.map(r => {
                 const catalogStatus = bnCatalogStatus.get(r.id);
+                const translation = bnTranslationSuggestions.get(r.id);
+                const translationStatus = bnTranslationStatus.get(r.id);
                 return `<div class="bn-ref-entry" data-id="${r.id}">
                     <div class="bn-ref-row">
-                        <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig || 'Désignation manquante')}</span></div>
+                        <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig || 'Désignation manquante')}</span>${r.desig ? `<button type="button" class="bn-st-btn" data-act="translate-designation"${bnTranslationLoading.has(r.id) ? ' disabled' : ''}>${bnTranslationLoading.has(r.id) ? 'Traduction…' : '🌐 Traduire en français'}</button>` : ''}</div>
                         <div class="bn-ref-btns">${btns.map(([k, l]) => `<button type="button" class="bn-st-btn bn-k-${k}${r.st === k ? ' on' : ''}" data-act="${k}">${l}</button>`).join('')}<button type="button" class="bn-st-btn bn-del" data-act="del" title="Supprimer">✕</button></div>
                     </div>
+                    ${translationStatus ? `<p class="bn-translate-status" role="status">${esc(translationStatus)}</p>` : ''}
+                    ${translation ? `<div class="bn-translation-proposal"><div><strong>Proposition en français — à vérifier</strong><p>${esc(translation.designation)}</p></div><div class="bn-manual-search"><button type="button" class="bn-st-btn bn-save-designation" data-act="apply-translation">Utiliser cette traduction</button><button type="button" class="bn-st-btn" data-act="dismiss-translation">Garder l’original</button></div></div>` : ''}
                     ${r.desig ? '' : `<div class="bn-manual-designation">
                         <div class="bn-manual-search">
                             <button type="button" class="bn-st-btn" data-act="search-catalog"${bnCatalogLoading.has(r.id) ? ' disabled' : ''}>${bnCatalogLoading.has(r.id) ? 'Recherche…' : '📚 Chercher dans DCSnet'}</button>
@@ -803,6 +834,44 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 await chercherDesignationCatalogue(r);
                 return;
             }
+            if (b.dataset.act === 'translate-designation') {
+                if (!r.desig || bnTranslationLoading.has(id)) return;
+                const source = r.desig;
+                bnTranslationLoading.add(id);
+                bnTranslationStatus.set(id, 'Traduction en cours…');
+                bnTranslationSuggestions.delete(id);
+                renderBnRefs();
+                try {
+                    const traduction = await traduireDesignationEnFrancais(source);
+                    if (bnRefs.includes(r) && r.desig === source) {
+                        bnTranslationSuggestions.set(id, { source, designation: traduction });
+                        bnTranslationStatus.delete(id);
+                    }
+                } catch (error) {
+                    if (bnRefs.includes(r) && r.desig === source) {
+                        bnTranslationStatus.set(id, error.message || 'La traduction est impossible pour le moment.');
+                    }
+                } finally {
+                    bnTranslationLoading.delete(id);
+                    if (bnRefs.includes(r)) renderBnRefs();
+                }
+                return;
+            }
+            if (b.dataset.act === 'apply-translation') {
+                const suggestion = bnTranslationSuggestions.get(id);
+                if (!suggestion || r.desig !== suggestion.source) return;
+                r.desig = suggestion.designation;
+                bnTranslationSuggestions.delete(id);
+                bnTranslationStatus.delete(id);
+                renderBnRefs();
+                return;
+            }
+            if (b.dataset.act === 'dismiss-translation') {
+                bnTranslationSuggestions.delete(id);
+                bnTranslationStatus.delete(id);
+                renderBnRefs();
+                return;
+            }
             if (b.dataset.act === 'search-google' || b.dataset.act === 'search-bing') {
                 const query = [r.ref, bnModele.value.trim(), 'pièce automobile'].filter(Boolean).join(' ');
                 const baseUrl = b.dataset.act === 'search-google'
@@ -821,6 +890,9 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 bnRefs = bnRefs.filter(x => x.id !== id);
                 bnCatalogStatus.delete(id);
                 bnCatalogLoading.delete(id);
+                bnTranslationSuggestions.delete(id);
+                bnTranslationStatus.delete(id);
+                bnTranslationLoading.delete(id);
             }
             else r.st = (r.st === b.dataset.act) ? null : b.dataset.act;
             renderBnRefs();
