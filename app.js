@@ -601,9 +601,51 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             return Array.from(catalogue, ([reference, designation]) => ({ reference, designation }));
         }
 
-        const bnCatalogOptions = new Map();
         const bnCatalogStatus = new Map();
         const bnCatalogLoading = new Set();
+
+        async function chercherDesignationCatalogue(r) {
+            if (r.desig || bnCatalogLoading.has(r.id)) return;
+            if (!supabaseClient || !currentUser) {
+                bnCatalogStatus.set(r.id, 'Connecte-toi pour rechercher automatiquement dans le catalogue partagé.');
+                renderBnRefs();
+                return;
+            }
+
+            bnCatalogLoading.add(r.id);
+            bnCatalogStatus.set(r.id, 'Recherche automatique dans le catalogue DCSnet…');
+            renderBnRefs();
+            try {
+                const { data, error } = await supabaseClient
+                    .from('atelier_part_catalog')
+                    .select('designation')
+                    .eq('reference', normaliserReferenceCatalogue(r.ref))
+                    .limit(1);
+                if (error) throw error;
+                if (!bnRefs.includes(r)) return;
+
+                if (r.desig) {
+                    bnCatalogStatus.delete(r.id);
+                    return;
+                }
+                const designation = Array.isArray(data) && data.length
+                    ? String(data[0].designation || '').trim()
+                    : '';
+                if (designation) {
+                    r.desig = designation;
+                    bnCatalogStatus.delete(r.id);
+                } else {
+                    bnCatalogStatus.set(r.id, 'Référence absente du catalogue partagé. Essaie la recherche manuelle.');
+                }
+            } catch (error) {
+                if (bnRefs.includes(r) && !r.desig) {
+                    bnCatalogStatus.set(r.id, error.message || 'Recherche impossible dans le catalogue partagé.');
+                }
+            } finally {
+                bnCatalogLoading.delete(r.id);
+                if (bnRefs.includes(r)) renderBnRefs();
+            }
+        }
 
         function renderBnRefs() {
             const c = $id('bn-ref-liste'), cnt = k => bnRefs.filter(r => r.st === k).length;
@@ -611,12 +653,6 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             if (!bnRefs.length) { c.innerHTML = '<div class="bn-ref-vide">Aucune référence — ajoutez-en ci-dessus ou importez la zone de texte.</div>'; return; }
             const btns = [['stock', '🏠 En stock'], ['usine', '🏭 Dispo usine'], ['pasdispo', '❌ Pas dispo']];
             c.innerHTML = bnRefs.map(r => {
-                const catalogOptions = bnCatalogOptions.get(r.id) || [];
-                const catalogMarkup = catalogOptions.map((option, index) => `
-                    <div class="bn-catalog-option">
-                        <div><strong>${esc(option.designation)}</strong><small>Catalogue DCSnet partagé</small></div>
-                        <button type="button" class="bn-st-btn" data-act="use-catalog-designation" data-index="${index}">Choisir</button>
-                    </div>`).join('');
                 const catalogStatus = bnCatalogStatus.get(r.id);
                 return `<div class="bn-ref-entry" data-id="${r.id}">
                     <div class="bn-ref-row">
@@ -630,7 +666,6 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                             <button type="button" class="bn-st-btn" data-act="search-bing">Rechercher sur Bing</button>
                         </div>
                         ${catalogStatus ? `<p class="bn-catalog-ref-status" role="status">${esc(catalogStatus)}</p>` : ''}
-                        ${catalogMarkup ? `<div class="bn-catalog-options">${catalogMarkup}</div>` : ''}
                         <div class="bn-manual-entry">
                             <input type="text" class="modal-input bn-manual-desig" placeholder="Colle ici la désignation choisie">
                             <button type="button" class="bn-st-btn bn-save-designation" data-act="save-manual-designation">Enregistrer</button>
@@ -642,8 +677,10 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
 
         function validerAjoutRef() {
             if (ajouterRefBn($id('bn-ref-input').value, $id('bn-ref-qty').value, $id('bn-ref-desig').value)) {
+                const referenceAjoutee = bnRefs[bnRefs.length - 1];
                 $id('bn-ref-input').value = ''; $id('bn-ref-qty').value = 1; $id('bn-ref-desig').value = '';
                 renderBnRefs();
+                if (!referenceAjoutee.desig) chercherDesignationCatalogue(referenceAjoutee);
             }
             $id('bn-ref-input').focus();
         }
@@ -763,33 +800,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const b = e.target.closest('button[data-act]'); if (!b) return;
             const id = Number(b.closest('.bn-ref-entry').dataset.id), r = bnRefs.find(x => x.id === id); if (!r) return;
             if (b.dataset.act === 'search-catalog') {
-                if (!supabaseClient || !currentUser) {
-                    bnCatalogStatus.set(id, 'Connecte-toi pour chercher dans le catalogue partagé.');
-                    renderBnRefs();
-                    return;
-                }
-                bnCatalogLoading.add(id);
-                bnCatalogStatus.set(id, 'Recherche dans les catalogues DCSnet partagés…');
-                bnCatalogOptions.delete(id);
-                renderBnRefs();
-                try {
-                    const { data, error } = await supabaseClient
-                        .from('atelier_part_catalog')
-                        .select('designation')
-                        .eq('reference', normaliserReferenceCatalogue(r.ref))
-                        .limit(5);
-                    if (error) throw error;
-                    const options = Array.isArray(data) ? data : [];
-                    bnCatalogOptions.set(id, options);
-                    bnCatalogStatus.set(id, options.length
-                        ? `${options.length} désignation(s) trouvée(s) dans le catalogue partagé.`
-                        : 'Référence absente du catalogue partagé. Essaie la recherche manuelle.');
-                } catch (error) {
-                    bnCatalogStatus.set(id, error.message || 'Recherche impossible dans le catalogue partagé.');
-                } finally {
-                    bnCatalogLoading.delete(id);
-                    renderBnRefs();
-                }
+                await chercherDesignationCatalogue(r);
                 return;
             }
             if (b.dataset.act === 'search-google' || b.dataset.act === 'search-bing') {
@@ -800,20 +811,14 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 window.open(baseUrl + encodeURIComponent(query), '_blank', 'noopener,noreferrer');
                 return;
             }
-            if (b.dataset.act === 'use-catalog-designation') {
-                const option = (bnCatalogOptions.get(id) || [])[Number(b.dataset.index)];
-                if (!option) return;
-                r.desig = option.designation;
-                bnCatalogOptions.delete(id);
-                bnCatalogStatus.delete(id);
-            } else if (b.dataset.act === 'save-manual-designation') {
+            if (b.dataset.act === 'save-manual-designation') {
                 const input = b.closest('.bn-ref-entry').querySelector('.bn-manual-desig');
                 const designation = input.value.trim();
                 if (!designation) { input.focus(); return; }
                 r.desig = designation;
+                bnCatalogStatus.delete(id);
             } else if (b.dataset.act === 'del') {
                 bnRefs = bnRefs.filter(x => x.id !== id);
-                bnCatalogOptions.delete(id);
                 bnCatalogStatus.delete(id);
                 bnCatalogLoading.delete(id);
             }
