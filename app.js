@@ -606,6 +606,30 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         const bnTranslationSuggestions = new Map();
         const bnTranslationStatus = new Map();
         const bnTranslationLoading = new Set();
+        const MOTS_DESIGNATION_ANGLAISE = new Set([
+            'ASSEMBLY', 'ASSY', 'ASM', 'BEARING', 'BELT', 'BRACKET', 'BUMPER', 'COVER',
+            'DOOR', 'ENGINE', 'FENDER', 'FILTER', 'FRONT', 'FRT', 'GASKET', 'GEAR',
+            'GRILLE', 'GUARD', 'HANDLE', 'HEADLAMP', 'HOOD', 'HOSE', 'HOUSING', 'LAMP',
+            'LATCH', 'LEFT', 'LENS', 'LINER', 'LOCK', 'LOWER', 'MIRROR', 'MOUNT', 'PANEL',
+            'PIPE', 'PUMP', 'REAR', 'RIGHT', 'SEAL', 'SHAFT', 'SHIELD', 'SWITCH', 'TAIL',
+            'TANK', 'UPPER', 'VALVE', 'WHEEL', 'WIPER'
+        ]);
+        const MOTS_DESIGNATION_FRANCAISE = new Set([
+            'AILE', 'ARRIERE', 'AVANT', 'BOITE', 'BOUCLIER', 'CACHE', 'CAPOT', 'CAOUTCHOUC',
+            'COFFRE', 'COUVERCLE', 'DURITE', 'ECHAPPEMENT', 'EMBRAYAGE', 'ENJOLIVEUR',
+            'FEU', 'GAUCHE', 'GARNITURE', 'MOTEUR', 'PAREBRISE', 'PHARE', 'POIGNEE',
+            'PORTE', 'RESERVOIR', 'RETROVISEUR', 'ROUE', 'TOIT', 'TUYAU', 'VITRE', 'VITESSE'
+        ]);
+
+        function designationSembleAnglaise(designation) {
+            const mots = String(designation || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toUpperCase()
+                .match(/[A-Z]+/g) || [];
+            return mots.some(mot => MOTS_DESIGNATION_ANGLAISE.has(mot))
+                && !mots.some(mot => MOTS_DESIGNATION_FRANCAISE.has(mot));
+        }
 
         async function traduireDesignationEnFrancais(designation) {
             const controller = new AbortController();
@@ -685,7 +709,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 const translationStatus = bnTranslationStatus.get(r.id);
                 return `<div class="bn-ref-entry" data-id="${r.id}">
                     <div class="bn-ref-row">
-                        <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig || 'Désignation manquante')}</span>${r.desig ? `<button type="button" class="bn-st-btn" data-act="translate-designation"${bnTranslationLoading.has(r.id) ? ' disabled' : ''}>${bnTranslationLoading.has(r.id) ? 'Traduction…' : '🌐 Traduire en français'}</button>` : ''}</div>
+                        <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig || 'Désignation manquante')}</span>${r.desig && designationSembleAnglaise(r.desig) ? `<button type="button" class="bn-st-btn" data-act="translate-designation"${bnTranslationLoading.has(r.id) ? ' disabled' : ''}>${bnTranslationLoading.has(r.id) ? 'Traduction…' : '🌐 Traduire en français'}</button>` : ''}</div>
                         <div class="bn-ref-btns">${btns.map(([k, l]) => `<button type="button" class="bn-st-btn bn-k-${k}${r.st === k ? ' on' : ''}" data-act="${k}">${l}</button>`).join('')}<button type="button" class="bn-st-btn bn-del" data-act="del" title="Supprimer">✕</button></div>
                     </div>
                     ${translationStatus ? `<p class="bn-translate-status" role="status">${esc(translationStatus)}</p>` : ''}
@@ -835,7 +859,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 return;
             }
             if (b.dataset.act === 'translate-designation') {
-                if (!r.desig || bnTranslationLoading.has(id)) return;
+                if (!r.desig || !designationSembleAnglaise(r.desig) || bnTranslationLoading.has(id)) return;
                 const source = r.desig;
                 bnTranslationLoading.add(id);
                 bnTranslationStatus.set(id, 'Traduction en cours…');
