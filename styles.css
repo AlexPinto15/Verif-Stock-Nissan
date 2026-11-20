@@ -454,6 +454,7 @@
         .bn-epc-actions .btn { padding: 7px 9px; font-size: 10px; }
         .bn-ref-add { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
         #bn-ref-liste { display: flex; flex-direction: column; gap: 8px; max-height: 340px; overflow-y: auto; }
+        .bn-ref-entry { display: flex; flex-direction: column; gap: 6px; }
         .bn-ref-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px; background: rgba(10, 13, 20, 0.7); border: 1px solid var(--border-subtle); border-radius: 12px; }
         .bn-ref-info { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; min-width: 0; }
         .bn-ref-code { font-family: 'JetBrains Mono', monospace; font-weight: 800; color: #fff; font-size: 14px; }
@@ -465,6 +466,11 @@
         .bn-k-stock.on { background: #2563eb; border-color: #2563eb; color: #fff; }
         .bn-k-usine.on { background: #059669; border-color: #059669; color: #fff; }
         .bn-k-pasdispo.on { background: #e11d48; border-color: #e11d48; color: #fff; }
+        .bn-manual-designation { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; background: rgba(59,130,246,0.06); border: 1px solid var(--border-subtle); border-radius: 9px; }
+        .bn-manual-search, .bn-manual-entry { display: flex; gap: 6px; flex-wrap: wrap; }
+        .bn-manual-entry .bn-manual-desig { flex: 1 1 220px; min-width: 0; padding: 7px 9px; font-size: 11px; }
+        .bn-manual-designation .bn-st-btn { font-size: 10px; }
+        .bn-save-designation { background: rgba(16,185,129,0.16); border-color: rgba(16,185,129,0.45); color: #6ee7b7; }
         .bn-del { color: #fb7185; }
         .bn-ref-vide { text-align: center; color: var(--text-muted); font-size: 12px; padding: 14px 0; }
 

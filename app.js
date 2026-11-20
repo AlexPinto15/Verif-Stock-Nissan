@@ -545,7 +545,9 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             pieces.forEach(piece => {
                 const ref = String(piece.ref || '').trim().toUpperCase().replace(/\s+/g, '');
                 if (!ref || refsExistantes.has(ref)) return;
-                if (ajouterRefBn(ref, piece.qty, piece.desig)) {
+                const designation = String(piece.desig || '').trim();
+                const designationFinale = /^SANS DÉSIGNATION$/i.test(designation) ? '' : designation;
+                if (ajouterRefBn(ref, piece.qty, designationFinale)) {
                     refsExistantes.add(ref);
                     ajoutees++;
                 }
@@ -566,10 +568,24 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             $id('bn-ref-resume').textContent = bnRefs.length ? `${bnRefs.length} réf. · 🏠 ${cnt('stock')} · 🏭 ${cnt('usine')} · ❌ ${cnt('pasdispo')}` : '';
             if (!bnRefs.length) { c.innerHTML = '<div class="bn-ref-vide">Aucune référence — ajoutez-en ci-dessus ou importez la zone de texte.</div>'; return; }
             const btns = [['stock', '🏠 En stock'], ['usine', '🏭 Dispo usine'], ['pasdispo', '❌ Pas dispo']];
-            c.innerHTML = bnRefs.map(r => `<div class="bn-ref-row" data-id="${r.id}">
-                <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig)}</span></div>
-                <div class="bn-ref-btns">${btns.map(([k, l]) => `<button type="button" class="bn-st-btn bn-k-${k}${r.st === k ? ' on' : ''}" data-act="${k}">${l}</button>`).join('')}<button type="button" class="bn-st-btn bn-del" data-act="del" title="Supprimer">✕</button></div>
-            </div>`).join('');
+            c.innerHTML = bnRefs.map(r => {
+                return `<div class="bn-ref-entry" data-id="${r.id}">
+                    <div class="bn-ref-row">
+                        <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig || 'Désignation manquante')}</span></div>
+                        <div class="bn-ref-btns">${btns.map(([k, l]) => `<button type="button" class="bn-st-btn bn-k-${k}${r.st === k ? ' on' : ''}" data-act="${k}">${l}</button>`).join('')}<button type="button" class="bn-st-btn bn-del" data-act="del" title="Supprimer">✕</button></div>
+                    </div>
+                    ${r.desig ? '' : `<div class="bn-manual-designation">
+                        <div class="bn-manual-search">
+                            <button type="button" class="bn-st-btn" data-act="search-google">🔎 Rechercher sur Google</button>
+                            <button type="button" class="bn-st-btn" data-act="search-bing">Rechercher sur Bing</button>
+                        </div>
+                        <div class="bn-manual-entry">
+                            <input type="text" class="modal-input bn-manual-desig" placeholder="Colle ici la désignation choisie">
+                            <button type="button" class="bn-st-btn bn-save-designation" data-act="save-manual-designation">Enregistrer</button>
+                        </div>
+                    </div>`}
+                </div>`;
+            }).join('');
         }
 
         function validerAjoutRef() {
@@ -621,10 +637,31 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         });
         $id('bn-ref-liste').addEventListener('click', e => {
             const b = e.target.closest('button[data-act]'); if (!b) return;
-            const id = Number(b.closest('.bn-ref-row').dataset.id), r = bnRefs.find(x => x.id === id); if (!r) return;
-            if (b.dataset.act === 'del') bnRefs = bnRefs.filter(x => x.id !== id);
+            const id = Number(b.closest('.bn-ref-entry').dataset.id), r = bnRefs.find(x => x.id === id); if (!r) return;
+            if (b.dataset.act === 'search-google' || b.dataset.act === 'search-bing') {
+                const query = [r.ref, bnModele.value.trim(), 'pièce automobile'].filter(Boolean).join(' ');
+                const baseUrl = b.dataset.act === 'search-google'
+                    ? 'https://www.google.com/search?q='
+                    : 'https://www.bing.com/search?q=';
+                window.open(baseUrl + encodeURIComponent(query), '_blank', 'noopener,noreferrer');
+                return;
+            }
+            if (b.dataset.act === 'save-manual-designation') {
+                const input = b.closest('.bn-ref-entry').querySelector('.bn-manual-desig');
+                const designation = input.value.trim();
+                if (!designation) { input.focus(); return; }
+                r.desig = designation;
+            } else if (b.dataset.act === 'del') {
+                bnRefs = bnRefs.filter(x => x.id !== id);
+            }
             else r.st = (r.st === b.dataset.act) ? null : b.dataset.act;
             renderBnRefs();
+        });
+        $id('bn-ref-liste').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && e.target.matches('.bn-manual-desig')) {
+                e.preventDefault();
+                e.target.closest('.bn-ref-entry').querySelector('[data-act="save-manual-designation"]').click();
+            }
         });
         renderBnRefs();
 
