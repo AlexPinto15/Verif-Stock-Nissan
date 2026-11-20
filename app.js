@@ -563,12 +563,61 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             }
         }
 
+        function normaliserReferenceCatalogue(reference) {
+            return String(reference || '').trim().toUpperCase().replace(/\s+/g, '').replace(/^\$/, '');
+        }
+
+        function extraireCatalogueDcsnet(rows) {
+            const catalogue = new Map();
+            const headerIndex = rows.findIndex(row =>
+                row.some(cell => /^(?:réf(?:érence)?|reference)$/i.test(String(cell || '').trim())) &&
+                row.some(cell => /^(?:désignation|designation|description)$/i.test(String(cell || '').trim()))
+            );
+
+            if (headerIndex >= 0) {
+                const header = rows[headerIndex].map(cell => String(cell || '').trim());
+                const refIndex = header.findIndex(cell => /^(?:réf(?:érence)?|reference)$/i.test(cell));
+                const designationIndex = header.findIndex(cell => /^(?:désignation|designation|description)$/i.test(cell));
+                if (refIndex >= 0 && designationIndex >= 0 && refIndex !== designationIndex) {
+                    rows.slice(headerIndex + 1).forEach(row => {
+                        const reference = normaliserReferenceCatalogue(row[refIndex]);
+                        const designation = String(row[designationIndex] || '').trim();
+                        if (reference && designation && !catalogue.has(reference)) catalogue.set(reference, designation);
+                    });
+                    return Array.from(catalogue, ([reference, designation]) => ({ reference, designation }));
+                }
+            }
+
+            rows.forEach(row => {
+                const line = row.map(cell => String(cell || '')).join(' ')
+                    .replace(/[\u00a0\u202f]/g, ' ')
+                    .trim();
+                const match = line.match(/^\s*(\$?[A-Z0-9][A-Z0-9./-]{4,})\s{2,}(.+?)\s{2,}\d+\s{2,}/i);
+                if (!match) return;
+                const reference = normaliserReferenceCatalogue(match[1]);
+                const designation = match[2].trim();
+                if (reference && designation && !catalogue.has(reference)) catalogue.set(reference, designation);
+            });
+            return Array.from(catalogue, ([reference, designation]) => ({ reference, designation }));
+        }
+
+        const bnCatalogOptions = new Map();
+        const bnCatalogStatus = new Map();
+        const bnCatalogLoading = new Set();
+
         function renderBnRefs() {
             const c = $id('bn-ref-liste'), cnt = k => bnRefs.filter(r => r.st === k).length;
             $id('bn-ref-resume').textContent = bnRefs.length ? `${bnRefs.length} réf. · 🏠 ${cnt('stock')} · 🏭 ${cnt('usine')} · ❌ ${cnt('pasdispo')}` : '';
             if (!bnRefs.length) { c.innerHTML = '<div class="bn-ref-vide">Aucune référence — ajoutez-en ci-dessus ou importez la zone de texte.</div>'; return; }
             const btns = [['stock', '🏠 En stock'], ['usine', '🏭 Dispo usine'], ['pasdispo', '❌ Pas dispo']];
             c.innerHTML = bnRefs.map(r => {
+                const catalogOptions = bnCatalogOptions.get(r.id) || [];
+                const catalogMarkup = catalogOptions.map((option, index) => `
+                    <div class="bn-catalog-option">
+                        <div><strong>${esc(option.designation)}</strong><small>Catalogue DCSnet partagé</small></div>
+                        <button type="button" class="bn-st-btn" data-act="use-catalog-designation" data-index="${index}">Choisir</button>
+                    </div>`).join('');
+                const catalogStatus = bnCatalogStatus.get(r.id);
                 return `<div class="bn-ref-entry" data-id="${r.id}">
                     <div class="bn-ref-row">
                         <div class="bn-ref-info"><span class="bn-ref-code">${esc(r.ref)}</span><span class="bn-ref-qty">x${esc(r.qty)}</span><span class="bn-ref-des">${esc(r.desig || 'Désignation manquante')}</span></div>
@@ -576,9 +625,12 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                     </div>
                     ${r.desig ? '' : `<div class="bn-manual-designation">
                         <div class="bn-manual-search">
+                            <button type="button" class="bn-st-btn" data-act="search-catalog"${bnCatalogLoading.has(r.id) ? ' disabled' : ''}>${bnCatalogLoading.has(r.id) ? 'Recherche…' : '📚 Chercher dans DCSnet'}</button>
                             <button type="button" class="bn-st-btn" data-act="search-google">🔎 Rechercher sur Google</button>
                             <button type="button" class="bn-st-btn" data-act="search-bing">Rechercher sur Bing</button>
                         </div>
+                        ${catalogStatus ? `<p class="bn-catalog-ref-status" role="status">${esc(catalogStatus)}</p>` : ''}
+                        ${catalogMarkup ? `<div class="bn-catalog-options">${catalogMarkup}</div>` : ''}
                         <div class="bn-manual-entry">
                             <input type="text" class="modal-input bn-manual-desig" placeholder="Colle ici la désignation choisie">
                             <button type="button" class="bn-st-btn bn-save-designation" data-act="save-manual-designation">Enregistrer</button>
@@ -605,6 +657,78 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         $id('bn-ref-import').addEventListener('click', () => {
             if (!importerRefsDuTexte(bnTexte.value)) alert("Aucune nouvelle référence détectée dans la zone de texte.\nFormat attendu : 260424CA0A x2 - Désignation");
         });
+        const bnCatalogFileInput = $id('bn-catalog-file-input');
+        $id('btn-bn-import-catalog').addEventListener('click', () => bnCatalogFileInput.click());
+        bnCatalogFileInput.addEventListener('change', async event => {
+            const file = event.target.files[0];
+            event.target.value = '';
+            if (file) await importerCatalogueDcsnet(file);
+        });
+
+        async function importerCatalogueDcsnet(file) {
+            const status = $id('bn-catalog-status');
+            if (!supabaseClient || !currentUser) {
+                alert('Connecte-toi avant d’importer le catalogue partagé.');
+                return;
+            }
+            if (typeof XLSX === 'undefined') {
+                alert('La bibliothèque Excel n’est pas chargée. Vérifie la connexion Internet puis réessaie.');
+                return;
+            }
+            if (!/\.(xlsx|xls|csv)$/i.test(file.name)) {
+                alert('Choisis un catalogue DCSnet au format .xlsx, .xls ou .csv.');
+                return;
+            }
+
+            let importees = 0;
+            try {
+                status.textContent = 'Lecture du catalogue DCSnet…';
+                const buffer = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onerror = () => reject(new Error(`Impossible de lire « ${file.name} ».`));
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsArrayBuffer(file);
+                });
+                const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
+                const firstSheet = workbook.SheetNames[0];
+                if (!firstSheet || !workbook.Sheets[firstSheet]) throw new Error('Aucune feuille lisible dans le fichier.');
+                const rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheet], { header: 1, raw: false });
+                const catalogue = extraireCatalogueDcsnet(rows);
+                if (!catalogue.length) {
+                    throw new Error('Aucune paire référence/désignation reconnue dans le fichier.');
+                }
+                if (!confirm(`${catalogue.length.toLocaleString('fr-FR')} références et désignations seront partagées avec les utilisateurs connectés. Les prix et casiers du fichier seront ignorés. Continuer ?`)) {
+                    status.textContent = 'Import annulé.';
+                    return;
+                }
+
+                const userId = currentUser.id;
+                for (let start = 0; start < catalogue.length; start += 200) {
+                    if (!currentUser || currentUser.id !== userId) throw new Error('La session a changé pendant l’import.');
+                    const batch = catalogue.slice(start, start + 200).map(item => ({
+                        reference: item.reference,
+                        designation: item.designation,
+                        updated_at: new Date().toISOString(),
+                        updated_by: userId
+                    }));
+                    const { error } = await supabaseClient
+                        .from('atelier_part_catalog')
+                        .upsert(batch, { onConflict: 'reference' });
+                    if (error) throw error;
+                    importees += batch.length;
+                    status.textContent = `${importees.toLocaleString('fr-FR')} / ${catalogue.length.toLocaleString('fr-FR')} références importées…`;
+                }
+                status.textContent = `Catalogue DCSnet importé : ${importees.toLocaleString('fr-FR')} références/désignations.`;
+                alert(status.textContent);
+            } catch (error) {
+                const details = importees
+                    ? `${importees.toLocaleString('fr-FR')} références avaient déjà été importées avant l’erreur. `
+                    : '';
+                status.textContent = 'Échec de l’import du catalogue.';
+                alert(`${details}Import impossible : ${error.message || 'erreur de connexion à Supabase.'}`);
+            }
+        }
+
         const bnEpcDropZone = $id('bn-epc-drop-zone');
         const bnEpcFileInput = $id('bn-epc-file-input');
         $id('bn-epc-select-file').addEventListener('click', event => {
@@ -635,9 +759,39 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             event.stopPropagation();
             importerPiecesEpcDansBlocNote(parserTexte(EXEMPLE_EPC));
         });
-        $id('bn-ref-liste').addEventListener('click', e => {
+        $id('bn-ref-liste').addEventListener('click', async e => {
             const b = e.target.closest('button[data-act]'); if (!b) return;
             const id = Number(b.closest('.bn-ref-entry').dataset.id), r = bnRefs.find(x => x.id === id); if (!r) return;
+            if (b.dataset.act === 'search-catalog') {
+                if (!supabaseClient || !currentUser) {
+                    bnCatalogStatus.set(id, 'Connecte-toi pour chercher dans le catalogue partagé.');
+                    renderBnRefs();
+                    return;
+                }
+                bnCatalogLoading.add(id);
+                bnCatalogStatus.set(id, 'Recherche dans les catalogues DCSnet partagés…');
+                bnCatalogOptions.delete(id);
+                renderBnRefs();
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('atelier_part_catalog')
+                        .select('designation')
+                        .eq('reference', normaliserReferenceCatalogue(r.ref))
+                        .limit(5);
+                    if (error) throw error;
+                    const options = Array.isArray(data) ? data : [];
+                    bnCatalogOptions.set(id, options);
+                    bnCatalogStatus.set(id, options.length
+                        ? `${options.length} désignation(s) trouvée(s) dans le catalogue partagé.`
+                        : 'Référence absente du catalogue partagé. Essaie la recherche manuelle.');
+                } catch (error) {
+                    bnCatalogStatus.set(id, error.message || 'Recherche impossible dans le catalogue partagé.');
+                } finally {
+                    bnCatalogLoading.delete(id);
+                    renderBnRefs();
+                }
+                return;
+            }
             if (b.dataset.act === 'search-google' || b.dataset.act === 'search-bing') {
                 const query = [r.ref, bnModele.value.trim(), 'pièce automobile'].filter(Boolean).join(' ');
                 const baseUrl = b.dataset.act === 'search-google'
@@ -646,13 +800,22 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 window.open(baseUrl + encodeURIComponent(query), '_blank', 'noopener,noreferrer');
                 return;
             }
-            if (b.dataset.act === 'save-manual-designation') {
+            if (b.dataset.act === 'use-catalog-designation') {
+                const option = (bnCatalogOptions.get(id) || [])[Number(b.dataset.index)];
+                if (!option) return;
+                r.desig = option.designation;
+                bnCatalogOptions.delete(id);
+                bnCatalogStatus.delete(id);
+            } else if (b.dataset.act === 'save-manual-designation') {
                 const input = b.closest('.bn-ref-entry').querySelector('.bn-manual-desig');
                 const designation = input.value.trim();
                 if (!designation) { input.focus(); return; }
                 r.desig = designation;
             } else if (b.dataset.act === 'del') {
                 bnRefs = bnRefs.filter(x => x.id !== id);
+                bnCatalogOptions.delete(id);
+                bnCatalogStatus.delete(id);
+                bnCatalogLoading.delete(id);
             }
             else r.st = (r.st === b.dataset.act) ? null : b.dataset.act;
             renderBnRefs();

@@ -398,6 +398,8 @@
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                             <button class="btn btn-glass" id="btn-bn-ouvrir-notes" style="font-size: 12px;">📚 Notes enregistrées<span class="bn-pill" id="bn-notes-count-btn">0</span></button>
+                            <button class="btn btn-glass" id="btn-bn-import-catalog" type="button" title="Importe uniquement les références et désignations ; prix et casiers sont ignorés." style="font-size: 12px;">📥 Importer catalogue DCSnet</button>
+                            <input type="file" id="bn-catalog-file-input" accept=".xlsx,.xls,.csv" class="hidden">
                             <button class="btn btn-glass hidden" id="btn-bn-import-local" type="button" style="font-size: 12px;">⬆ Importer anciennes fiches</button>
                             <button class="btn btn-glass" id="btn-bn-nouveau" style="font-size: 12px;">📄 Vider</button>
                             <button class="btn btn-emerald" id="btn-bn-sauvegarder" style="font-size: 12px;">💾 Sauvegarder</button>
@@ -409,6 +411,7 @@
                         <button type="button" class="btn btn-glass" id="btn-import-clients" style="font-size: 11px; padding: 6px 10px;">📥 Mettre à jour (.csv DCSnet)</button>
                         <input type="file" id="file-import-clients" accept=".csv,.txt" class="hidden">
                     </div>
+                    <p id="bn-catalog-status" class="bn-catalog-status" role="status" aria-live="polite"></p>
                     <!-- Données Client -->
                     <div style="display: grid; grid-template-columns: 1fr 140px 140px; gap: 12px; margin-bottom: 14px;">
                         <div class="modal-field">

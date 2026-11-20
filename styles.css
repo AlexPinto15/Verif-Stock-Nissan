@@ -471,6 +471,13 @@
         .bn-manual-entry .bn-manual-desig { flex: 1 1 220px; min-width: 0; padding: 7px 9px; font-size: 11px; }
         .bn-manual-designation .bn-st-btn { font-size: 10px; }
         .bn-save-designation { background: rgba(16,185,129,0.16); border-color: rgba(16,185,129,0.45); color: #6ee7b7; }
+        .bn-catalog-status { min-height: 0; margin: 0 0 8px; color: var(--text-secondary); font-size: 11px; }
+        .bn-catalog-status:empty { display: none; }
+        .bn-catalog-ref-status { margin: 0; color: var(--text-secondary); font-size: 10px; }
+        .bn-catalog-options { display: flex; flex-direction: column; gap: 5px; }
+        .bn-catalog-option { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 9px; background: rgba(16,185,129,0.07); border: 1px solid var(--border-subtle); border-radius: 8px; }
+        .bn-catalog-option strong { display: block; color: var(--text-main); font-size: 11px; }
+        .bn-catalog-option small { display: block; margin-top: 2px; color: var(--text-muted); font-size: 9px; }
         .bn-del { color: #fb7185; }
         .bn-ref-vide { text-align: center; color: var(--text-muted); font-size: 12px; padding: 14px 0; }
 
