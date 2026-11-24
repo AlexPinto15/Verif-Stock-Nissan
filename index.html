@@ -402,16 +402,6 @@
                             <p>Prise de note rapide pour devis, demande comptoir ou commande téléphonique</p>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <label class="bn-note-status-field" for="bn-note-status">
-                                <span>Statut à l’enregistrement</span>
-                                <select id="bn-note-status" class="modal-input" required>
-                                    <option value="">Choisir un statut…</option>
-                                    <option value="Commandé">Commandé</option>
-                                    <option value="Attente Mail">Attente Mail</option>
-                                    <option value="Devis">Devis</option>
-                                    <option value="Attente téléphone">Attente téléphone</option>
-                                </select>
-                            </label>
                             <button class="btn btn-glass" id="btn-bn-import-catalog" type="button" title="Importe uniquement les références et désignations ; prix et casiers sont ignorés." style="font-size: 12px;">📥 Importer catalogue DCSnet</button>
                             <input type="file" id="bn-catalog-file-input" accept=".xlsx,.xls,.csv" class="hidden">
                             <button class="btn btn-glass hidden" id="btn-bn-import-local" type="button" style="font-size: 12px;">⬆ Importer anciennes fiches</button>
@@ -755,6 +745,26 @@
     </div>
 
     <!-- CONTENEUR DÉDIÉ STRICTEMENT À L'IMPRESSION PAPIER A4 -->
+    <div id="modal-note-status" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-note-status-title">
+        <div class="modal-content" style="max-width: 460px; width: 92%;">
+            <div class="modal-title" id="modal-note-status-title">Choisir le statut de la note</div>
+            <div class="modal-desc">Sélectionne le statut à appliquer avant l’enregistrement ou la mise à jour.</div>
+            <label class="bn-save-status-field" for="bn-save-note-status">
+                Statut
+                <select id="bn-save-note-status" class="modal-input" required>
+                    <option value="">Choisir un statut…</option>
+                    <option value="Commandé">Commandé</option>
+                    <option value="Attente Mail">Attente Mail</option>
+                    <option value="Devis">Devis</option>
+                    <option value="Attente téléphone">Attente téléphone</option>
+                </select>
+            </label>
+            <div class="bn-save-status-actions">
+                <button type="button" class="btn btn-glass" id="btn-annuler-note-status">Annuler</button>
+                <button type="button" class="btn btn-emerald" id="btn-confirmer-note-status">Confirmer et enregistrer</button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODALE FIN D'ÉTAPE -->
     <div id="modal-etape" class="modal-overlay hidden">

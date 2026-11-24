@@ -449,7 +449,6 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             $id('bn-ref-qty').value = 1;
             bnRefs = []; renderBnRefs();
             noteEnEditionId = null;
-            $id('bn-note-status').value = '';
             $id('btn-bn-sauvegarder').textContent = '💾 Sauvegarder';
             bnNomClient.focus();
         }
@@ -458,22 +457,16 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             viderFormulaireBn();
         });
 
-        document.getElementById('btn-bn-sauvegarder').addEventListener('click', async () => {
+        async function enregistrerNote(statut) {
+            $id('modal-note-status').classList.add('hidden');
             const client = bnNomClient.value.trim() || 'Client sans nom';
             const immat = bnImmat.value.trim().toUpperCase() || '--';
             const notes = bnTexte.value.trim();
-            const statut = $id('bn-note-status').value;
 
             if (!notes && !bnRefs.length && immat === '--' && client === 'Client sans nom') {
                 alert("La note est vide. Renseignez au moins un nom client, une plaque ou du texte.");
                 return;
             }
-            if (!STATUTS_NOTES.includes(statut)) {
-                alert('Choisis un statut avant d’enregistrer la note.');
-                $id('bn-note-status').focus();
-                return;
-            }
-
             const now = new Date();
             const dateStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
             const note = {
@@ -526,6 +519,34 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             alert(isEditing
                 ? '✓ Fiche mise à jour.'
                 : '✓ Fiche enregistrée dans l’espace partagé de l’équipe.');
+        }
+
+        const modalStatutNote = $id('modal-note-status');
+        const selectionStatutNote = $id('bn-save-note-status');
+        function demanderStatutNote() {
+            selectionStatutNote.value = '';
+            modalStatutNote.classList.remove('hidden');
+            selectionStatutNote.focus();
+        }
+        function fermerDemandeStatutNote() {
+            modalStatutNote.classList.add('hidden');
+        }
+        $id('btn-bn-sauvegarder').addEventListener('click', demanderStatutNote);
+        $id('btn-annuler-note-status').addEventListener('click', fermerDemandeStatutNote);
+        $id('btn-confirmer-note-status').addEventListener('click', async () => {
+            const statut = selectionStatutNote.value;
+            if (!STATUTS_NOTES.includes(statut)) {
+                alert('Choisis un statut avant de continuer.');
+                selectionStatutNote.focus();
+                return;
+            }
+            await enregistrerNote(statut);
+        });
+        modalStatutNote.addEventListener('mousedown', e => {
+            if (e.target === modalStatutNote) fermerDemandeStatutNote();
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !modalStatutNote.classList.contains('hidden')) fermerDemandeStatutNote();
         });
 
         /* ---- Liste de références du bloc-notes ---- */
@@ -1052,7 +1073,6 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                     bnModele.value = note.modele || '';
                     bnVin.value = note.vin || '';
                     bnTexte.value = note.notes || '';
-                    $id('bn-note-status').value = note.status || 'Devis';
                     bnRefs = refs.map(r => ({ ...r, id: ++bnRefSeq })); renderBnRefs();
                     $id('btn-bn-sauvegarder').textContent = '💾 Mettre à jour la fiche';
                     afficherOngletBlocNote('form');
