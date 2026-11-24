@@ -387,6 +387,11 @@
 
         <!-- SECTION 2 : BLOC-NOTES ATELIER & CLIENT (NOUVEL ONGLET DÉDIÉ) -->
         <section id="screen-blocnote" class="app-screen">
+            <div class="bn-tabs" role="tablist" aria-label="Sections du bloc-notes">
+                <button type="button" class="bn-tab-button" id="bn-tab-form" role="tab" aria-selected="true" aria-controls="bn-panel-form">📝 Bloc-Notes</button>
+                <button type="button" class="bn-tab-button" id="bn-tab-saved" role="tab" aria-selected="false" aria-controls="bn-panel-saved" tabindex="-1">📚 Notes enregistrées <span class="bn-pill" id="bn-notes-count-btn">0</span></button>
+            </div>
+            <div id="bn-panel-form" class="bn-tab-panel" role="tabpanel" aria-labelledby="bn-tab-form">
             <div style="max-width: 920px; margin: 0 auto;">
                 
                 <!-- Panneau de Saisie -->
@@ -397,7 +402,6 @@
                             <p>Prise de note rapide pour devis, demande comptoir ou commande téléphonique</p>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                            <button class="btn btn-glass" id="btn-bn-ouvrir-notes" style="font-size: 12px;">📚 Notes enregistrées<span class="bn-pill" id="bn-notes-count-btn">0</span></button>
                             <button class="btn btn-glass" id="btn-bn-import-catalog" type="button" title="Importe uniquement les références et désignations ; prix et casiers sont ignorés." style="font-size: 12px;">📥 Importer catalogue DCSnet</button>
                             <input type="file" id="bn-catalog-file-input" accept=".xlsx,.xls,.csv" class="hidden">
                             <button class="btn btn-glass hidden" id="btn-bn-import-local" type="button" style="font-size: 12px;">⬆ Importer anciennes fiches</button>
@@ -501,7 +505,21 @@
                     </div>
                 </div>
 
-
+            </div>
+            </div>
+            <div id="bn-panel-saved" class="bn-tab-panel hidden" role="tabpanel" aria-labelledby="bn-tab-saved">
+                <div style="max-width: 920px; margin: 0 auto;">
+                    <div class="table-card bn-saved-notes-panel">
+                        <div class="table-header">
+                            <div class="table-header-left">
+                                <h3 style="font-size: 17px;">📚 Notes enregistrées (<span id="bn-notes-count">0</span>)</h3>
+                                <p>Charge, imprime ou supprime une fiche partagée avec l’équipe.</p>
+                            </div>
+                        </div>
+                        <input type="text" id="bn-filtre-notes" class="modal-input" placeholder="🔍 Filtrer client, immat, pièce..." style="width: 100%; margin-bottom: 12px;">
+                        <div id="bn-liste-notes" class="bn-saved-notes-list"></div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -721,18 +739,6 @@
     </div>
 
     <!-- CONTENEUR DÉDIÉ STRICTEMENT À L'IMPRESSION PAPIER A4 -->
-    <!-- MODALE NOTES ENREGISTRÉES -->
-    <div id="modal-notes" class="modal-overlay hidden">
-        <div class="modal-content" style="max-width: 680px; width: 95%;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px;">
-                <div class="modal-title" style="margin: 0;"><span>📚 Notes enregistrées (<span id="bn-notes-count">0</span>)</span></div>
-                <button class="btn btn-glass" id="btn-fermer-notes" style="font-size: 12px; padding: 6px 10px;">✕ Fermer</button>
-            </div>
-            <div class="modal-desc">Historique mémorisé localement : chargez, imprimez ou supprimez une note.</div>
-            <input type="text" id="bn-filtre-notes" class="modal-input" placeholder="🔍 Filtrer client, immat, pièce..." style="width: 100%; margin-bottom: 12px;">
-            <div id="bn-liste-notes" style="display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto;"></div>
-        </div>
-    </div>
 
     <!-- MODALE FIN D'ÉTAPE -->
     <div id="modal-etape" class="modal-overlay hidden">

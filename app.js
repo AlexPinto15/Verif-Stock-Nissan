@@ -1033,12 +1033,11 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                     bnTexte.value = note.notes || '';
                     bnRefs = refs.map(r => ({ ...r, id: ++bnRefSeq })); renderBnRefs();
                     $id('btn-bn-sauvegarder').textContent = '💾 Mettre à jour la fiche';
-                    fermerNotes();
+                    afficherOngletBlocNote('form');
                 });
 
                 card.querySelector('.btn-imprimer-cette-note').addEventListener('click', (e) => {
                     e.stopPropagation();
-                    fermerNotes();
                     imprimerNote(note);
                 });
 
@@ -1377,7 +1376,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         document.addEventListener('keydown', (e) => {
             if (!$id('screen-stock').classList.contains('active-screen') || !pieceCourante()) return;
             if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
-            if (['modal-print', 'modal-db-veh', 'modal-etape', 'modal-notes'].some(m => !$id(m).classList.contains('hidden'))) return;
+            if (['modal-print', 'modal-db-veh', 'modal-etape'].some(m => !$id(m).classList.contains('hidden'))) return;
             if (e.key === '1') decider(true);
             else if (e.key === '2') decider(false);
             else if (e.key === 'ArrowLeft') $id('btn-prev').click();
@@ -1748,14 +1747,32 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             }
         }
 
-        /* ---- Popup « Notes enregistrées » + impression d'une note ---- */
-        const modalNotes = $id('modal-notes');
-        function ouvrirNotes() { chargerHistoriqueNotes(); modalNotes.classList.remove('hidden'); bnFiltre.focus(); }
-        function fermerNotes() { modalNotes.classList.add('hidden'); }
-        $id('btn-bn-ouvrir-notes').addEventListener('click', ouvrirNotes);
-        $id('btn-fermer-notes').addEventListener('click', fermerNotes);
-        modalNotes.addEventListener('mousedown', e => { if (e.target === modalNotes) fermerNotes(); });
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerNotes(); });
+        /* ---- Onglets Bloc-Notes / Notes enregistrées ---- */
+        function afficherOngletBlocNote(onglet) {
+            const afficherNotes = onglet === 'saved';
+            const ongletForm = $id('bn-tab-form');
+            const ongletSaved = $id('bn-tab-saved');
+            ongletForm.setAttribute('aria-selected', String(!afficherNotes));
+            ongletSaved.setAttribute('aria-selected', String(afficherNotes));
+            ongletForm.tabIndex = afficherNotes ? -1 : 0;
+            ongletSaved.tabIndex = afficherNotes ? 0 : -1;
+            $id('bn-panel-form').classList.toggle('hidden', afficherNotes);
+            $id('bn-panel-saved').classList.toggle('hidden', !afficherNotes);
+            if (afficherNotes) {
+                chargerHistoriqueNotes();
+                bnFiltre.focus();
+            }
+        }
+
+        $id('bn-tab-form').addEventListener('click', () => afficherOngletBlocNote('form'));
+        $id('bn-tab-saved').addEventListener('click', () => afficherOngletBlocNote('saved'));
+        $id('screen-blocnote').querySelector('[role="tablist"]').addEventListener('keydown', e => {
+            if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+            e.preventDefault();
+            const onglet = e.key === 'ArrowRight' || e.key === 'End' ? 'saved' : 'form';
+            afficherOngletBlocNote(onglet);
+            $id(onglet === 'saved' ? 'bn-tab-saved' : 'bn-tab-form').focus();
+        });
 
         function reinitialiserImpressionStock() {
             $id('print-sous-titre').textContent = 'Magasin Pièces de Rechange & Atelier — Fiche de Contrôle Disponibilité';
