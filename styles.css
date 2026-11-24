@@ -451,6 +451,17 @@
         .bn-tab-panel { width: 100%; }
         .bn-saved-notes-panel { padding: 24px; }
         .bn-saved-notes-list { display: flex; flex-direction: column; gap: 10px; max-height: calc(100vh - 300px); overflow-y: auto; }
+        .bn-note-status-field { display: flex; flex-direction: column; gap: 2px; min-width: 150px; color: var(--text-muted); font-size: 10px; font-weight: 700; }
+        .bn-note-status-field .modal-input { min-width: 150px; padding: 7px 9px; font-size: 11px; }
+        .bn-note-status-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .bn-note-status-tab { flex: 1 1 140px; min-height: 36px; padding: 7px 12px; border: 1px solid var(--border-highlight); border-radius: 9px; background: rgba(255,255,255,0.04); color: var(--text-secondary); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.18s, color 0.18s, border-color 0.18s; }
+        .bn-note-status-tab:hover { color: #fff; border-color: #fff; }
+        .bn-note-status-tab[aria-pressed="true"] { color: #fff; background: rgba(59,130,246,0.18); border-color: var(--blue-border); }
+        .bn-note-status-badge { display: inline-flex; align-items: center; padding: 2px 8px; border: 1px solid var(--border-highlight); border-radius: 999px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+        .bn-note-status-commande { color: #6ee7b7; background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.35); }
+        .bn-note-status-attente-mail { color: #fcd34d; background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.35); }
+        .bn-note-status-devis { color: #93c5fd; background: rgba(59,130,246,0.12); border-color: rgba(59,130,246,0.35); }
+        .bn-note-status-attente-telephone { color: #c4b5fd; background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.35); }
 
         /* Liste de références du bloc-notes */
         .bn-epc-drop-zone { gap: 10px; flex-wrap: wrap; margin-bottom: 10px; padding: 10px 12px !important; }
@@ -557,6 +568,7 @@
                 .bn-tab-button { min-height: 40px; padding: 7px 8px; font-size: 12px; }
                 .bn-saved-notes-panel { padding: 16px; }
                 .bn-saved-notes-list { max-height: none; }
+                .bn-note-status-field { flex: 1 1 100%; }
                 .hub-hero h2 { font-size: 28px; }
                 .header-right, .app-switcher-bar { width: 100%; }
                 .quick-switch-select { flex: 1; min-width: 0; }

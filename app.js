@@ -415,8 +415,10 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
            ------------------------------------------------------------------------- */
         const STORAGE_KEY_NOTES = 'atelier_sofibrie_notes_db';
         const STORAGE_KEY_MIGRATION_DEVICE = 'atelier_sofibrie_notes_device_id';
+        const STATUTS_NOTES = ['Commandé', 'Attente Mail', 'Devis', 'Attente téléphone'];
         let notesPartagees = [];
         let noteEnEditionId = null;
+        let statutFiltreNotes = 'Devis';
 
         const bnNomClient = document.getElementById('bn-nom-client');
         const bnCodeClient = document.getElementById('bn-code-client');
@@ -447,6 +449,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             $id('bn-ref-qty').value = 1;
             bnRefs = []; renderBnRefs();
             noteEnEditionId = null;
+            $id('bn-note-status').value = '';
             $id('btn-bn-sauvegarder').textContent = '💾 Sauvegarder';
             bnNomClient.focus();
         }
@@ -459,9 +462,15 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const client = bnNomClient.value.trim() || 'Client sans nom';
             const immat = bnImmat.value.trim().toUpperCase() || '--';
             const notes = bnTexte.value.trim();
+            const statut = $id('bn-note-status').value;
 
             if (!notes && !bnRefs.length && immat === '--' && client === 'Client sans nom') {
                 alert("La note est vide. Renseignez au moins un nom client, une plaque ou du texte.");
+                return;
+            }
+            if (!STATUTS_NOTES.includes(statut)) {
+                alert('Choisis un statut avant d’enregistrer la note.');
+                $id('bn-note-status').focus();
                 return;
             }
 
@@ -477,7 +486,8 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 modele: bnModele.value.trim(),
                 vin: bnVin.value.trim().toUpperCase(),
                 notes: notes,
-                refs: bnRefs.map(({ ref, qty, desig, st }) => ({ ref, qty, desig, st }))
+                refs: bnRefs.map(({ ref, qty, desig, st }) => ({ ref, qty, desig, st })),
+                note_status: statut
             };
             const isEditing = noteEnEditionId !== null;
             if (!isEditing) note.note_date = dateStr;
@@ -950,6 +960,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 vin: row.vin,
                 notes: row.notes,
                 refs: row.refs,
+                status: STATUTS_NOTES.includes(row.note_status) ? row.note_status : 'Devis',
                 date: row.note_date,
                 createdBy: row.created_by,
                 createdByName: row.created_by_name,
@@ -986,10 +997,11 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const q = bnFiltre.value.trim().toLowerCase();
             bnListeConteneur.innerHTML = '';
 
-            const filtres = liste.filter(n => !q || [n.client, n.immat, n.codeClient, n.modele, n.notes, (n.refs || []).map(r => r.ref + ' ' + r.desig).join(' ')].join(' ').toLowerCase().includes(q));
+            const filtres = liste.filter(n => n.status === statutFiltreNotes)
+                .filter(n => !q || [n.client, n.immat, n.codeClient, n.modele, n.notes, (n.refs || []).map(r => r.ref + ' ' + r.desig).join(' ')].join(' ').toLowerCase().includes(q));
 
             if (!filtres.length) {
-                bnListeConteneur.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 0;">Aucune note enregistrée pour l'instant.</div>`;
+                bnListeConteneur.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 24px 0;">Aucune note « ${esc(statutFiltreNotes)} » ne correspond à la recherche.</div>`;
                 return;
             }
 
@@ -997,10 +1009,19 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 const card = document.createElement('div');
                 card.style.cssText = "background: rgba(10, 13, 20, 0.7); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;";
                 const refs = note.refs || [], nb = k => refs.filter(r => r.st === k).length;
+                const statusClass = {
+                    'Commandé': 'commande',
+                    'Attente Mail': 'attente-mail',
+                    'Devis': 'devis',
+                    'Attente téléphone': 'attente-telephone'
+                }[note.status] || 'devis';
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                         <strong style="color: #fff; font-size: 13px;">${esc(note.client)}</strong>
-                        <span style="font-size: 10px; color: var(--text-muted); white-space: nowrap;">${esc(note.date)}</span>
+                        <div style="display: flex; align-items: center; gap: 7px; flex-wrap: wrap; justify-content: flex-end;">
+                            <span class="bn-note-status-badge bn-note-status-${statusClass}">${esc(note.status)}</span>
+                            <span style="font-size: 10px; color: var(--text-muted); white-space: nowrap;">${esc(note.date)}</span>
+                        </div>
                     </div>
                     <div style="display: flex; gap: 8px; font-size: 11px; flex-wrap: wrap; align-items: center;">
                         ${note.immat !== '--' ? `<span style="font-family: monospace; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); padding: 2px 6px; border-radius: 4px;">${esc(note.immat)}</span>` : ''}
@@ -1031,6 +1052,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                     bnModele.value = note.modele || '';
                     bnVin.value = note.vin || '';
                     bnTexte.value = note.notes || '';
+                    $id('bn-note-status').value = note.status || 'Devis';
                     bnRefs = refs.map(r => ({ ...r, id: ++bnRefSeq })); renderBnRefs();
                     $id('btn-bn-sauvegarder').textContent = '💾 Mettre à jour la fiche';
                     afficherOngletBlocNote('form');
@@ -1061,6 +1083,15 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         }
 
         bnFiltre.addEventListener('input', afficherHistoriqueNotes);
+        $id('bn-note-status-tabs').addEventListener('click', e => {
+            const button = e.target.closest('button[data-note-status]');
+            if (!button || !STATUTS_NOTES.includes(button.dataset.noteStatus)) return;
+            statutFiltreNotes = button.dataset.noteStatus;
+            $id('bn-note-status-tabs').querySelectorAll('button[data-note-status]').forEach(tab => {
+                tab.setAttribute('aria-pressed', String(tab === button));
+            });
+            afficherHistoriqueNotes();
+        });
 
         document.getElementById('btn-bn-copier-recap').addEventListener('click', () => {
             const client = bnNomClient.value.trim() || 'Non renseigné';
@@ -1910,6 +1941,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 vin: String(note.vin || ''),
                 notes: String(note.notes || ''),
                 refs: Array.isArray(note.refs) ? note.refs : [],
+                note_status: STATUTS_NOTES.includes(note.status) ? note.status : 'Devis',
                 note_date: String(note.date || now),
                 legacy_key: `${deviceId}:${String(note.id === undefined ? index : note.id)}`
             }));

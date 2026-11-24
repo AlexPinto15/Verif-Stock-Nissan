@@ -402,6 +402,16 @@
                             <p>Prise de note rapide pour devis, demande comptoir ou commande téléphonique</p>
                         </div>
                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <label class="bn-note-status-field" for="bn-note-status">
+                                <span>Statut à l’enregistrement</span>
+                                <select id="bn-note-status" class="modal-input" required>
+                                    <option value="">Choisir un statut…</option>
+                                    <option value="Commandé">Commandé</option>
+                                    <option value="Attente Mail">Attente Mail</option>
+                                    <option value="Devis">Devis</option>
+                                    <option value="Attente téléphone">Attente téléphone</option>
+                                </select>
+                            </label>
                             <button class="btn btn-glass" id="btn-bn-import-catalog" type="button" title="Importe uniquement les références et désignations ; prix et casiers sont ignorés." style="font-size: 12px;">📥 Importer catalogue DCSnet</button>
                             <input type="file" id="bn-catalog-file-input" accept=".xlsx,.xls,.csv" class="hidden">
                             <button class="btn btn-glass hidden" id="btn-bn-import-local" type="button" style="font-size: 12px;">⬆ Importer anciennes fiches</button>
@@ -515,6 +525,12 @@
                                 <h3 style="font-size: 17px;">📚 Notes enregistrées (<span id="bn-notes-count">0</span>)</h3>
                                 <p>Charge, imprime ou supprime une fiche partagée avec l’équipe.</p>
                             </div>
+                        </div>
+                        <div id="bn-note-status-tabs" class="bn-note-status-tabs" role="group" aria-label="Filtrer les notes par statut">
+                            <button type="button" class="bn-note-status-tab" data-note-status="Commandé" aria-pressed="false">Commandé</button>
+                            <button type="button" class="bn-note-status-tab" data-note-status="Attente Mail" aria-pressed="false">Attente Mail</button>
+                            <button type="button" class="bn-note-status-tab" data-note-status="Devis" aria-pressed="true">Devis</button>
+                            <button type="button" class="bn-note-status-tab" data-note-status="Attente téléphone" aria-pressed="false">Attente téléphone</button>
                         </div>
                         <input type="text" id="bn-filtre-notes" class="modal-input" placeholder="🔍 Filtrer client, immat, pièce..." style="width: 100%; margin-bottom: 12px;">
                         <div id="bn-liste-notes" class="bn-saved-notes-list"></div>
