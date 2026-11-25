@@ -522,22 +522,90 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         }
 
         const modalStatutNote = $id('modal-note-status');
-        const selectionStatutNote = $id('bn-save-note-status');
+        const boutonStatutNote = $id('bn-save-note-status');
+        const valeurStatutNote = $id('bn-save-note-status-value');
+        const optionsStatutNote = $id('bn-save-note-status-options');
+        let statutNoteSelectionne = '';
+        function fermerOptionsStatutNote() {
+            optionsStatutNote.classList.add('hidden');
+            boutonStatutNote.setAttribute('aria-expanded', 'false');
+        }
+        function choisirStatutNote(statut) {
+            if (!STATUTS_NOTES.includes(statut)) return;
+            statutNoteSelectionne = statut;
+            valeurStatutNote.textContent = statut;
+            optionsStatutNote.querySelectorAll('[role="option"]').forEach(option => {
+                option.setAttribute('aria-selected', String(option.dataset.value === statut));
+            });
+            fermerOptionsStatutNote();
+            boutonStatutNote.focus();
+        }
+        function ouvrirOptionsStatutNote() {
+            optionsStatutNote.classList.remove('hidden');
+            boutonStatutNote.setAttribute('aria-expanded', 'true');
+            const option = Array.from(optionsStatutNote.querySelectorAll('[role="option"]'))
+                .find(item => item.dataset.value === statutNoteSelectionne)
+                || optionsStatutNote.querySelector('[role="option"]');
+            option.focus();
+        }
         function demanderStatutNote() {
-            selectionStatutNote.value = '';
+            statutNoteSelectionne = '';
+            valeurStatutNote.textContent = 'Choisir un statut…';
+            optionsStatutNote.querySelectorAll('[role="option"]').forEach(option => option.setAttribute('aria-selected', 'false'));
+            fermerOptionsStatutNote();
             modalStatutNote.classList.remove('hidden');
-            selectionStatutNote.focus();
+            boutonStatutNote.focus();
         }
         function fermerDemandeStatutNote() {
+            fermerOptionsStatutNote();
             modalStatutNote.classList.add('hidden');
         }
         $id('btn-bn-sauvegarder').addEventListener('click', demanderStatutNote);
         $id('btn-annuler-note-status').addEventListener('click', fermerDemandeStatutNote);
+        boutonStatutNote.addEventListener('click', () => {
+            if (boutonStatutNote.getAttribute('aria-expanded') === 'true') fermerOptionsStatutNote();
+            else ouvrirOptionsStatutNote();
+        });
+        optionsStatutNote.addEventListener('click', e => {
+            const option = e.target.closest('[role="option"]');
+            if (option) choisirStatutNote(option.dataset.value);
+        });
+        boutonStatutNote.addEventListener('keydown', e => {
+            if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (boutonStatutNote.getAttribute('aria-expanded') !== 'true') ouvrirOptionsStatutNote();
+            }
+        });
+        optionsStatutNote.addEventListener('keydown', e => {
+            const options = Array.from(optionsStatutNote.querySelectorAll('[role="option"]'));
+            const index = options.indexOf(document.activeElement);
+            let nextIndex = index;
+            if (e.key === 'ArrowDown') nextIndex = (index + 1) % options.length;
+            else if (e.key === 'ArrowUp') nextIndex = (index - 1 + options.length) % options.length;
+            else if (e.key === 'Home') nextIndex = 0;
+            else if (e.key === 'End') nextIndex = options.length - 1;
+            else if (e.key === 'Escape') {
+                e.preventDefault();
+                e.stopPropagation();
+                fermerOptionsStatutNote();
+                boutonStatutNote.focus();
+                return;
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                if (options[index]) choisirStatutNote(options[index].dataset.value);
+                return;
+            } else return;
+            e.preventDefault();
+            options[nextIndex].focus();
+        });
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.bn-status-select')) fermerOptionsStatutNote();
+        });
         $id('btn-confirmer-note-status').addEventListener('click', async () => {
-            const statut = selectionStatutNote.value;
+            const statut = statutNoteSelectionne;
             if (!STATUTS_NOTES.includes(statut)) {
                 alert('Choisis un statut avant de continuer.');
-                selectionStatutNote.focus();
+                boutonStatutNote.focus();
                 return;
             }
             await enregistrerNote(statut);

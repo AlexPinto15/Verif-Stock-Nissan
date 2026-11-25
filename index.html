@@ -749,16 +749,21 @@
         <div class="modal-content" style="max-width: 460px; width: 92%;">
             <div class="modal-title" id="modal-note-status-title">Choisir le statut de la note</div>
             <div class="modal-desc">Sélectionne le statut à appliquer avant l’enregistrement ou la mise à jour.</div>
-            <label class="bn-save-status-field" for="bn-save-note-status">
-                Statut
-                <select id="bn-save-note-status" class="modal-input" required>
-                    <option value="">Choisir un statut…</option>
-                    <option value="Commandé">Commandé</option>
-                    <option value="Attente Mail">Attente Mail</option>
-                    <option value="Devis">Devis</option>
-                    <option value="Attente téléphone">Attente téléphone</option>
-                </select>
-            </label>
+            <div class="bn-save-status-field">
+                <span id="bn-save-note-status-label">Statut</span>
+                <div class="bn-status-select">
+                    <button type="button" id="bn-save-note-status" class="bn-status-select-button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bn-save-note-status-label bn-save-note-status-value">
+                        <span id="bn-save-note-status-value">Choisir un statut…</span>
+                        <span class="bn-status-select-chevron" aria-hidden="true">⌄</span>
+                    </button>
+                    <div id="bn-save-note-status-options" class="bn-status-select-options hidden" role="listbox" aria-labelledby="bn-save-note-status-label">
+                        <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Commandé">Commandé</button>
+                        <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Attente Mail">Attente Mail</button>
+                        <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Devis">Devis</button>
+                        <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Attente téléphone">Attente téléphone</button>
+                    </div>
+                </div>
+            </div>
             <div class="bn-save-status-actions">
                 <button type="button" class="btn btn-glass" id="btn-annuler-note-status">Annuler</button>
                 <button type="button" class="btn btn-emerald" id="btn-confirmer-note-status">Confirmer et enregistrer</button>

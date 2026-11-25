@@ -327,10 +327,15 @@
             padding: 10px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none;
         }
         .modal-input:focus { border-color: var(--blue); }
-        #bn-save-note-status { color-scheme: dark; background-color: #090c13; color: var(--text-main); border-color: var(--border-highlight); }
-        #bn-save-note-status option { background-color: #10141e; color: var(--text-main); }
-        #bn-save-note-status option:checked { background-color: #1e3a5f; color: #fff; }
-        #bn-save-note-status:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        .bn-status-select { position: relative; }
+        .bn-status-select-button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 42px; padding: 10px 14px; border: 1px solid var(--border-highlight); border-radius: 9px; background: #090c13; color: var(--text-main); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+        .bn-status-select-button:hover, .bn-status-select-button[aria-expanded="true"] { border-color: var(--blue); }
+        .bn-status-select-button:focus-visible { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        .bn-status-select-chevron { margin-left: 12px; color: var(--text-secondary); font-size: 18px; line-height: 1; }
+        .bn-status-select-options { position: absolute; z-index: 5; top: calc(100% + 4px); left: 0; right: 0; display: flex; flex-direction: column; padding: 4px; background: #10141e; border: 1px solid var(--border-highlight); border-radius: 10px; box-shadow: 0 14px 32px rgba(0,0,0,0.55); }
+        .bn-status-select-option { width: 100%; padding: 9px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+        .bn-status-select-option:hover, .bn-status-select-option:focus-visible { outline: none; background: rgba(59,130,246,0.18); color: #fff; }
+        .bn-status-select-option[aria-selected="true"] { background: rgba(16,185,129,0.16); color: #6ee7b7; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
 
         #print-container { display: none; }
