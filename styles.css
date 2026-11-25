@@ -332,12 +332,11 @@
         .bn-status-select-button:hover, .bn-status-select-button[aria-expanded="true"] { border-color: var(--blue); }
         .bn-status-select-button:focus-visible { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
         .bn-status-select-chevron { margin-left: 12px; color: var(--text-secondary); font-size: 18px; line-height: 1; }
-        .bn-status-select-options { position: absolute; z-index: 5; top: calc(100% + 4px); left: 0; right: 0; display: flex; flex-direction: column; padding: 4px; background: #10141e; border: 1px solid var(--border-highlight); border-radius: 10px; box-shadow: 0 14px 32px rgba(0,0,0,0.55); }
+        .bn-status-select-options { position: absolute; z-index: 5; top: calc(100% + 4px); left: 0; right: 0; display: flex; flex-direction: column; max-height: 240px; overflow-y: auto; padding: 4px; background: #10141e; border: 1px solid var(--border-highlight); border-radius: 10px; box-shadow: 0 14px 32px rgba(0,0,0,0.55); }
         .bn-status-select-option { width: 100%; padding: 9px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--text-secondary); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
         .bn-status-select-option:hover, .bn-status-select-option:focus-visible { outline: none; background: rgba(59,130,246,0.18); color: #fff; }
         .bn-status-select-option[aria-selected="true"] { background: rgba(16,185,129,0.16); color: #6ee7b7; }
         .bn-order-reminder-fields { margin-top: 12px; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 12px; background: rgba(255,255,255,0.03); }
-        .bn-order-reminder-fields .modal-input { width: 100%; color-scheme: dark; }
         .bn-reminder-hint { margin: 8px 0 0; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
 

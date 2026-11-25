@@ -539,104 +539,144 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
 
         const modalStatutNote = $id('modal-note-status');
         const boutonStatutNote = $id('bn-save-note-status');
-        const valeurStatutNote = $id('bn-save-note-status-value');
-        const optionsStatutNote = $id('bn-save-note-status-options');
         const champsRappelCommande = $id('bn-order-reminder-fields');
         const selectionMarqueNote = $id('bn-save-note-brand');
         const selectionDelaiRappel = $id('bn-save-note-reminder-days');
-        let statutNoteSelectionne = '';
-        function fermerOptionsStatutNote() {
-            optionsStatutNote.classList.add('hidden');
-            boutonStatutNote.setAttribute('aria-expanded', 'false');
+        function initialiserSelecteurPersonnalise(buttonId, valueId, labelId, optionsId, placeholder, onSelect = () => {}) {
+            const button = $id(buttonId);
+            const value = $id(valueId);
+            const label = $id(labelId);
+            const options = $id(optionsId);
+            const root = button.closest('.bn-status-select');
+
+            function fermer() {
+                options.classList.add('hidden');
+                button.setAttribute('aria-expanded', 'false');
+            }
+
+            function setValue(nextValue) {
+                const selectedOption = Array.from(options.querySelectorAll('[role="option"]'))
+                    .find(option => option.dataset.value === String(nextValue));
+                value.value = selectedOption ? selectedOption.dataset.value : '';
+                label.textContent = selectedOption ? selectedOption.textContent.trim() : placeholder;
+                options.querySelectorAll('[role="option"]').forEach(option => {
+                    option.setAttribute('aria-selected', String(option === selectedOption));
+                });
+            }
+
+            function choisir(option) {
+                if (!option) return;
+                setValue(option.dataset.value);
+                onSelect(value.value);
+                fermer();
+                button.focus();
+            }
+
+            function ouvrir() {
+                options.classList.remove('hidden');
+                button.setAttribute('aria-expanded', 'true');
+                const selectedOption = options.querySelector('[aria-selected="true"]');
+                (selectedOption || options.querySelector('[role="option"]')).focus();
+            }
+
+            button.addEventListener('click', () => {
+                if (button.getAttribute('aria-expanded') === 'true') fermer();
+                else ouvrir();
+            });
+            button.addEventListener('keydown', event => {
+                if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    if (button.getAttribute('aria-expanded') !== 'true') ouvrir();
+                }
+            });
+            options.addEventListener('click', event => {
+                choisir(event.target.closest('[role="option"]'));
+            });
+            options.addEventListener('keydown', event => {
+                const items = Array.from(options.querySelectorAll('[role="option"]'));
+                const index = items.indexOf(document.activeElement);
+                let nextIndex = index;
+                if (event.key === 'ArrowDown') nextIndex = (index + 1) % items.length;
+                else if (event.key === 'ArrowUp') nextIndex = (index - 1 + items.length) % items.length;
+                else if (event.key === 'Home') nextIndex = 0;
+                else if (event.key === 'End') nextIndex = items.length - 1;
+                else if (event.key === 'Escape') {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    fermer();
+                    button.focus();
+                    return;
+                } else if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    choisir(items[index]);
+                    return;
+                } else return;
+                event.preventDefault();
+                items[nextIndex].focus();
+            });
+            document.addEventListener('click', event => {
+                if (!root.contains(event.target)) fermer();
+            });
+
+            return { button, setValue, ouvrir, fermer };
         }
+
+        const selecteurMarqueNote = initialiserSelecteurPersonnalise(
+            'bn-save-note-brand-button',
+            'bn-save-note-brand',
+            'bn-save-note-brand-value',
+            'bn-save-note-brand-options',
+            'Choisir une marque…'
+        );
+        const selecteurDelaiRappel = initialiserSelecteurPersonnalise(
+            'bn-save-note-reminder-days-button',
+            'bn-save-note-reminder-days',
+            'bn-save-note-reminder-days-value',
+            'bn-save-note-reminder-days-options',
+            'Choisir un délai…'
+        );
+        let statutNoteSelectionne = '';
         function choisirStatutNote(statut) {
             if (!STATUTS_NOTES.includes(statut)) return;
             statutNoteSelectionne = statut;
-            valeurStatutNote.textContent = statut;
-            optionsStatutNote.querySelectorAll('[role="option"]').forEach(option => {
-                option.setAttribute('aria-selected', String(option.dataset.value === statut));
-            });
             const commande = statut === 'Commandé';
             champsRappelCommande.classList.toggle('hidden', !commande);
             if (commande) {
                 const noteEnEdition = notesPartagees.find(note => note.id === noteEnEditionId);
-                selectionMarqueNote.value = noteEnEdition && noteEnEdition.status === 'Commandé'
+                selecteurMarqueNote.setValue(noteEnEdition && noteEnEdition.status === 'Commandé'
                     ? noteEnEdition.brand || ''
-                    : '';
-                selectionDelaiRappel.value = noteEnEdition && noteEnEdition.status === 'Commandé' && noteEnEdition.reminderDays
+                    : '');
+                selecteurDelaiRappel.setValue(noteEnEdition && noteEnEdition.status === 'Commandé' && noteEnEdition.reminderDays
                     ? String(noteEnEdition.reminderDays)
-                    : '';
+                    : '');
             } else {
-                selectionMarqueNote.value = '';
-                selectionDelaiRappel.value = '';
+                selecteurMarqueNote.setValue('');
+                selecteurDelaiRappel.setValue('');
             }
-            fermerOptionsStatutNote();
-            boutonStatutNote.focus();
         }
-        function ouvrirOptionsStatutNote() {
-            optionsStatutNote.classList.remove('hidden');
-            boutonStatutNote.setAttribute('aria-expanded', 'true');
-            const option = Array.from(optionsStatutNote.querySelectorAll('[role="option"]'))
-                .find(item => item.dataset.value === statutNoteSelectionne)
-                || optionsStatutNote.querySelector('[role="option"]');
-            option.focus();
-        }
+        const selecteurStatutNote = initialiserSelecteurPersonnalise(
+            'bn-save-note-status',
+            'bn-save-note-status-data',
+            'bn-save-note-status-value',
+            'bn-save-note-status-options',
+            'Choisir un statut…',
+            choisirStatutNote
+        );
         function demanderStatutNote() {
             statutNoteSelectionne = '';
-            valeurStatutNote.textContent = 'Choisir un statut…';
+            selecteurStatutNote.setValue('');
             champsRappelCommande.classList.add('hidden');
-            selectionMarqueNote.value = '';
-            selectionDelaiRappel.value = '';
-            optionsStatutNote.querySelectorAll('[role="option"]').forEach(option => option.setAttribute('aria-selected', 'false'));
-            fermerOptionsStatutNote();
+            selecteurMarqueNote.setValue('');
+            selecteurDelaiRappel.setValue('');
             modalStatutNote.classList.remove('hidden');
             boutonStatutNote.focus();
         }
         function fermerDemandeStatutNote() {
-            fermerOptionsStatutNote();
+            selecteurStatutNote.fermer();
             modalStatutNote.classList.add('hidden');
         }
         $id('btn-bn-sauvegarder').addEventListener('click', demanderStatutNote);
         $id('btn-annuler-note-status').addEventListener('click', fermerDemandeStatutNote);
-        boutonStatutNote.addEventListener('click', () => {
-            if (boutonStatutNote.getAttribute('aria-expanded') === 'true') fermerOptionsStatutNote();
-            else ouvrirOptionsStatutNote();
-        });
-        optionsStatutNote.addEventListener('click', e => {
-            const option = e.target.closest('[role="option"]');
-            if (option) choisirStatutNote(option.dataset.value);
-        });
-        boutonStatutNote.addEventListener('keydown', e => {
-            if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                if (boutonStatutNote.getAttribute('aria-expanded') !== 'true') ouvrirOptionsStatutNote();
-            }
-        });
-        optionsStatutNote.addEventListener('keydown', e => {
-            const options = Array.from(optionsStatutNote.querySelectorAll('[role="option"]'));
-            const index = options.indexOf(document.activeElement);
-            let nextIndex = index;
-            if (e.key === 'ArrowDown') nextIndex = (index + 1) % options.length;
-            else if (e.key === 'ArrowUp') nextIndex = (index - 1 + options.length) % options.length;
-            else if (e.key === 'Home') nextIndex = 0;
-            else if (e.key === 'End') nextIndex = options.length - 1;
-            else if (e.key === 'Escape') {
-                e.preventDefault();
-                e.stopPropagation();
-                fermerOptionsStatutNote();
-                boutonStatutNote.focus();
-                return;
-            } else if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                if (options[index]) choisirStatutNote(options[index].dataset.value);
-                return;
-            } else return;
-            e.preventDefault();
-            options[nextIndex].focus();
-        });
-        document.addEventListener('click', e => {
-            if (!e.target.closest('.bn-status-select')) fermerOptionsStatutNote();
-        });
         $id('btn-confirmer-note-status').addEventListener('click', async () => {
             const statut = statutNoteSelectionne;
             if (!STATUTS_NOTES.includes(statut)) {
@@ -646,13 +686,13 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             }
             if (statut === 'Commandé' && !['Nissan', 'MG', 'Infinity', 'Suzuki'].includes(selectionMarqueNote.value)) {
                 alert('Choisis la marque du véhicule.');
-                selectionMarqueNote.focus();
+                selecteurMarqueNote.button.focus();
                 return;
             }
             const joursRappel = Number(selectionDelaiRappel.value);
             if (statut === 'Commandé' && (!Number.isInteger(joursRappel) || joursRappel < 1 || joursRappel > 30)) {
                 alert('Choisis un délai de rappel entre J+1 et J+30.');
-                selectionDelaiRappel.focus();
+                selecteurDelaiRappel.button.focus();
                 return;
             }
             await enregistrerNote(statut, selectionMarqueNote.value, joursRappel);

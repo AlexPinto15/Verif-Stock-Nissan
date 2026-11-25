@@ -753,6 +753,7 @@
             <div class="bn-save-status-field">
                 <span id="bn-save-note-status-label">Statut</span>
                 <div class="bn-status-select">
+                    <input type="hidden" id="bn-save-note-status-data">
                     <button type="button" id="bn-save-note-status" class="bn-status-select-button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bn-save-note-status-label bn-save-note-status-value">
                         <span id="bn-save-note-status-value">Choisir un statut…</span>
                         <span class="bn-status-select-chevron" aria-hidden="true">⌄</span>
@@ -766,52 +767,64 @@
                 </div>
             </div>
             <div id="bn-order-reminder-fields" class="bn-order-reminder-fields hidden">
-                <label class="bn-save-status-field" for="bn-save-note-brand">
-                    Marque
-                    <select id="bn-save-note-brand" class="modal-input">
-                        <option value="">Choisir une marque…</option>
-                        <option value="Nissan">Nissan</option>
-                        <option value="MG">MG</option>
-                        <option value="Infinity">Infinity</option>
-                        <option value="Suzuki">Suzuki</option>
-                    </select>
-                </label>
-                <label class="bn-save-status-field" for="bn-save-note-reminder-days">
-                    Délai du rappel (jours ouvrés)
-                    <select id="bn-save-note-reminder-days" class="modal-input">
-                        <option value="">Choisir un délai…</option>
-                        <option value="1">J+1</option>
-                        <option value="2">J+2</option>
-                        <option value="3">J+3</option>
-                        <option value="4">J+4</option>
-                        <option value="5">J+5</option>
-                        <option value="6">J+6</option>
-                        <option value="7">J+7</option>
-                        <option value="8">J+8</option>
-                        <option value="9">J+9</option>
-                        <option value="10">J+10</option>
-                        <option value="11">J+11</option>
-                        <option value="12">J+12</option>
-                        <option value="13">J+13</option>
-                        <option value="14">J+14</option>
-                        <option value="15">J+15</option>
-                        <option value="16">J+16</option>
-                        <option value="17">J+17</option>
-                        <option value="18">J+18</option>
-                        <option value="19">J+19</option>
-                        <option value="20">J+20</option>
-                        <option value="21">J+21</option>
-                        <option value="22">J+22</option>
-                        <option value="23">J+23</option>
-                        <option value="24">J+24</option>
-                        <option value="25">J+25</option>
-                        <option value="26">J+26</option>
-                        <option value="27">J+27</option>
-                        <option value="28">J+28</option>
-                        <option value="29">J+29</option>
-                        <option value="30">J+30</option>
-                    </select>
-                </label>
+                <div class="bn-save-status-field">
+                    <span id="bn-save-note-brand-label">Marque</span>
+                    <div class="bn-status-select">
+                        <input type="hidden" id="bn-save-note-brand">
+                        <button type="button" id="bn-save-note-brand-button" class="bn-status-select-button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bn-save-note-brand-label bn-save-note-brand-value">
+                            <span id="bn-save-note-brand-value">Choisir une marque…</span>
+                            <span class="bn-status-select-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div id="bn-save-note-brand-options" class="bn-status-select-options hidden" role="listbox" aria-labelledby="bn-save-note-brand-label">
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Nissan">Nissan</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="MG">MG</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Infinity">Infinity</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Suzuki">Suzuki</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="bn-save-status-field">
+                    <span id="bn-save-note-reminder-days-label">Délai du rappel (jours ouvrés)</span>
+                    <div class="bn-status-select">
+                        <input type="hidden" id="bn-save-note-reminder-days">
+                        <button type="button" id="bn-save-note-reminder-days-button" class="bn-status-select-button" aria-haspopup="listbox" aria-expanded="false" aria-labelledby="bn-save-note-reminder-days-label bn-save-note-reminder-days-value">
+                            <span id="bn-save-note-reminder-days-value">Choisir un délai…</span>
+                            <span class="bn-status-select-chevron" aria-hidden="true">⌄</span>
+                        </button>
+                        <div id="bn-save-note-reminder-days-options" class="bn-status-select-options hidden" role="listbox" aria-labelledby="bn-save-note-reminder-days-label">
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="1">J+1</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="2">J+2</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="3">J+3</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="4">J+4</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="5">J+5</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="6">J+6</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="7">J+7</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="8">J+8</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="9">J+9</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="10">J+10</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="11">J+11</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="12">J+12</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="13">J+13</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="14">J+14</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="15">J+15</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="16">J+16</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="17">J+17</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="18">J+18</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="19">J+19</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="20">J+20</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="21">J+21</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="22">J+22</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="23">J+23</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="24">J+24</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="25">J+25</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="26">J+26</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="27">J+27</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="28">J+28</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="29">J+29</button>
+                            <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="30">J+30</button>
+                        </div>
+                    </div>
+                </div>
                 <p class="bn-reminder-hint">Le rappel apparaîtra à 9 h 30, les jours ouvrés. Si le site est fermé, il s’affichera à sa prochaine ouverture.</p>
             </div>
             <div class="bn-save-status-actions">
