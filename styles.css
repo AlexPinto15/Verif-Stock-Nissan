@@ -464,9 +464,11 @@
         .bn-save-status-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
         .bn-save-status-actions .btn { font-size: 12px; }
         .bn-note-status-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-        .bn-note-status-tab { flex: 1 1 140px; min-height: 36px; padding: 7px 12px; border: 1px solid var(--border-highlight); border-radius: 9px; background: rgba(255,255,255,0.04); color: var(--text-secondary); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.18s, color 0.18s, border-color 0.18s; }
+        .bn-note-status-tab { display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 1 1 140px; min-height: 36px; padding: 7px 12px; border: 1px solid var(--border-highlight); border-radius: 9px; background: rgba(255,255,255,0.04); color: var(--text-secondary); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.18s, color 0.18s, border-color 0.18s; }
         .bn-note-status-tab:hover { color: #fff; border-color: #fff; }
         .bn-note-status-tab[aria-pressed="true"] { color: #fff; background: rgba(59,130,246,0.18); border-color: var(--blue-border); }
+        .bn-note-status-count { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: rgba(255,255,255,0.1); color: var(--text-main); font-size: 10px; font-weight: 800; }
+        .bn-note-status-tab[aria-pressed="true"] .bn-note-status-count { background: rgba(59,130,246,0.3); }
         .bn-note-status-badge { display: inline-flex; align-items: center; padding: 2px 8px; border: 1px solid var(--border-highlight); border-radius: 999px; font-size: 10px; font-weight: 700; white-space: nowrap; }
         .bn-note-status-commande { color: #6ee7b7; background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.35); }
         .bn-note-status-attente-mail { color: #fcd34d; background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.35); }

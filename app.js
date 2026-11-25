@@ -1083,6 +1083,13 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             const liste = notesPartagees;
             bnCountBadge.textContent = liste.length;
             $id('bn-notes-count-btn').textContent = liste.length;
+            const compteursStatuts = new Map(STATUTS_NOTES.map(statut => [statut, 0]));
+            liste.forEach(note => {
+                if (compteursStatuts.has(note.status)) compteursStatuts.set(note.status, compteursStatuts.get(note.status) + 1);
+            });
+            $id('bn-note-status-tabs').querySelectorAll('[data-note-count]').forEach(compteur => {
+                compteur.textContent = compteursStatuts.get(compteur.dataset.noteCount) || 0;
+            });
             const q = bnFiltre.value.trim().toLowerCase();
             bnListeConteneur.innerHTML = '';
 
