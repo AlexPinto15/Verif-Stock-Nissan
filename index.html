@@ -91,6 +91,7 @@
     </header>
 
     <main inert>
+        <div id="order-reminders" class="order-reminders hidden" role="region" aria-label="Rappels de commandes" aria-live="assertive"></div>
 
         <!-- SECTION HUB -->
         <section id="screen-hub" class="app-screen active-screen">
@@ -748,7 +749,7 @@
     <div id="modal-note-status" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-note-status-title">
         <div class="modal-content" style="max-width: 460px; width: 92%;">
             <div class="modal-title" id="modal-note-status-title">Choisir le statut de la note</div>
-            <div class="modal-desc">Sélectionne le statut à appliquer avant l’enregistrement ou la mise à jour.</div>
+            <div class="modal-desc">Sélectionne le statut à appliquer avant l’enregistrement ou la mise à jour. Pour une commande, choisis aussi la marque et le délai de rappel.</div>
             <div class="bn-save-status-field">
                 <span id="bn-save-note-status-label">Statut</span>
                 <div class="bn-status-select">
@@ -763,6 +764,55 @@
                         <button type="button" class="bn-status-select-option" role="option" aria-selected="false" data-value="Attente téléphone">Attente téléphone</button>
                     </div>
                 </div>
+            </div>
+            <div id="bn-order-reminder-fields" class="bn-order-reminder-fields hidden">
+                <label class="bn-save-status-field" for="bn-save-note-brand">
+                    Marque
+                    <select id="bn-save-note-brand" class="modal-input">
+                        <option value="">Choisir une marque…</option>
+                        <option value="Nissan">Nissan</option>
+                        <option value="MG">MG</option>
+                        <option value="Infinity">Infinity</option>
+                        <option value="Suzuki">Suzuki</option>
+                    </select>
+                </label>
+                <label class="bn-save-status-field" for="bn-save-note-reminder-days">
+                    Délai du rappel (jours ouvrés)
+                    <select id="bn-save-note-reminder-days" class="modal-input">
+                        <option value="">Choisir un délai…</option>
+                        <option value="1">J+1</option>
+                        <option value="2">J+2</option>
+                        <option value="3">J+3</option>
+                        <option value="4">J+4</option>
+                        <option value="5">J+5</option>
+                        <option value="6">J+6</option>
+                        <option value="7">J+7</option>
+                        <option value="8">J+8</option>
+                        <option value="9">J+9</option>
+                        <option value="10">J+10</option>
+                        <option value="11">J+11</option>
+                        <option value="12">J+12</option>
+                        <option value="13">J+13</option>
+                        <option value="14">J+14</option>
+                        <option value="15">J+15</option>
+                        <option value="16">J+16</option>
+                        <option value="17">J+17</option>
+                        <option value="18">J+18</option>
+                        <option value="19">J+19</option>
+                        <option value="20">J+20</option>
+                        <option value="21">J+21</option>
+                        <option value="22">J+22</option>
+                        <option value="23">J+23</option>
+                        <option value="24">J+24</option>
+                        <option value="25">J+25</option>
+                        <option value="26">J+26</option>
+                        <option value="27">J+27</option>
+                        <option value="28">J+28</option>
+                        <option value="29">J+29</option>
+                        <option value="30">J+30</option>
+                    </select>
+                </label>
+                <p class="bn-reminder-hint">Le rappel apparaîtra à 9 h 30, les jours ouvrés. Si le site est fermé, il s’affichera à sa prochaine ouverture.</p>
             </div>
             <div class="bn-save-status-actions">
                 <button type="button" class="btn btn-glass" id="btn-annuler-note-status">Annuler</button>

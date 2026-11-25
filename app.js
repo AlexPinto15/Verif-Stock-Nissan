@@ -457,7 +457,19 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             viderFormulaireBn();
         });
 
-        async function enregistrerNote(statut) {
+        function calculerDateRappelCommande(dateCommande, joursOuvres) {
+            const dateRappel = new Date(dateCommande);
+            let joursAjoutes = 0;
+            while (joursAjoutes < joursOuvres) {
+                dateRappel.setDate(dateRappel.getDate() + 1);
+                const jour = dateRappel.getDay();
+                if (jour !== 0 && jour !== 6) joursAjoutes++;
+            }
+            dateRappel.setHours(9, 30, 0, 0);
+            return dateRappel;
+        }
+
+        async function enregistrerNote(statut, marque, joursRappel) {
             $id('modal-note-status').classList.add('hidden');
             const client = bnNomClient.value.trim() || 'Client sans nom';
             const immat = bnImmat.value.trim().toUpperCase() || '--';
@@ -480,7 +492,11 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 vin: bnVin.value.trim().toUpperCase(),
                 notes: notes,
                 refs: bnRefs.map(({ ref, qty, desig, st }) => ({ ref, qty, desig, st })),
-                note_status: statut
+                note_status: statut,
+                note_brand: statut === 'Commandé' ? marque : null,
+                reminder_days: statut === 'Commandé' ? joursRappel : null,
+                reminder_at: statut === 'Commandé' ? calculerDateRappelCommande(now, joursRappel).toISOString() : null,
+                reminder_acknowledged: false
             };
             const isEditing = noteEnEditionId !== null;
             if (!isEditing) note.note_date = dateStr;
@@ -525,6 +541,9 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         const boutonStatutNote = $id('bn-save-note-status');
         const valeurStatutNote = $id('bn-save-note-status-value');
         const optionsStatutNote = $id('bn-save-note-status-options');
+        const champsRappelCommande = $id('bn-order-reminder-fields');
+        const selectionMarqueNote = $id('bn-save-note-brand');
+        const selectionDelaiRappel = $id('bn-save-note-reminder-days');
         let statutNoteSelectionne = '';
         function fermerOptionsStatutNote() {
             optionsStatutNote.classList.add('hidden');
@@ -537,6 +556,20 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             optionsStatutNote.querySelectorAll('[role="option"]').forEach(option => {
                 option.setAttribute('aria-selected', String(option.dataset.value === statut));
             });
+            const commande = statut === 'Commandé';
+            champsRappelCommande.classList.toggle('hidden', !commande);
+            if (commande) {
+                const noteEnEdition = notesPartagees.find(note => note.id === noteEnEditionId);
+                selectionMarqueNote.value = noteEnEdition && noteEnEdition.status === 'Commandé'
+                    ? noteEnEdition.brand || ''
+                    : '';
+                selectionDelaiRappel.value = noteEnEdition && noteEnEdition.status === 'Commandé' && noteEnEdition.reminderDays
+                    ? String(noteEnEdition.reminderDays)
+                    : '';
+            } else {
+                selectionMarqueNote.value = '';
+                selectionDelaiRappel.value = '';
+            }
             fermerOptionsStatutNote();
             boutonStatutNote.focus();
         }
@@ -551,6 +584,9 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         function demanderStatutNote() {
             statutNoteSelectionne = '';
             valeurStatutNote.textContent = 'Choisir un statut…';
+            champsRappelCommande.classList.add('hidden');
+            selectionMarqueNote.value = '';
+            selectionDelaiRappel.value = '';
             optionsStatutNote.querySelectorAll('[role="option"]').forEach(option => option.setAttribute('aria-selected', 'false'));
             fermerOptionsStatutNote();
             modalStatutNote.classList.remove('hidden');
@@ -608,7 +644,18 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 boutonStatutNote.focus();
                 return;
             }
-            await enregistrerNote(statut);
+            if (statut === 'Commandé' && !['Nissan', 'MG', 'Infinity', 'Suzuki'].includes(selectionMarqueNote.value)) {
+                alert('Choisis la marque du véhicule.');
+                selectionMarqueNote.focus();
+                return;
+            }
+            const joursRappel = Number(selectionDelaiRappel.value);
+            if (statut === 'Commandé' && (!Number.isInteger(joursRappel) || joursRappel < 1 || joursRappel > 30)) {
+                alert('Choisis un délai de rappel entre J+1 et J+30.');
+                selectionDelaiRappel.focus();
+                return;
+            }
+            await enregistrerNote(statut, selectionMarqueNote.value, joursRappel);
         });
         modalStatutNote.addEventListener('mousedown', e => {
             if (e.target === modalStatutNote) fermerDemandeStatutNote();
@@ -1050,6 +1097,10 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 notes: row.notes,
                 refs: row.refs,
                 status: STATUTS_NOTES.includes(row.note_status) ? row.note_status : 'Devis',
+                brand: row.note_brand || '',
+                reminderDays: row.reminder_days,
+                reminderAt: row.reminder_at,
+                reminderAcknowledged: Boolean(row.reminder_acknowledged),
                 date: row.note_date,
                 createdBy: row.created_by,
                 createdByName: row.created_by_name,
@@ -1057,6 +1108,62 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 updatedByName: row.updated_by_name
             };
         }
+
+        function afficherRappelsCommandes() {
+            const conteneur = $id('order-reminders');
+            const maintenant = Date.now();
+            const rappelsDus = notesPartagees.filter(note =>
+                note.status === 'Commandé' &&
+                note.reminderAt &&
+                !note.reminderAcknowledged &&
+                new Date(note.reminderAt).getTime() <= maintenant
+            );
+            conteneur.classList.toggle('hidden', rappelsDus.length === 0);
+            if (!rappelsDus.length) {
+                conteneur.innerHTML = '';
+                return;
+            }
+
+            conteneur.innerHTML = `
+                <h2>Rappels de commandes à vérifier</h2>
+                <div class="order-reminders-list">
+                    ${rappelsDus.map(note => `
+                        <article class="order-reminder-card">
+                            <div>
+                                <strong>${esc(note.brand || 'Commande')} · ${esc(note.client)}</strong>
+                                <p>${note.immat && note.immat !== '--' ? `Immatriculation : ${esc(note.immat)} · ` : ''}Vérifier que la commande est bien partie. Échéance : ${esc(new Date(note.reminderAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }))}.</p>
+                            </div>
+                            <button type="button" class="btn btn-blue" data-acknowledge-reminder="${esc(note.id)}">Rappel traité</button>
+                        </article>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        $id('order-reminders').addEventListener('click', async event => {
+            const button = event.target.closest('[data-acknowledge-reminder]');
+            if (!button) return;
+            const note = notesPartagees.find(item => String(item.id) === button.dataset.acknowledgeReminder);
+            if (!note || note.reminderAcknowledged) return;
+            button.disabled = true;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('atelier_notes')
+                    .update({ reminder_acknowledged: true })
+                    .eq('id', note.id)
+                    .eq('reminder_at', note.reminderAt)
+                    .eq('reminder_acknowledged', false)
+                    .select('id')
+                    .maybeSingle();
+                if (error) throw error;
+                if (!data) throw new Error('Cette fiche a été modifiée. Actualise les données et réessaie.');
+                note.reminderAcknowledged = true;
+                afficherRappelsCommandes();
+            } catch (error) {
+                alert(`Impossible de fermer le rappel : ${error.message || 'erreur de connexion à la base de données.'}`);
+                button.disabled = false;
+            }
+        });
 
         async function chargerHistoriqueNotes(afficherErreur = true) {
             if (!supabaseClient || !currentUser) return false;
@@ -1081,6 +1188,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
 
         function afficherHistoriqueNotes() {
             const liste = notesPartagees;
+            afficherRappelsCommandes();
             bnCountBadge.textContent = liste.length;
             $id('bn-notes-count-btn').textContent = liste.length;
             const compteursStatuts = new Map(STATUTS_NOTES.map(statut => [statut, 0]));
@@ -1122,6 +1230,8 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                     <div style="display: flex; gap: 8px; font-size: 11px; flex-wrap: wrap; align-items: center;">
                         ${note.immat !== '--' ? `<span style="font-family: monospace; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); padding: 2px 6px; border-radius: 4px;">${esc(note.immat)}</span>` : ''}
                         ${note.modele ? `<span style="color: var(--text-secondary);">${esc(note.modele)}</span>` : ''}
+                        ${note.status === 'Commandé' && note.brand ? `<span class="bn-note-brand">${esc(note.brand)}</span>` : ''}
+                        ${note.status === 'Commandé' && note.reminderAt ? `<span class="bn-note-reminder-date">Rappel : ${esc(new Date(note.reminderAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }))}</span>` : ''}
                         ${note.codeClient ? `<span style="color: #34d399; font-weight: 600;">Code: ${esc(note.codeClient)}</span>` : ''}
                         ${refs.length ? `<span style="color: var(--text-secondary);">📋 ${refs.length} réf. · 🏠 ${nb('stock')} · 🏭 ${nb('usine')} · ❌ ${nb('pasdispo')}</span>` : ''}
                     </div>
