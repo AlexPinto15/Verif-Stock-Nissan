@@ -459,6 +459,12 @@
                             <input type="text" id="bn-vin" class="modal-input" placeholder="17 caractères..." maxlength="17" style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace; font-size: 12px;">
                         </div>
                     </div>
+                    <div class="bn-ocr-paste-field">
+                        <label for="bn-ocr-paste-target">Importer depuis une capture</label>
+                        <input id="bn-ocr-paste-target" class="modal-input" type="text" readonly placeholder="Clique ici, puis Ctrl + V après Win + Maj + S">
+                    </div>
+                    <p class="bn-ocr-hint">La capture est analysée dans le navigateur. Vérifie les informations dans la fenêtre avant de les intégrer.</p>
+                    <p id="bn-ocr-status" class="bn-ocr-status hidden" role="status" aria-live="polite"></p>
 
                     <!-- Bloc Prise de Notes / Pièces -->
                     <div class="modal-field" style="margin-bottom: 16px;">
@@ -741,6 +747,22 @@
                     </thead>
                     <tbody id="db-veh-table-body"></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-ocr-note-vehicle" class="modal-overlay hidden ocr-note-modal" role="dialog" aria-modal="true" aria-labelledby="modal-ocr-note-vehicle-title">
+        <div class="modal-content" style="max-width: 500px; width: 92%;">
+            <div class="modal-title" id="modal-ocr-note-vehicle-title">Véhicule détecté dans la capture</div>
+            <div class="modal-desc">Vérifie les informations avant de les intégrer. Elles remplaceront les valeurs véhicule de la note en cours, sans enregistrer la note.</div>
+            <div class="ocr-note-preview">
+                <div><span>Immatriculation</span><strong id="ocr-note-preview-immat"></strong></div>
+                <div><span>Modèle</span><strong id="ocr-note-preview-modele"></strong></div>
+                <div><span>VIN</span><strong id="ocr-note-preview-vin"></strong></div>
+            </div>
+            <div class="bn-save-status-actions">
+                <button type="button" class="btn btn-glass" id="btn-cancel-ocr-note-vehicle">Ignorer</button>
+                <button type="button" class="btn btn-emerald" id="btn-apply-ocr-note-vehicle">Intégrer dans la note actuelle</button>
             </div>
         </div>
     </div>

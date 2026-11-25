@@ -167,31 +167,33 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         /* -------------------------------------------------------------------------
            MOTEUR D'EXTRACTION DE TEXTE & SCAN OCR (BLINDÉ SIV / VIN / MICROCAT)
            ------------------------------------------------------------------------- */
-        function extraireInfosDepuisTexte(texteBrut) {
-            if (!texteBrut) return false;
-            let trouve = false;
+        function extraireDonneesVehiculeDepuisTexte(texteBrut) {
+            if (!texteBrut) return {};
+            const infos = {};
 
-            // 1. Modèle (Nissan & MG)
-            const modMatch = texteBrut.match(/\b(PIXO|JUKE|QASHQAI|MICRA(?:\s*C\+C)?|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR|MG4|MG ZS|MG3|MG5|MG EHS|CYBERSTER)[^\n\r]*/i);
-            if (modMatch) {
-                inputModele.value = modMatch[0].replace(/\s+/g, ' ').trim().slice(0, 35);
-                trouve = true;
-            }
+            const modeleCatalogue = texteBrut.match(/(?:Catalogue|Catalog)\s*:\s*([^|\n\r]+)/i);
+            const modeleMatch = texteBrut.match(/\b(NV200|PIXO|JUKE|QASHQAI|MICRA(?:\s*C\+C)?|X-TRAIL|NAVARA|LEAF|NOTE|PULSAR|ARIYA|TOWNSTAR|PRIMASTAR|INTERSTAR|MG4|MG ZS|MG3|MG5|MG EHS|CYBERSTER)\b([^\n\r|]*)/i);
+            const modele = modeleCatalogue
+                ? modeleCatalogue[1]
+                : modeleMatch ? `${modeleMatch[1]}${modeleMatch[2]}` : '';
+            if (modele) infos.modele = modele.replace(/\s+/g, ' ').trim().slice(0, 50);
 
-            // 2. Immatriculation (Recherche ciblée après label ou par motif SIV)
-            let immatBrute = null;
-            const matchApresLabel = texteBrut.match(/Immatriculation[^\w\n\r]*([A-Z0-9\s-]{6,12})/i);
+            const candidatsImmat = [];
+            const matchApresLabel = texteBrut.match(/Immatriculation[^\w\n\r]*([A-Z0-9 -]{6,12})/i);
             if (matchApresLabel) {
-                immatBrute = matchApresLabel[1].replace(/[\s-]/g, '').toUpperCase();
-            } else {
-                const matchGen = texteBrut.match(/\b([A-Z0-9]{2}[- ]?[A-Z0-9]{3}[- ]?[A-Z0-9]{2})\b/i);
-                if (matchGen) immatBrute = matchGen[1].replace(/[\s-]/g, '').toUpperCase();
+                candidatsImmat.push(matchApresLabel[1]);
+            }
+            const motifImmat = /\b([A-Z0-9]{2}[- ]?[A-Z0-9]{3}[- ]?[A-Z0-9]{2})\b/gi;
+            let matchImmat;
+            while ((matchImmat = motifImmat.exec(texteBrut)) !== null) {
+                candidatsImmat.push(matchImmat[1]);
             }
 
-            if (immatBrute && immatBrute.length >= 7) {
-                let car = immatBrute.slice(0, 7).split('');
-                const versLettre = (c) => ({ '8': 'B', '2': 'Z', '0': 'O', '1': 'I', '5': 'S', '6': 'G' }[c] || c);
-                const versChiffre = (c) => ({ 'B': '8', 'Z': '2', 'O': '0', 'I': '1', 'S': '5', 'G': '6' }[c] || c);
+            const versLettre = c => ({ '8': 'B', '2': 'Z', '0': 'O', '1': 'I', '5': 'S', '6': 'G' }[c] || c);
+            const versChiffre = c => ({ 'B': '8', 'Z': '2', 'O': '0', 'I': '1', 'S': '5', 'G': '6' }[c] || c);
+            for (const candidat of candidatsImmat) {
+                const car = candidat.replace(/[\s-]/g, '').toUpperCase().slice(0, 7).split('');
+                if (car.length !== 7) continue;
 
                 car[0] = versLettre(car[0]);
                 car[1] = versLettre(car[1]);
@@ -200,54 +202,119 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 car[4] = versChiffre(car[4]);
                 car[5] = versLettre(car[5]);
                 car[6] = versLettre(car[6]);
-
-                inputImmat.value = car.join('');
-                trouve = true;
-            }
-
-            // 3. VIN / N° Châssis
-            let vinBrut = null;
-            const vinMatchLabel = texteBrut.match(/VIN[^\w\n\r]*([A-Z0-9\s]{15,22})/i);
-            if (vinMatchLabel) {
-                vinBrut = vinMatchLabel[1].replace(/\s+/g, '').toUpperCase();
-            } else {
-                const matchGenVIN = texteBrut.match(/\b([A-Z0-9]{17})\b/i);
-                if (matchGenVIN) vinBrut = matchGenVIN[1].toUpperCase();
-            }
-
-            if (vinBrut && vinBrut.length >= 17) {
-                let vinNet = vinBrut.slice(0, 17);
-                if (vinNet.startsWith("S1N") || vinNet.startsWith("SIN")) {
-                    vinNet = "SJN" + vinNet.slice(3);
+                const immatNormalisee = car.join('');
+                if (/^[A-Z]{2}\d{3}[A-Z]{2}$/.test(immatNormalisee)) {
+                    infos.immat = immatNormalisee;
+                    break;
                 }
-                if (vinNet.startsWith("SJN") && vinNet[3] === 'Z') {
+            }
+
+            const vinMatchLabel = texteBrut.match(/VIN[^\w\n\r]*([A-Z0-9\s-]{15,22})/i);
+            const vinMatch = texteBrut.match(/\b([A-Z0-9](?:[ -]?[A-Z0-9]){16})\b/i);
+            const vinBrut = (vinMatchLabel ? vinMatchLabel[1] : vinMatch && vinMatch[1])
+                ? (vinMatchLabel ? vinMatchLabel[1] : vinMatch[1]).replace(/[\s-]/g, '').toUpperCase()
+                : '';
+
+            if (vinBrut.length >= 17) {
+                let vinNet = vinBrut.slice(0, 17);
+                if (vinNet.startsWith('S1N') || vinNet.startsWith('SIN')) {
+                    vinNet = 'SJN' + vinNet.slice(3);
+                }
+                if (vinNet.startsWith('SJN') && vinNet[3] === 'Z') {
                     vinNet = vinNet.substring(0, 3) + '2' + vinNet.substring(4);
                 }
-                vinNet = vinNet.replace(/O/g, '0').replace(/Q/g, '0');
-                inputVin.value = vinNet;
-                trouve = true;
+                infos.vin = vinNet.replace(/O/g, '0').replace(/Q/g, '0');
             }
 
-            // 4. Date de construction
-            const dateConstrMatch = texteBrut.match(/(?:construction|date)[^\d\n\r]*([0-1]?[0-9])\s*[\/]\s*([12][0-9]{3})/i);
-            if (dateConstrMatch) {
-                const mois = dateConstrMatch[1].padStart(2, '0');
-                const annee = dateConstrMatch[2];
-                inputDate.value = `${mois}/${annee}`;
-                trouve = true;
+            const dateMatch = texteBrut.match(/(?:construction|date)[^\d\n\r]*([0-1]?[0-9])\s*[\/]\s*([12][0-9]{3})/i)
+                || texteBrut.match(/\b(0?[1-9]|1[0-2])\s*[\/.-]\s*([12][0-9]{3})\b/);
+            if (dateMatch) {
+                infos.dateConst = `${dateMatch[1].padStart(2, '0')}/${dateMatch[2]}`;
             }
 
-            if (trouve) {
-                animerConfirmationDetection();
-                synchroniserDonneesVehicule(true);
-            }
-            return trouve;
+            return infos;
         }
 
-        async function analyserImageOCR(imageSource) {
+        function estFormulaireBlocNoteActif() {
+            return document.getElementById('screen-blocnote').classList.contains('active-screen')
+                && !document.getElementById('bn-panel-form').classList.contains('hidden');
+        }
+
+        let infosVehiculeOCREnAttente = null;
+        const modalIntegrationOCR = document.getElementById('modal-ocr-note-vehicle');
+
+        function proposerIntegrationVehiculeDansNote(infos) {
+            infosVehiculeOCREnAttente = infos;
+            document.getElementById('ocr-note-preview-immat').textContent = infos.immat;
+            document.getElementById('ocr-note-preview-modele').textContent = infos.modele;
+            document.getElementById('ocr-note-preview-vin').textContent = infos.vin;
+            modalIntegrationOCR.classList.remove('hidden');
+            document.getElementById('btn-cancel-ocr-note-vehicle').focus();
+        }
+
+        function extraireInfosDepuisTexte(texteBrut, destination = estFormulaireBlocNoteActif() ? 'note' : 'stock') {
+            const infos = extraireDonneesVehiculeDepuisTexte(texteBrut);
+            const trouve = Boolean(infos.immat || infos.modele || infos.vin || infos.dateConst);
+            if (!trouve) return false;
+
+            if (destination === 'note') {
+                const champsManquants = [
+                    !infos.immat && 'plaque',
+                    !infos.vin && 'VIN',
+                    !infos.modele && 'modèle'
+                ].filter(Boolean);
+                if (champsManquants.length) {
+                    const status = document.getElementById('bn-ocr-status');
+                    status.textContent = `Capture non intégrée : information manquante (${champsManquants.join(', ')}).`;
+                    status.classList.remove('hidden');
+                    return false;
+                }
+                document.getElementById('bn-ocr-status').classList.add('hidden');
+                proposerIntegrationVehiculeDansNote(infos);
+                return true;
+            }
+
+            if (infos.immat) inputImmat.value = infos.immat;
+            if (infos.modele) inputModele.value = infos.modele;
+            if (infos.vin) inputVin.value = infos.vin;
+            if (infos.dateConst) inputDate.value = infos.dateConst;
+            animerConfirmationDetection();
+            synchroniserDonneesVehicule(true);
+            return true;
+        }
+
+        document.getElementById('btn-cancel-ocr-note-vehicle').addEventListener('click', () => {
+            infosVehiculeOCREnAttente = null;
+            modalIntegrationOCR.classList.add('hidden');
+        });
+        document.getElementById('btn-apply-ocr-note-vehicle').addEventListener('click', () => {
+            if (!infosVehiculeOCREnAttente) return;
+            document.getElementById('bn-immat').value = infosVehiculeOCREnAttente.immat;
+            document.getElementById('bn-modele').value = infosVehiculeOCREnAttente.modele;
+            document.getElementById('bn-vin').value = infosVehiculeOCREnAttente.vin;
+            infosVehiculeOCREnAttente = null;
+            modalIntegrationOCR.classList.add('hidden');
+            document.getElementById('bn-immat').focus();
+        });
+        modalIntegrationOCR.addEventListener('mousedown', event => {
+            if (event.target === modalIntegrationOCR) {
+                infosVehiculeOCREnAttente = null;
+                modalIntegrationOCR.classList.add('hidden');
+            }
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && !modalIntegrationOCR.classList.contains('hidden')) {
+                infosVehiculeOCREnAttente = null;
+                modalIntegrationOCR.classList.add('hidden');
+            }
+        });
+
+        async function analyserImageOCR(imageSource, destination = estFormulaireBlocNoteActif() ? 'note' : 'stock') {
             const loader = document.getElementById('ocr-loader-text');
-            loader.classList.remove('hidden');
-            loader.textContent = "⏳ Analyse de l'image (OCR)...";
+            const statusNote = document.getElementById('bn-ocr-status');
+            const status = destination === 'note' ? statusNote : loader;
+            status.classList.remove('hidden');
+            status.textContent = "⏳ Analyse de l'image (OCR)...";
 
             try {
                 if (typeof Tesseract === 'undefined') {
@@ -256,35 +323,45 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
                 const res = await Tesseract.recognize(imageSource, 'fra+eng', {
                     logger: m => {
                         if (m.status === 'recognizing text') {
-                            loader.textContent = `⏳ Détection du texte : ${Math.round(m.progress * 100)}%`;
+                            status.textContent = `⏳ Détection du texte : ${Math.round(m.progress * 100)}%`;
                         }
                     }
                 });
 
                 const texteExtrait = res.data.text;
-                const reussi = extraireInfosDepuisTexte(texteExtrait);
+                const reussi = extraireInfosDepuisTexte(texteExtrait, destination);
 
                 if (reussi) {
-                    loader.textContent = "✓ Véhicule détecté !";
-                    setTimeout(() => loader.classList.add('hidden'), 2200);
+                    if (destination !== 'note') {
+                        status.textContent = "✓ Véhicule détecté !";
+                        setTimeout(() => status.classList.add('hidden'), 2200);
+                    }
                 } else {
-                    loader.textContent = "⚠️ Aucun VIN ou Plaque lisible";
-                    setTimeout(() => loader.classList.add('hidden'), 2600);
+                    if (destination === 'note' && status.textContent.startsWith('Capture non intégrée')) return;
+                    status.textContent = destination === 'note'
+                        ? "⚠️ Aucun véhicule lisible dans la capture."
+                        : "⚠️ Aucun VIN ou Plaque lisible";
+                    setTimeout(() => status.classList.add('hidden'), 2600);
                 }
             } catch (err) {
-                loader.textContent = "✕ Erreur lecture image";
-                setTimeout(() => loader.classList.add('hidden'), 2600);
+                status.textContent = destination === 'note'
+                    ? `✕ Erreur de lecture de la capture : ${err.message || 'bibliothèque OCR indisponible.'}`
+                    : "✕ Erreur lecture image";
+                setTimeout(() => status.classList.add('hidden'), 4000);
             }
         }
 
         document.addEventListener('paste', (e) => {
-            const items = (e.clipboardData || window.clipboardData).items;
+            const clipboardData = e.clipboardData || window.clipboardData;
+            const items = clipboardData && clipboardData.items ? clipboardData.items : [];
             let imageTrouvee = false;
 
             for (let i = 0; i < items.length; i++) {
                 if (items[i].type.indexOf('image') !== -1) {
                     const blob = items[i].getAsFile();
-                    analyserImageOCR(blob);
+                    const destination = estFormulaireBlocNoteActif() ? 'note' : 'stock';
+                    e.preventDefault();
+                    analyserImageOCR(blob, destination);
                     imageTrouvee = true;
                     break;
                 }
@@ -293,9 +370,9 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
             if (imageTrouvee) return;
 
             if (['TEXTAREA', 'INPUT'].includes(e.target.tagName)) return;
-            const texteColle = (e.clipboardData || window.clipboardData).getData('text');
+            const texteColle = clipboardData ? clipboardData.getData('text') : '';
             if (texteColle) {
-                extraireInfosDepuisTexte(texteColle);
+                extraireInfosDepuisTexte(texteColle, estFormulaireBlocNoteActif() ? 'note' : 'stock');
             }
         });
 
@@ -303,7 +380,7 @@ const SYNCHRONIZATION_INTERVAL_MS = 30_000;
         document.getElementById('btn-trigger-ocr').addEventListener('click', () => fileInputOcr.click());
         fileInputOcr.addEventListener('change', (e) => {
             if (e.target.files.length) {
-                analyserImageOCR(e.target.files[0]);
+                analyserImageOCR(e.target.files[0], 'stock');
             }
         });
 

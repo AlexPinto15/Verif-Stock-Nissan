@@ -338,6 +338,16 @@
         .bn-status-select-option[aria-selected="true"] { background: rgba(16,185,129,0.16); color: #6ee7b7; }
         .bn-order-reminder-fields { margin-top: 12px; padding: 12px; border: 1px solid var(--border-subtle); border-radius: 12px; background: rgba(255,255,255,0.03); }
         .bn-reminder-hint { margin: 8px 0 0; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+        .bn-ocr-paste-field { display: flex; flex-direction: column; gap: 6px; margin: -6px 0 8px; }
+        .bn-ocr-paste-field label { color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .bn-ocr-paste-field input { border-style: dashed; cursor: copy; }
+        .bn-ocr-hint { margin: 0 0 12px; color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+        .bn-ocr-status { margin: 0 0 12px; color: var(--text-secondary); font-size: 11px; }
+        .ocr-note-modal { z-index: 1100; }
+        .ocr-note-preview { display: grid; gap: 8px; margin: 16px 0; }
+        .ocr-note-preview > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid var(--border-subtle); border-radius: 8px; background: rgba(255,255,255,0.03); }
+        .ocr-note-preview span { color: var(--text-muted); font-size: 11px; }
+        .ocr-note-preview strong { color: var(--text-main); font-size: 12px; text-align: right; overflow-wrap: anywhere; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
 
         #print-container { display: none; }
