@@ -327,6 +327,10 @@
             padding: 10px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none;
         }
         .modal-input:focus { border-color: var(--blue); }
+        #bn-save-note-status { color-scheme: dark; background-color: #090c13; color: var(--text-main); border-color: var(--border-highlight); }
+        #bn-save-note-status option { background-color: #10141e; color: var(--text-main); }
+        #bn-save-note-status option:checked { background-color: #1e3a5f; color: #fff; }
+        #bn-save-note-status:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
         .modal-actions { display: flex; justify-content: flex-end; gap: 12px; }
 
         #print-container { display: none; }
